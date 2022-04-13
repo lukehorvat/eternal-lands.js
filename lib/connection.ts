@@ -5,18 +5,19 @@ import { SERVER_HOST, ServerPort } from './constants';
 
 export class Connection {
   private socket: Socket;
-  clientPackets: ClientPacketEventEmitter;
-  serverPackets: ServerPacketEventEmitter;
+
+  client: ClientPacketEventEmitter;
+  server: ServerPacketEventEmitter;
 
   constructor() {
     this.socket = new Socket();
-    this.clientPackets = new ClientPacketEventEmitter((packet) =>
+    this.client = new ClientPacketEventEmitter((packet) =>
       this.socket.write(packet.toBuffer())
     );
-    this.serverPackets = new ServerPacketEventEmitter();
+    this.server = new ServerPacketEventEmitter();
   }
 
-  open(host = SERVER_HOST, port = ServerPort.TEST_SERVER): Promise<void> {
+  connect(host = SERVER_HOST, port = ServerPort.TEST_SERVER): Promise<void> {
     return new Promise((resolve, reject) => {
       let previousData = Buffer.alloc(0);
 
@@ -31,7 +32,7 @@ export class Connection {
           );
 
           packets.forEach((packet) => {
-            this.serverPackets.receivePacket(packet);
+            this.server.receivePacket(packet);
           });
 
           previousData = partial;
@@ -40,7 +41,7 @@ export class Connection {
     });
   }
 
-  close() {
+  disconnect() {
     this.socket.destroy();
   }
 }

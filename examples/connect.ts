@@ -1,35 +1,35 @@
-import { Connection, ClientPacketType, ServerPacketType } from '../lib';
+import { ELPackets, ELPacketType } from '../lib';
 
 (async () => {
-  const connection = new Connection();
+  const elp = new ELPackets();
 
   try {
-    await connection.open();
+    await elp.connect();
     console.log('Connected!');
   } catch (err) {
     console.log('Failed to connect!');
     process.exit(1);
   }
 
-  connection.serverPackets.on(ServerPacketType.UNSUPPORTED, (type) => {
+  elp.server.on(ELPacketType.server.UNSUPPORTED, (type) => {
     console.log('<< Received unsupported packet', { type });
   });
 
-  connection.serverPackets.on(ServerPacketType.PONG, (echo) => {
+  elp.server.on(ELPacketType.server.PONG, (echo) => {
     console.log('<< Received pong', { echo });
   });
 
-  connection.serverPackets.on(ServerPacketType.CHAT, (channel, message) => {
+  elp.server.on(ELPacketType.server.CHAT, (channel, message) => {
     console.log('<< Received chat', { channel, message });
   });
 
   setTimeout(() => {
-    connection.clientPackets.emit(ClientPacketType.PING, 123);
+    elp.client.emit(ELPacketType.client.PING, 123);
     console.log('>> Sent ping');
   }, 2000);
 
   setInterval(() => {
-    connection.clientPackets.emit(ClientPacketType.HEARTBEAT);
+    elp.client.emit(ELPacketType.client.HEARTBEAT);
     console.log('>> Sent heartbeat');
   }, 25000);
 })();
