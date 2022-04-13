@@ -11,9 +11,9 @@ export class Connection {
 
   constructor() {
     this.socket = new Socket();
-    this.client = new ClientPacketEventEmitter((packet) =>
-      this.socket.write(packet.toBuffer())
-    );
+    this.client = new ClientPacketEventEmitter((packet) => {
+      this.socket.write(packet.toBuffer());
+    });
     this.server = new ServerPacketEventEmitter();
   }
 

@@ -4,12 +4,14 @@ import { ChatChannel } from './constants';
 export interface ClientPacketData extends Record<ClientPacketType, any[]> {
   [ClientPacketType.PING]: [echo: number];
   [ClientPacketType.HEARTBEAT]: [];
+  [ClientPacketType.PING_RESPONSE]: [echo: number];
 }
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.UNSUPPORTED]: [type: number];
-  [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.CHAT]: [channel: ChatChannel, message: string];
+  [ServerPacketType.PONG]: [echo: number];
+  [ServerPacketType.PING_REQUEST]: [echo: number];
 }
 
 export const clientPacketDataToBuffer: {
@@ -23,6 +25,11 @@ export const clientPacketDataToBuffer: {
   [ClientPacketType.HEARTBEAT]: () => {
     return Buffer.alloc(0);
   },
+  [ClientPacketType.PING_RESPONSE]: (echo: number) => {
+    const echoBuffer = Buffer.alloc(4);
+    echoBuffer.writeUInt32LE(echo);
+    return echoBuffer;
+  },
 };
 
 export const serverPacketDataFromBuffer: {
@@ -30,13 +37,17 @@ export const serverPacketDataFromBuffer: {
     data: Buffer
   ) => ServerPacketData[Type];
 } = {
-  [ServerPacketType.PONG]: (data: Buffer) => {
-    const echo = data.readUInt32LE(0); // 4 bytes
-    return [echo];
-  },
   [ServerPacketType.CHAT]: (data: Buffer) => {
     const channel = data.readUInt8(0); // 1 byte
     const message = data.toString('binary', 1);
     return [channel, message];
+  },
+  [ServerPacketType.PONG]: (data: Buffer) => {
+    const echo = data.readUInt32LE(0); // 4 bytes
+    return [echo];
+  },
+  [ServerPacketType.PING_REQUEST]: (data: Buffer) => {
+    const echo = data.readUInt32LE(0); // 4 bytes
+    return [echo];
   },
 };

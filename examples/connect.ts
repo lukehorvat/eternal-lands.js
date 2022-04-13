@@ -27,6 +27,12 @@ import { ELPackets, ELPacketType } from '../lib';
     console.log('<< Received pong', { echo });
   });
 
+  elp.server.on(ELPacketType.server.PING_REQUEST, (echo) => {
+    console.log('<< Received ping request', { echo });
+    elp.client.emit(ELPacketType.client.PING_RESPONSE, echo);
+    console.log('>> Sent ping response');
+  });
+
   elp.server.on(ELPacketType.server.CHAT, (channel, message) => {
     console.log('<< Received chat', { channel, message });
   });
