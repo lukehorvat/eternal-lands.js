@@ -2,9 +2,17 @@ import { ELPackets, ELPacketType } from '../lib';
 
 (async () => {
   const elp = new ELPackets();
+  let pingTimeoutId: NodeJS.Timeout;
+  let heartbeatIntervalId: NodeJS.Timer;
 
   try {
-    await elp.connect();
+    await elp.connect({
+      onDisconnect: () => {
+        console.log('Disconnected!');
+        clearTimeout(pingTimeoutId);
+        clearInterval(heartbeatIntervalId);
+      },
+    });
     console.log('Connected!');
   } catch (err) {
     console.log('Failed to connect!');
@@ -23,12 +31,12 @@ import { ELPackets, ELPacketType } from '../lib';
     console.log('<< Received chat', { channel, message });
   });
 
-  setTimeout(() => {
+  pingTimeoutId = setTimeout(() => {
     elp.client.emit(ELPacketType.client.PING, 123);
     console.log('>> Sent ping');
-  }, 2000);
+  }, 3000);
 
-  setInterval(() => {
+  heartbeatIntervalId = setInterval(() => {
     elp.client.emit(ELPacketType.client.HEARTBEAT);
     console.log('>> Sent heartbeat');
   }, 25000);

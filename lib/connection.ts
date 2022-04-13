@@ -17,15 +17,21 @@ export class Connection {
     this.server = new ServerPacketEventEmitter();
   }
 
-  connect(host = SERVER_HOST, port = ServerPort.TEST_SERVER): Promise<void> {
+  connect({
+    host = SERVER_HOST,
+    port = ServerPort.TEST_SERVER,
+    onDisconnect,
+  }: {
+    host?: string;
+    port?: number;
+    onDisconnect?: () => void;
+  } = {}): Promise<void> {
     return new Promise((resolve, reject) => {
       let previousData = Buffer.alloc(0);
 
       this.socket
         .on('error', reject)
-        .on('close', () => {
-          // TODO: Provide a way for calling code to shutdown when socket disconnects.
-        })
+        .on('close', () => onDisconnect?.())
         .on('data', (data) => {
           const { packets, partial } = Packet.fromBuffer(
             Buffer.concat([previousData, data]) // Prepend any partial packet data received previously.
