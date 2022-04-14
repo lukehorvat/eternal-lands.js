@@ -14,6 +14,22 @@ export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.PING_REQUEST]: [echo: number];
 }
 
+export const clientPacketDataFromBuffer: {
+  [Type in ClientPacketType]: (data: Buffer) => ClientPacketData[Type];
+} = {
+  [ClientPacketType.PING]: (data: Buffer) => {
+    const echo = data.readUInt32LE(0); // 4 bytes
+    return [echo];
+  },
+  [ClientPacketType.HEARTBEAT]: (data: Buffer) => {
+    return [];
+  },
+  [ClientPacketType.PING_RESPONSE]: (data: Buffer) => {
+    const echo = data.readUInt32LE(0); // 4 bytes
+    return [echo];
+  },
+};
+
 export const clientPacketDataToBuffer: {
   [Type in ClientPacketType]: (...data: ClientPacketData[Type]) => Buffer;
 } = {
@@ -49,5 +65,28 @@ export const serverPacketDataFromBuffer: {
   [ServerPacketType.PING_REQUEST]: (data: Buffer) => {
     const echo = data.readUInt32LE(0); // 4 bytes
     return [echo];
+  },
+};
+
+export const serverPacketDataToBuffer: {
+  [Type in Exclude<ServerPacketType, ServerPacketType.UNSUPPORTED>]: (
+    ...data: ServerPacketData[Type]
+  ) => Buffer;
+} = {
+  [ServerPacketType.CHAT]: (channel: ChatChannel, message: string) => {
+    const channelBuffer = Buffer.alloc(1);
+    channelBuffer.writeUInt8(channel); // 1 byte
+    const messageBuffer = Buffer.from(message, 'binary');
+    return Buffer.concat([channelBuffer, messageBuffer]);
+  },
+  [ServerPacketType.PONG]: (echo: number) => {
+    const echoBuffer = Buffer.alloc(4);
+    echoBuffer.writeUInt32LE(echo);
+    return echoBuffer;
+  },
+  [ServerPacketType.PING_REQUEST]: (echo: number) => {
+    const echoBuffer = Buffer.alloc(4);
+    echoBuffer.writeUInt32LE(echo);
+    return echoBuffer;
   },
 };

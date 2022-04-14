@@ -57,7 +57,7 @@ export class ServerPacketEventEmitter extends (EventEmitter as {
       return;
     }
 
-    const data = serverPacketDataFromBuffer[type](packet.data);
+    const data = serverPacketDataFromBuffer[type](packet.dataBuffer);
     this.emit(type, ...data);
   }
 }

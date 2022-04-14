@@ -35,11 +35,11 @@ describe('fromBuffer()', () => {
 
     expect(packets.length).toBe(3);
     expect(packets[0].type).toBe(10);
-    expect(packets[0].data.toString('utf8')).toBe('AAA');
+    expect(packets[0].dataBuffer.toString('utf8')).toBe('AAA');
     expect(packets[1].type).toBe(20);
-    expect(packets[1].data.toString('utf8')).toBe('BBB');
+    expect(packets[1].dataBuffer.toString('utf8')).toBe('BBB');
     expect(packets[2].type).toBe(30);
-    expect(packets[2].data.toString('utf8')).toBe('CCC');
+    expect(packets[2].dataBuffer.toString('utf8')).toBe('CCC');
     expect(partial.byteLength).toBe(0);
   });
 
@@ -77,9 +77,9 @@ describe('fromBuffer()', () => {
 
     expect(packets.length).toBe(2);
     expect(packets[0].type).toBe(10);
-    expect(packets[0].data.toString('utf8')).toBe('AAA');
+    expect(packets[0].dataBuffer.toString('utf8')).toBe('AAA');
     expect(packets[1].type).toBe(20);
-    expect(packets[1].data.toString('utf8')).toBe('BBB');
+    expect(packets[1].dataBuffer.toString('utf8')).toBe('BBB');
     expect(partial.byteLength).toBe(3);
     expect(partial.readUInt8(0)).toBe(30);
     expect(partial.readUInt16LE(1)).toBe(4);
