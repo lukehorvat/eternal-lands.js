@@ -12,9 +12,7 @@ export class Packet {
     typeBuffer.writeUInt8(this.type); // 1 byte
 
     const lengthBuffer = Buffer.alloc(2);
-    lengthBuffer.writeUInt16LE(
-      typeBuffer.byteLength + this.dataBuffer.byteLength
-    ); // 2 bytes
+    lengthBuffer.writeUInt16LE(1 + this.dataBuffer.byteLength); // 2 bytes
 
     return Buffer.concat([typeBuffer, lengthBuffer, this.dataBuffer]);
   }

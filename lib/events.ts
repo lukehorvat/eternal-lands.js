@@ -1,12 +1,7 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 import { ClientPacketType, ServerPacketType } from './types';
-import {
-  ClientPacketData,
-  clientPacketDataToBuffer,
-  ServerPacketData,
-  serverPacketDataFromBuffer,
-} from './data';
+import { ClientPacketData, ServerPacketData, packetDataParsers } from './data';
 import { Packet } from './packet';
 
 type ClientPacketEvents = {
@@ -35,7 +30,7 @@ export class ClientPacketEventEmitter extends (EventEmitter as {
       throw new Error(`Unsupported client packet type '${type}'.`);
     }
 
-    const dataBuffer = clientPacketDataToBuffer[type](...data);
+    const dataBuffer = packetDataParsers.client[type].toBuffer(...data);
     const packet = new Packet(type, dataBuffer);
     this.sendPacket(packet);
 
@@ -57,7 +52,7 @@ export class ServerPacketEventEmitter extends (EventEmitter as {
       return;
     }
 
-    const data = serverPacketDataFromBuffer[type](packet.dataBuffer);
+    const data = packetDataParsers.server[type].fromBuffer(packet.dataBuffer);
     this.emit(type, ...data);
   }
 }

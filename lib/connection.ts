@@ -34,7 +34,8 @@ export class Connection {
         .on('close', () => onDisconnect?.())
         .on('data', (data) => {
           const { packets, partial } = Packet.fromBuffer(
-            Buffer.concat([previousData, data]) // Prepend any partial packet data received previously.
+            // Prepend any partial (overflow/underflow) packet data received previously.
+            Buffer.concat([previousData, data])
           );
 
           packets.forEach((packet) => {

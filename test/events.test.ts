@@ -2,10 +2,7 @@ import {
   ClientPacketEventEmitter,
   ServerPacketEventEmitter,
 } from '../lib/events';
-import {
-  clientPacketDataToBuffer,
-  serverPacketDataToBuffer,
-} from '../lib/data';
+import { packetDataParsers } from '../lib/data';
 import { ClientPacketType, ServerPacketType } from '../lib/types';
 import { Packet } from '../lib/packet';
 import { ChatChannel } from '../lib/constants';
@@ -24,21 +21,21 @@ describe('ClientPacketEventEmitter', () => {
       1,
       new Packet(
         ClientPacketType.HEARTBEAT,
-        clientPacketDataToBuffer[ClientPacketType.HEARTBEAT]()
+        packetDataParsers.client[ClientPacketType.HEARTBEAT].toBuffer()
       )
     );
     expect(sendPacketMock).nthCalledWith(
       2,
       new Packet(
         ClientPacketType.PING,
-        clientPacketDataToBuffer[ClientPacketType.PING](123)
+        packetDataParsers.client[ClientPacketType.PING].toBuffer(123)
       )
     );
     expect(sendPacketMock).nthCalledWith(
       3,
       new Packet(
         ClientPacketType.PING_RESPONSE,
-        clientPacketDataToBuffer[ClientPacketType.PING_RESPONSE](321)
+        packetDataParsers.client[ClientPacketType.PING_RESPONSE].toBuffer(321)
       )
     );
   });
@@ -69,7 +66,7 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.CHAT,
-        serverPacketDataToBuffer[ServerPacketType.CHAT](
+        packetDataParsers.server[ServerPacketType.CHAT].toBuffer(
           ChatChannel.LOCAL,
           'test'
         )
@@ -78,13 +75,13 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.PONG,
-        serverPacketDataToBuffer[ServerPacketType.PONG](123)
+        packetDataParsers.server[ServerPacketType.PONG].toBuffer(123)
       )
     );
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.PING_REQUEST,
-        serverPacketDataToBuffer[ServerPacketType.PONG](321)
+        packetDataParsers.server[ServerPacketType.PONG].toBuffer(321)
       )
     );
 
