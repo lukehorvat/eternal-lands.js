@@ -1,18 +1,19 @@
 import { ELPackets, ELPacketType } from '../lib';
 
 (async () => {
-  const elp = new ELPackets();
   let pingTimeoutId: NodeJS.Timeout;
   let heartbeatIntervalId: NodeJS.Timer;
 
+  const elp = new ELPackets({
+    onDisconnect: () => {
+      console.log('Disconnected!');
+      clearTimeout(pingTimeoutId);
+      clearInterval(heartbeatIntervalId);
+    },
+  });
+
   try {
-    await elp.connect({
-      onDisconnect: () => {
-        console.log('Disconnected!');
-        clearTimeout(pingTimeoutId);
-        clearInterval(heartbeatIntervalId);
-      },
-    });
+    await elp.connect();
     console.log('Connected!');
   } catch (err) {
     console.log('Failed to connect!');

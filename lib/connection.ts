@@ -4,20 +4,15 @@ import { Packet } from './packet';
 import { SERVER_HOST, ServerPort } from './constants';
 
 export class Connection {
+  private host: string;
+  private port: number;
+  private onDisconnect?: () => void;
   private socket: Socket;
 
   client: ClientPacketEventEmitter;
   server: ServerPacketEventEmitter;
 
-  constructor() {
-    this.socket = new Socket();
-    this.client = new ClientPacketEventEmitter((packet) => {
-      this.socket.write(packet.toBuffer());
-    });
-    this.server = new ServerPacketEventEmitter();
-  }
-
-  connect({
+  constructor({
     host = SERVER_HOST,
     port = ServerPort.TEST_SERVER,
     onDisconnect,
@@ -25,30 +20,42 @@ export class Connection {
     host?: string;
     port?: number;
     onDisconnect?: () => void;
-  } = {}): Promise<void> {
+  } = {}) {
+    this.host = host;
+    this.port = port;
+    this.onDisconnect = onDisconnect;
+    this.socket = new Socket();
+    this.client = new ClientPacketEventEmitter((packet) => {
+      this.socket.write(packet.toBuffer());
+    });
+    this.server = new ServerPacketEventEmitter();
+  }
+
+  connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      let previousData = Buffer.alloc(0);
+      let previousBuffer = Buffer.alloc(0);
 
       this.socket
         .on('error', reject)
-        .on('close', () => onDisconnect?.())
-        .on('data', (data) => {
+        .on('close', () => this.onDisconnect?.())
+        .on('data', (buffer) => {
           const { packets, partial } = Packet.fromBuffer(
             // Prepend any partial (overflow/underflow) packet data received previously.
-            Buffer.concat([previousData, data])
+            Buffer.concat([previousBuffer, buffer])
           );
 
           packets.forEach((packet) => {
             this.server.receivePacket(packet);
           });
 
-          previousData = partial;
+          previousBuffer = partial;
         })
-        .connect(port, host, resolve);
+        .connect(this.port, this.host, resolve);
     });
   }
 
   disconnect() {
     this.socket.destroy();
+    this.onDisconnect?.();
   }
 }
