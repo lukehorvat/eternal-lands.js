@@ -56,6 +56,16 @@ describe('ClientPacketEventEmitter', () => {
     expect(onMock).nthCalledWith(2, 123);
     expect(onMock).nthCalledWith(3, 321);
   });
+
+  test('Throws an error when emit() is called with an unsupported packet type', () => {
+    const sendPacketMock = jest.fn();
+    const eventEmitter = new ClientPacketEventEmitter(sendPacketMock);
+
+    expect(() => {
+      eventEmitter.emit(-42 /* A packet type that would never be supported. */);
+    }).toThrow('Unsupported client packet type');
+    expect(sendPacketMock).toBeCalledTimes(0);
+  });
 });
 
 describe('ServerPacketEventEmitter', () => {
@@ -81,7 +91,7 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.PING_REQUEST,
-        packetDataParsers.server[ServerPacketType.PONG].toBuffer(321)
+        packetDataParsers.server[ServerPacketType.PING_REQUEST].toBuffer(321)
       )
     );
 
@@ -99,12 +109,18 @@ describe('ServerPacketEventEmitter', () => {
   test('Triggers a special emit() when unsupported packets are received', () => {
     const eventEmitter = new ServerPacketEventEmitter();
     const emitSpy = jest.spyOn(eventEmitter, 'emit');
-
-    eventEmitter.receivePacket(
-      new Packet(-42 /* A packet type that would never be supported. */)
+    const packet = new Packet(
+      -42, // A packet type that would never be supported.
+      Buffer.from('test', 'utf8')
     );
+    eventEmitter.receivePacket(packet);
 
     expect(emitSpy).toBeCalledTimes(1);
-    expect(emitSpy).nthCalledWith(1, ServerPacketType.UNSUPPORTED, -42);
+    expect(emitSpy).nthCalledWith(
+      1,
+      'unsupported',
+      packet.type,
+      packet.dataBuffer
+    );
   });
 });

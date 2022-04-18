@@ -8,7 +8,6 @@ export interface ClientPacketData extends Record<ClientPacketType, any[]> {
 }
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
-  [ServerPacketType.UNSUPPORTED]: [type: number];
   [ServerPacketType.CHAT]: [channel: ChatChannel, message: string];
   [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.PING_REQUEST]: [echo: number];
@@ -22,7 +21,7 @@ export const packetDataParsers: {
     };
   };
   server: {
-    [Type in Exclude<ServerPacketType, ServerPacketType.UNSUPPORTED>]: {
+    [Type in ServerPacketType]: {
       fromBuffer: (dataBuffer: Buffer) => ServerPacketData[Type];
       toBuffer: (...data: ServerPacketData[Type]) => Buffer;
     };

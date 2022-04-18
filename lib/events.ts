@@ -10,6 +10,8 @@ type ClientPacketEvents = {
 
 type ServerPacketEvents = {
   [Type in ServerPacketType]: (...data: ServerPacketData[Type]) => void;
+} & {
+  unsupported: (type: number, dataBuffer: Buffer) => void;
 };
 
 export class ClientPacketEventEmitter extends (EventEmitter as {
@@ -42,13 +44,10 @@ export class ServerPacketEventEmitter extends (EventEmitter as {
   new (): TypedEmitter<ServerPacketEvents>;
 }) {
   receivePacket(packet: Packet) {
-    const type = packet.type as Exclude<
-      ServerPacketType,
-      ServerPacketType.UNSUPPORTED
-    >;
+    const type = packet.type as ServerPacketType;
 
     if (!(type in ServerPacketType)) {
-      this.emit(ServerPacketType.UNSUPPORTED, packet.type);
+      this.emit('unsupported', packet.type, packet.dataBuffer);
       return;
     }
 

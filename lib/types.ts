@@ -5,7 +5,6 @@ export enum ClientPacketType {
 }
 
 export enum ServerPacketType {
-  UNSUPPORTED = -1,
   CHAT = 0,
   PONG = 11,
   PING_REQUEST = 60,
