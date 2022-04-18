@@ -63,7 +63,7 @@ describe('ClientPacketEventEmitter', () => {
 
     expect(() => {
       eventEmitter.emit(-42 /* A packet type that would never be supported. */);
-    }).toThrow('Unsupported client packet type');
+    }).toThrow('Unsupported packet type');
     expect(sendPacketMock).toBeCalledTimes(0);
   });
 });
@@ -116,11 +116,6 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(packet);
 
     expect(emitSpy).toBeCalledTimes(1);
-    expect(emitSpy).nthCalledWith(
-      1,
-      'unsupported',
-      packet.type,
-      packet.dataBuffer
-    );
+    expect(emitSpy).nthCalledWith(1, 'unsupported', packet);
   });
 });

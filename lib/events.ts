@@ -11,7 +11,7 @@ type ClientPacketEvents = {
 type ServerPacketEvents = {
   [Type in ServerPacketType]: (...data: ServerPacketData[Type]) => void;
 } & {
-  unsupported: (type: number, dataBuffer: Buffer) => void;
+  unsupported: (packet: Packet) => void;
 };
 
 export class ClientPacketEventEmitter extends (EventEmitter as {
@@ -29,7 +29,7 @@ export class ClientPacketEventEmitter extends (EventEmitter as {
     ...data: Parameters<ClientPacketEvents[Type]>
   ) {
     if (!(type in ClientPacketType)) {
-      throw new Error(`Unsupported client packet type '${type}'.`);
+      throw new Error(`Unsupported packet type '${type}'.`);
     }
 
     const dataBuffer = packetDataParsers.client[type].toBuffer(...data);
@@ -47,7 +47,7 @@ export class ServerPacketEventEmitter extends (EventEmitter as {
     const type = packet.type as ServerPacketType;
 
     if (!(type in ServerPacketType)) {
-      this.emit('unsupported', packet.type, packet.dataBuffer);
+      this.emit('unsupported', packet);
       return;
     }
 

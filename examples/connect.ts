@@ -19,8 +19,8 @@ import { ELPackets, ELPacketType } from '../lib';
     process.exit(1);
   }
 
-  elp.server.on('unsupported', (type, dataBuffer) => {
-    console.log('<< Received unsupported packet', { type, dataBuffer });
+  elp.server.on('unsupported', (packet) => {
+    console.log('<< Received unsupported packet', packet);
   });
 
   elp.server.on(ELPacketType.server.PONG, (echo) => {
