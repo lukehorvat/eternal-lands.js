@@ -5,12 +5,16 @@ export interface ClientPacketData extends Record<ClientPacketType, any[]> {
   [ClientPacketType.PING]: [echo: number];
   [ClientPacketType.HEARTBEAT]: [];
   [ClientPacketType.PING_RESPONSE]: [echo: number];
+  [ClientPacketType.LOGIN]: [username: string, password: string];
 }
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.CHAT]: [channel: ChatChannel, message: string];
   [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.PING_REQUEST]: [echo: number];
+  [ServerPacketType.YOU_DONT_EXIST]: [];
+  [ServerPacketType.LOGIN_SUCCESSFUL]: [];
+  [ServerPacketType.LOGIN_FAILED]: [reason: string];
 }
 
 export const packetDataParsers: {
@@ -58,6 +62,19 @@ export const packetDataParsers: {
         return echoBuffer;
       },
     },
+    [ClientPacketType.LOGIN]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const [_, username, password] = dataBuffer
+          .toString('binary')
+          .match(/^(\w+)\s(.+)\0$/)!;
+        return [username, password];
+      },
+      toBuffer(username: string, password: string) {
+        // A string with username and password separated by a space,
+        // and ending with a null-terminator.
+        return Buffer.from(`${username} ${password}\0`, 'binary');
+      },
+    },
   },
   server: {
     [ServerPacketType.CHAT]: {
@@ -93,6 +110,31 @@ export const packetDataParsers: {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
+      },
+    },
+    [ServerPacketType.YOU_DONT_EXIST]: {
+      fromBuffer(dataBuffer: Buffer) {
+        return [];
+      },
+      toBuffer() {
+        return Buffer.alloc(0);
+      },
+    },
+    [ServerPacketType.LOGIN_SUCCESSFUL]: {
+      fromBuffer(dataBuffer: Buffer) {
+        return [];
+      },
+      toBuffer() {
+        return Buffer.alloc(0);
+      },
+    },
+    [ServerPacketType.LOGIN_FAILED]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const reason = dataBuffer.toString('binary');
+        return [reason];
+      },
+      toBuffer(reason: string) {
+        return Buffer.from(reason, 'binary');
       },
     },
   },

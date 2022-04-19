@@ -13,6 +13,8 @@ test('Client packet data parsing', () => {
     [ClientPacketType.PING]: [123],
     [ClientPacketType.HEARTBEAT]: [],
     [ClientPacketType.PING_RESPONSE]: [321],
+    [ClientPacketType.PING_RESPONSE]: [321],
+    [ClientPacketType.LOGIN]: ['foo', 'bar'],
   };
 
   (Object.values(ClientPacketType) as ClientPacketType[])
@@ -20,7 +22,11 @@ test('Client packet data parsing', () => {
     .forEach((type) => {
       const dataParser = packetDataParsers.client[type];
       const data = packetData[type];
-      const dataBuffer = dataParser.toBuffer.apply(null, data as any) as Buffer;
+      const dataBuffer = (
+        dataParser.toBuffer as (
+          ...data: ClientPacketData[ClientPacketType]
+        ) => Buffer
+      )(...data);
 
       expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
     });
@@ -33,6 +39,9 @@ test('Server packet data parsing', () => {
     [ServerPacketType.CHAT]: [ChatChannel.LOCAL, 'test'],
     [ServerPacketType.PONG]: [123],
     [ServerPacketType.PING_REQUEST]: [321],
+    [ServerPacketType.YOU_DONT_EXIST]: [],
+    [ServerPacketType.LOGIN_SUCCESSFUL]: [],
+    [ServerPacketType.LOGIN_FAILED]: ['Wrong password!'],
   };
 
   (Object.values(ServerPacketType) as ServerPacketType[])
@@ -40,7 +49,11 @@ test('Server packet data parsing', () => {
     .forEach((type) => {
       const dataParser = packetDataParsers.server[type];
       const data = packetData[type];
-      const dataBuffer = dataParser.toBuffer.apply(null, data as any) as Buffer;
+      const dataBuffer = (
+        dataParser.toBuffer as (
+          ...data: ServerPacketData[ServerPacketType]
+        ) => Buffer
+      )(...data) as Buffer;
 
       expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
     });
