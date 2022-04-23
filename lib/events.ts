@@ -1,57 +1,36 @@
-import EventEmitter from 'events';
-import TypedEmitter from 'typed-emitter';
+import Emittery from 'emittery';
 import { ClientPacketType, ServerPacketType } from './types';
 import { ClientPacketData, ServerPacketData, packetDataParsers } from './data';
 import { Packet } from './packet';
 
-type ClientPacketEvents = {
-  [Type in ClientPacketType]: (...data: ClientPacketData[Type]) => void;
-};
-
-type ServerPacketEvents = {
-  [Type in ServerPacketType]: (...data: ServerPacketData[Type]) => void;
-} & {
-  unsupported: (packet: Packet) => void;
-};
-
-export class ClientPacketEventEmitter extends (EventEmitter as {
-  new (): TypedEmitter<ClientPacketEvents>;
-}) {
-  private sendPacket: (packet: Packet) => void;
-
+export class ClientPacketEventEmitter extends Emittery<ClientPacketData> {
   constructor(sendPacket: (packet: Packet) => void) {
     super();
-    this.sendPacket = sendPacket;
-  }
 
-  emit<Type extends keyof ClientPacketEvents>(
-    type: Type,
-    ...data: Parameters<ClientPacketEvents[Type]>
-  ) {
-    if (!(type in ClientPacketType)) {
-      throw new Error(`Unsupported packet type '${type}'.`);
-    }
+    this.onAny((type, data) => {
+      if (!(type in ClientPacketType)) {
+        throw new Error(`Unsupported packet type '${type}'.`);
+      }
 
-    const dataBuffer = packetDataParsers.client[type].toBuffer(...data);
-    const packet = new Packet(type, dataBuffer);
-    this.sendPacket(packet);
-
-    return super.emit(type, ...data);
+      const dataBuffer = packetDataParsers.client[type].toBuffer(data as any);
+      const packet = new Packet(type, dataBuffer);
+      sendPacket(packet);
+    });
   }
 }
 
-export class ServerPacketEventEmitter extends (EventEmitter as {
-  new (): TypedEmitter<ServerPacketEvents>;
-}) {
+export class ServerPacketEventEmitter extends Emittery<
+  ServerPacketData & { UNSUPPORTED: Packet }
+> {
   receivePacket(packet: Packet) {
     const type = packet.type as ServerPacketType;
 
     if (!(type in ServerPacketType)) {
-      this.emit('unsupported', packet);
+      this.emit('UNSUPPORTED', packet);
       return;
     }
 
     const data = packetDataParsers.server[type].fromBuffer(packet.dataBuffer);
-    this.emit(type, ...data);
+    this.emit(type, data);
   }
 }

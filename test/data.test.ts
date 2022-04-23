@@ -22,11 +22,7 @@ test('Client packet data parsing', () => {
     .forEach((type) => {
       const dataParser = packetDataParsers.client[type];
       const data = packetData[type];
-      const dataBuffer = (
-        dataParser.toBuffer as (
-          ...data: ClientPacketData[ClientPacketType]
-        ) => Buffer
-      )(...data);
+      const dataBuffer = dataParser.toBuffer(data as any);
 
       expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
     });
@@ -49,11 +45,7 @@ test('Server packet data parsing', () => {
     .forEach((type) => {
       const dataParser = packetDataParsers.server[type];
       const data = packetData[type];
-      const dataBuffer = (
-        dataParser.toBuffer as (
-          ...data: ServerPacketData[ServerPacketType]
-        ) => Buffer
-      )(...data) as Buffer;
+      const dataBuffer = dataParser.toBuffer(data as any);
 
       expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
     });

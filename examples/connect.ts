@@ -20,31 +20,31 @@ import { ELPackets, ELPacketType } from '../lib';
     process.exit(1);
   }
 
-  elp.server.on('unsupported', (packet) => {
+  elp.server.on('UNSUPPORTED', (packet) => {
     console.log('<< Received unsupported packet', packet);
   });
 
-  elp.server.on(ELPacketType.server.PONG, (echo) => {
+  elp.server.on(ELPacketType.server.PONG, ([echo]) => {
     console.log('<< Received pong', { echo });
   });
 
-  elp.server.on(ELPacketType.server.PING_REQUEST, (echo) => {
+  elp.server.on(ELPacketType.server.PING_REQUEST, ([echo]) => {
     console.log('<< Received ping request', { echo });
-    elp.client.emit(ELPacketType.client.PING_RESPONSE, echo);
+    elp.client.emit(ELPacketType.client.PING_RESPONSE, [echo]);
     console.log('>> Sent ping response');
   });
 
-  elp.server.on(ELPacketType.server.CHAT, (channel, message) => {
+  elp.server.on(ELPacketType.server.CHAT, ([channel, message]) => {
     console.log('<< Received chat', { channel, message });
   });
 
   pingTimeoutId = setTimeout(() => {
-    elp.client.emit(ELPacketType.client.PING, 123);
+    elp.client.emit(ELPacketType.client.PING, [123]);
     console.log('>> Sent ping');
   }, 3000);
 
   heartbeatIntervalId = setInterval(() => {
-    elp.client.emit(ELPacketType.client.HEARTBEAT);
+    elp.client.emit(ELPacketType.client.HEARTBEAT, []);
     console.log('>> Sent heartbeat');
   }, 25000);
 })();

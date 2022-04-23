@@ -21,13 +21,13 @@ export const packetDataParsers: {
   client: {
     [Type in ClientPacketType]: {
       fromBuffer: (dataBuffer: Buffer) => ClientPacketData[Type];
-      toBuffer: (...data: ClientPacketData[Type]) => Buffer;
+      toBuffer: (data: ClientPacketData[Type]) => Buffer;
     };
   };
   server: {
     [Type in ServerPacketType]: {
       fromBuffer: (dataBuffer: Buffer) => ServerPacketData[Type];
-      toBuffer: (...data: ServerPacketData[Type]) => Buffer;
+      toBuffer: (data: ServerPacketData[Type]) => Buffer;
     };
   };
 } = {
@@ -37,7 +37,7 @@ export const packetDataParsers: {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
         return [echo];
       },
-      toBuffer(echo: number) {
+      toBuffer([echo]) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -56,7 +56,7 @@ export const packetDataParsers: {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
         return [echo];
       },
-      toBuffer(echo: number) {
+      toBuffer([echo]) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -69,7 +69,7 @@ export const packetDataParsers: {
           .match(/^(\w+)\s(.+)\0$/)!;
         return [username, password];
       },
-      toBuffer(username: string, password: string) {
+      toBuffer([username, password]) {
         // A string with username and password separated by a space,
         // and ending with a null-terminator.
         return Buffer.from(`${username} ${password}\0`, 'binary');
@@ -83,7 +83,7 @@ export const packetDataParsers: {
         const message = dataBuffer.toString('binary', 1);
         return [channel, message];
       },
-      toBuffer(channel: ChatChannel, message: string) {
+      toBuffer([channel, message]) {
         const channelBuffer = Buffer.alloc(1);
         channelBuffer.writeUInt8(channel); // 1 byte
         const messageBuffer = Buffer.from(message, 'binary');
@@ -95,7 +95,7 @@ export const packetDataParsers: {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
         return [echo];
       },
-      toBuffer(echo: number) {
+      toBuffer([echo]) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -106,7 +106,7 @@ export const packetDataParsers: {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
         return [echo];
       },
-      toBuffer(echo: number) {
+      toBuffer([echo]) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -133,7 +133,7 @@ export const packetDataParsers: {
         const reason = dataBuffer.toString('binary');
         return [reason];
       },
-      toBuffer(reason: string) {
+      toBuffer([reason]) {
         return Buffer.from(reason, 'binary');
       },
     },

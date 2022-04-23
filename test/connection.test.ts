@@ -1,6 +1,6 @@
 import { Socket, Server, createServer } from 'net';
 import { Connection } from '../lib/connection';
-import { packetDataParsers, ServerPacketData } from '../lib/data';
+import { packetDataParsers } from '../lib/data';
 import { ClientPacketType, ServerPacketType } from '../lib/types';
 import { Packet } from '../lib/packet';
 
@@ -24,12 +24,8 @@ test('Connects, sends, and receives packets', async () => {
   await server.start();
   await connection.connect();
 
-  connection.client.emit(ClientPacketType.PING, 123);
-  const [echo] = await new Promise<ServerPacketData[ServerPacketType.PONG]>(
-    (resolve) => {
-      connection.server.once(ServerPacketType.PONG, (...data) => resolve(data));
-    }
-  );
+  connection.client.emit(ClientPacketType.PING, [123]);
+  const [echo] = await connection.server.once(ServerPacketType.PONG);
   expect(echo).toBe(123);
 });
 
@@ -81,7 +77,7 @@ class MockELServer {
         socket,
         new Packet(
           ServerPacketType.PONG,
-          packetDataParsers.server[ServerPacketType.PONG].toBuffer(echo)
+          packetDataParsers.server[ServerPacketType.PONG].toBuffer([echo])
         )
       );
     }
