@@ -2,7 +2,7 @@ import { ClientPacketType, ServerPacketType } from './types';
 import { ChatChannel } from './constants';
 
 export interface ClientPacketData extends Record<ClientPacketType, any[]> {
-  [ClientPacketType.CHAT]: [message: string];
+  [ClientPacketType.RAW_TEXT]: [message: string];
   [ClientPacketType.PING]: [echo: number];
   [ClientPacketType.HEARTBEAT]: [];
   [ClientPacketType.PING_RESPONSE]: [echo: number];
@@ -10,7 +10,7 @@ export interface ClientPacketData extends Record<ClientPacketType, any[]> {
 }
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
-  [ServerPacketType.CHAT]: [channel: ChatChannel, message: string];
+  [ServerPacketType.RAW_TEXT]: [channel: ChatChannel, message: string];
   [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.PING_REQUEST]: [echo: number];
   [ServerPacketType.YOU_DONT_EXIST]: [];
@@ -33,7 +33,7 @@ export const packetDataParsers: {
   };
 } = {
   client: {
-    [ClientPacketType.CHAT]: {
+    [ClientPacketType.RAW_TEXT]: {
       fromBuffer(dataBuffer: Buffer) {
         const message = dataBuffer.toString('ascii');
         return [message];
@@ -87,7 +87,7 @@ export const packetDataParsers: {
     },
   },
   server: {
-    [ServerPacketType.CHAT]: {
+    [ServerPacketType.RAW_TEXT]: {
       fromBuffer(dataBuffer: Buffer) {
         const channel = dataBuffer.readUInt8(0); // 1 byte
         const message = dataBuffer.toString('ascii', 1);

@@ -61,8 +61,8 @@ describe('ServerPacketEventEmitter', () => {
 
     eventEmitter.receivePacket(
       new Packet(
-        ServerPacketType.CHAT,
-        packetDataParsers.server[ServerPacketType.CHAT].toBuffer([
+        ServerPacketType.RAW_TEXT,
+        packetDataParsers.server[ServerPacketType.RAW_TEXT].toBuffer([
           ChatChannel.LOCAL,
           'test',
         ])
@@ -82,7 +82,7 @@ describe('ServerPacketEventEmitter', () => {
     );
 
     expect(emitSpy).toBeCalledTimes(3);
-    expect(emitSpy).nthCalledWith(1, ServerPacketType.CHAT, [
+    expect(emitSpy).nthCalledWith(1, ServerPacketType.RAW_TEXT, [
       ChatChannel.LOCAL,
       'test',
     ]);

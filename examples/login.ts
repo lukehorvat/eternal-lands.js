@@ -55,12 +55,12 @@ const password = process.env.EL_PASSWORD!;
 
     chatTimeoutId = setTimeout(() => {
       const message = 'Hello, world!';
-      elp.client.emit(ELPacketType.client.CHAT, [message]);
-      console.log('Sent CHAT', { message });
+      elp.client.emit(ELPacketType.client.RAW_TEXT, [message]);
+      console.log('Sent RAW_TEXT', { message });
     }, 3000);
 
-    elp.server.on(ELPacketType.server.CHAT, ([channel, message]) => {
-      console.log('Received CHAT', { channel, message });
+    elp.server.on(ELPacketType.server.RAW_TEXT, ([channel, message]) => {
+      console.log('Received RAW_TEXT', { channel, message });
     });
   });
 

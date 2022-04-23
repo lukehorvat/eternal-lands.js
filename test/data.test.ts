@@ -10,7 +10,7 @@ test('Client packet data parsing', () => {
   const packetData: {
     [Type in ClientPacketType]: ClientPacketData[Type];
   } = {
-    [ClientPacketType.CHAT]: ['test'],
+    [ClientPacketType.RAW_TEXT]: ['test'],
     [ClientPacketType.PING]: [123],
     [ClientPacketType.HEARTBEAT]: [],
     [ClientPacketType.PING_RESPONSE]: [321],
@@ -33,7 +33,7 @@ test('Server packet data parsing', () => {
   const packetData: {
     [Type in ServerPacketType]: ServerPacketData[Type];
   } = {
-    [ServerPacketType.CHAT]: [ChatChannel.LOCAL, 'test'],
+    [ServerPacketType.RAW_TEXT]: [ChatChannel.LOCAL, 'test'],
     [ServerPacketType.PONG]: [123],
     [ServerPacketType.PING_REQUEST]: [321],
     [ServerPacketType.YOU_DONT_EXIST]: [],

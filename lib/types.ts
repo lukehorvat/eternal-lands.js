@@ -1,5 +1,5 @@
 export enum ClientPacketType {
-  CHAT = 0,
+  RAW_TEXT = 0,
   PING = 13,
   HEARTBEAT = 14,
   PING_RESPONSE = 60,
@@ -7,7 +7,7 @@ export enum ClientPacketType {
 }
 
 export enum ServerPacketType {
-  CHAT = 0,
+  RAW_TEXT = 0,
   PONG = 11,
   PING_REQUEST = 60,
   YOU_DONT_EXIST = 249,
