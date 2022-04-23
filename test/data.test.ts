@@ -10,6 +10,7 @@ test('Client packet data parsing', () => {
   const packetData: {
     [Type in ClientPacketType]: ClientPacketData[Type];
   } = {
+    [ClientPacketType.CHAT]: ['test'],
     [ClientPacketType.PING]: [123],
     [ClientPacketType.HEARTBEAT]: [],
     [ClientPacketType.PING_RESPONSE]: [321],

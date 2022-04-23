@@ -1,14 +1,22 @@
+/**
+ * In this example, we connect and try sending a ping after several seconds.
+ *
+ * A heartbeat packet is also sent at regular intervals to keep the connection alive.
+ *
+ * We also respond to any ping requests that the server makes.
+ */
+
 import { ELPackets, ELPacketType } from '../lib';
 
 (async () => {
-  let pingTimeoutId: NodeJS.Timeout;
   let heartbeatIntervalId: NodeJS.Timer;
+  let pingTimeoutId: NodeJS.Timeout;
 
   const elp = new ELPackets({
     onDisconnect: () => {
       console.log('Disconnected!');
-      clearTimeout(pingTimeoutId);
       clearInterval(heartbeatIntervalId);
+      clearTimeout(pingTimeoutId);
     },
   });
 
@@ -20,31 +28,24 @@ import { ELPackets, ELPacketType } from '../lib';
     process.exit(1);
   }
 
-  elp.server.on('UNSUPPORTED', (packet) => {
-    console.log('<< Received unsupported packet', packet);
-  });
-
-  elp.server.on(ELPacketType.server.PONG, ([echo]) => {
-    console.log('<< Received pong', { echo });
-  });
+  heartbeatIntervalId = setInterval(() => {
+    elp.client.emit(ELPacketType.client.HEARTBEAT, []);
+    console.log('Sent HEARTBEAT');
+  }, 25000);
 
   elp.server.on(ELPacketType.server.PING_REQUEST, ([echo]) => {
-    console.log('<< Received ping request', { echo });
+    console.log('Received PING_REQUEST', { echo });
     elp.client.emit(ELPacketType.client.PING_RESPONSE, [echo]);
-    console.log('>> Sent ping response');
-  });
-
-  elp.server.on(ELPacketType.server.CHAT, ([channel, message]) => {
-    console.log('<< Received chat', { channel, message });
+    console.log('Sent PING_RESPONSE', { echo });
   });
 
   pingTimeoutId = setTimeout(() => {
-    elp.client.emit(ELPacketType.client.PING, [123]);
-    console.log('>> Sent ping');
-  }, 3000);
+    const echo = 123;
+    elp.client.emit(ELPacketType.client.PING, [echo]);
+    console.log('Sent PING', { echo });
+  }, 5000);
 
-  heartbeatIntervalId = setInterval(() => {
-    elp.client.emit(ELPacketType.client.HEARTBEAT, []);
-    console.log('>> Sent heartbeat');
-  }, 25000);
+  elp.server.on(ELPacketType.server.PONG, ([echo]) => {
+    console.log('Received PONG', { echo });
+  });
 })();

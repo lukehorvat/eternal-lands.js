@@ -1,4 +1,5 @@
 export enum ClientPacketType {
+  CHAT = 0,
   PING = 13,
   HEARTBEAT = 14,
   PING_RESPONSE = 60,

@@ -2,6 +2,7 @@ import { ClientPacketType, ServerPacketType } from './types';
 import { ChatChannel } from './constants';
 
 export interface ClientPacketData extends Record<ClientPacketType, any[]> {
+  [ClientPacketType.CHAT]: [message: string];
   [ClientPacketType.PING]: [echo: number];
   [ClientPacketType.HEARTBEAT]: [];
   [ClientPacketType.PING_RESPONSE]: [echo: number];
@@ -32,6 +33,15 @@ export const packetDataParsers: {
   };
 } = {
   client: {
+    [ClientPacketType.CHAT]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const message = dataBuffer.toString('ascii');
+        return [message];
+      },
+      toBuffer([message]) {
+        return Buffer.from(message, 'ascii');
+      },
+    },
     [ClientPacketType.PING]: {
       fromBuffer(dataBuffer: Buffer) {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
@@ -65,14 +75,14 @@ export const packetDataParsers: {
     [ClientPacketType.LOGIN]: {
       fromBuffer(dataBuffer: Buffer) {
         const [_, username, password] = dataBuffer
-          .toString('binary')
+          .toString('ascii')
           .match(/^(\w+)\s(.+)\0$/)!;
         return [username, password];
       },
       toBuffer([username, password]) {
         // A string with username and password separated by a space,
         // and ending with a null-terminator.
-        return Buffer.from(`${username} ${password}\0`, 'binary');
+        return Buffer.from(`${username} ${password}\0`, 'ascii');
       },
     },
   },
@@ -80,13 +90,13 @@ export const packetDataParsers: {
     [ServerPacketType.CHAT]: {
       fromBuffer(dataBuffer: Buffer) {
         const channel = dataBuffer.readUInt8(0); // 1 byte
-        const message = dataBuffer.toString('binary', 1);
+        const message = dataBuffer.toString('ascii', 1);
         return [channel, message];
       },
       toBuffer([channel, message]) {
         const channelBuffer = Buffer.alloc(1);
         channelBuffer.writeUInt8(channel); // 1 byte
-        const messageBuffer = Buffer.from(message, 'binary');
+        const messageBuffer = Buffer.from(message, 'ascii');
         return Buffer.concat([channelBuffer, messageBuffer]);
       },
     },
@@ -130,11 +140,11 @@ export const packetDataParsers: {
     },
     [ServerPacketType.LOGIN_FAILED]: {
       fromBuffer(dataBuffer: Buffer) {
-        const reason = dataBuffer.toString('binary');
+        const reason = dataBuffer.toString('ascii');
         return [reason];
       },
       toBuffer([reason]) {
-        return Buffer.from(reason, 'binary');
+        return Buffer.from(reason, 'ascii');
       },
     },
   },
