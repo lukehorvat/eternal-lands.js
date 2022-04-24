@@ -38,6 +38,7 @@ export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.YOU_ARE]: [actorId: number];
   [ServerPacketType.SYNC_CLOCK]: [serverTimestamp: number];
   [ServerPacketType.NEW_MINUTE]: [minute: number];
+  [ServerPacketType.REMOVE_ACTOR]: [actorId: number];
   [ServerPacketType.CHANGE_MAP]: [mapFilePath: string];
   [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: [
@@ -247,6 +248,17 @@ export const packetDataParsers: {
         const minuteBuffer = Buffer.alloc(2);
         minuteBuffer.writeUInt16LE(minute); // 2 bytes
         return minuteBuffer;
+      },
+    },
+    [ServerPacketType.REMOVE_ACTOR]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const actorId = dataBuffer.readUInt16LE(0);
+        return [actorId];
+      },
+      toBuffer([actorId]) {
+        const actorIdBuffer = Buffer.alloc(2);
+        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
+        return actorIdBuffer;
       },
     },
     [ServerPacketType.CHANGE_MAP]: {

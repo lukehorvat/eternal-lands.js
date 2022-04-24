@@ -12,6 +12,7 @@ export enum ServerPacketType {
   YOU_ARE = 3,
   SYNC_CLOCK = 4,
   NEW_MINUTE = 5,
+  REMOVE_ACTOR = 6,
   CHANGE_MAP = 7,
   PONG = 11,
   ADD_NEW_ENHANCED_ACTOR = 51,

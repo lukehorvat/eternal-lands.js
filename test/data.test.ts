@@ -49,7 +49,7 @@ test('Server packet data parsing', () => {
   } = {
     [ServerPacketType.RAW_TEXT]: [ChatChannel.LOCAL, 'test'],
     [ServerPacketType.ADD_NEW_ACTOR]: [
-      123,
+      42,
       100,
       100,
       270,
@@ -58,13 +58,14 @@ test('Server packet data parsing', () => {
       10,
       'Rat',
     ],
-    [ServerPacketType.YOU_ARE]: [5],
+    [ServerPacketType.YOU_ARE]: [42],
     [ServerPacketType.SYNC_CLOCK]: [123456789],
     [ServerPacketType.NEW_MINUTE]: [138],
+    [ServerPacketType.REMOVE_ACTOR]: [42],
     [ServerPacketType.CHANGE_MAP]: ['./maps/startmap_insides.elm'],
     [ServerPacketType.PONG]: [123],
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: [
-      123,
+      42,
       100,
       100,
       270,
