@@ -25,6 +25,16 @@ export interface ClientPacketData extends Record<ClientPacketType, any[]> {
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.RAW_TEXT]: [channel: ChatChannel, message: string];
+  [ServerPacketType.ADD_NEW_ACTOR]: [
+    id: number,
+    xPos: number,
+    yPos: number,
+    zRotation: number,
+    type: ActorType,
+    maxHealth: number,
+    currentHealth: number,
+    name: string
+  ];
   [ServerPacketType.YOU_ARE]: [actorId: number];
   [ServerPacketType.SYNC_CLOCK]: [serverTimestamp: number];
   [ServerPacketType.NEW_MINUTE]: [minute: number];
@@ -138,6 +148,72 @@ export const packetDataParsers: {
         channelBuffer.writeUInt8(channel); // 1 byte
         const messageBuffer = Buffer.from(message, 'ascii');
         return Buffer.concat([channelBuffer, messageBuffer]);
+      },
+    },
+    [ServerPacketType.ADD_NEW_ACTOR]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const id = dataBuffer.readUInt16LE(0);
+        const xPos = dataBuffer.readUInt16LE(2);
+        const yPos = dataBuffer.readUInt16LE(4);
+        const zRotation = dataBuffer.readUInt16LE(8);
+        const type = dataBuffer.readUInt8(10);
+        const maxHealth = dataBuffer.readUInt16LE(12);
+        const currentHealth = dataBuffer.readUInt16LE(14);
+        const [_, name] = dataBuffer
+          .slice(17)
+          .toString('ascii')
+          .match(/^(.+?)\0/)!; // Capture until we encounter a null-terminator.
+
+        return [
+          id,
+          xPos,
+          yPos,
+          zRotation,
+          type,
+          maxHealth,
+          currentHealth,
+          name,
+        ];
+      },
+      toBuffer([
+        id,
+        xPos,
+        yPos,
+        zRotation,
+        type,
+        maxHealth,
+        currentHealth,
+        name,
+      ]) {
+        const idBuffer = Buffer.alloc(2);
+        idBuffer.writeUInt16LE(id);
+        const xPosBuffer = Buffer.alloc(2);
+        xPosBuffer.writeUInt16LE(xPos);
+        const yPosBuffer = Buffer.alloc(2);
+        yPosBuffer.writeUInt16LE(yPos);
+        const zRotationBuffer = Buffer.alloc(2);
+        zRotationBuffer.writeUInt16LE(zRotation);
+        const typeBuffer = Buffer.alloc(1);
+        typeBuffer.writeUInt8(type);
+        const maxHealthBuffer = Buffer.alloc(2);
+        maxHealthBuffer.writeUInt16LE(maxHealth);
+        const currentHealthBuffer = Buffer.alloc(2);
+        currentHealthBuffer.writeUInt16LE(currentHealth);
+        const nameBuffer = Buffer.from(`${name}\0`, 'ascii');
+
+        return Buffer.concat([
+          idBuffer,
+          xPosBuffer,
+          yPosBuffer,
+          Buffer.alloc(2),
+          zRotationBuffer,
+          typeBuffer,
+          Buffer.alloc(1),
+          maxHealthBuffer,
+          currentHealthBuffer,
+          Buffer.alloc(1),
+          nameBuffer,
+        ]);
       },
     },
     [ServerPacketType.YOU_ARE]: {

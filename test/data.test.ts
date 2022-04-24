@@ -48,6 +48,16 @@ test('Server packet data parsing', () => {
     [Type in ServerPacketType]: ServerPacketData[Type];
   } = {
     [ServerPacketType.RAW_TEXT]: [ChatChannel.LOCAL, 'test'],
+    [ServerPacketType.ADD_NEW_ACTOR]: [
+      123,
+      100,
+      100,
+      270,
+      ActorType.RAT,
+      15,
+      10,
+      'Rat',
+    ],
     [ServerPacketType.YOU_ARE]: [5],
     [ServerPacketType.SYNC_CLOCK]: [123456789],
     [ServerPacketType.NEW_MINUTE]: [138],
