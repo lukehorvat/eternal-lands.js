@@ -11,6 +11,10 @@ export interface ClientPacketData extends Record<ClientPacketType, any[]> {
 
 export interface ServerPacketData extends Record<ServerPacketType, any[]> {
   [ServerPacketType.RAW_TEXT]: [channel: ChatChannel, message: string];
+  [ServerPacketType.YOU_ARE]: [actorId: number];
+  [ServerPacketType.SYNC_CLOCK]: [serverTimestamp: number];
+  [ServerPacketType.NEW_MINUTE]: [minute: number];
+  [ServerPacketType.CHANGE_MAP]: [mapFilePath: string];
   [ServerPacketType.PONG]: [echo: number];
   [ServerPacketType.PING_REQUEST]: [echo: number];
   [ServerPacketType.YOU_DONT_EXIST]: [];
@@ -80,8 +84,8 @@ export const packetDataParsers: {
         return [username, password];
       },
       toBuffer([username, password]) {
-        // A string with username and password separated by a space,
-        // and ending with a null-terminator.
+        // A string with username and password separated by a space, ending with
+        // a null-terminator.
         return Buffer.from(`${username} ${password}\0`, 'ascii');
       },
     },
@@ -98,6 +102,51 @@ export const packetDataParsers: {
         channelBuffer.writeUInt8(channel); // 1 byte
         const messageBuffer = Buffer.from(message, 'ascii');
         return Buffer.concat([channelBuffer, messageBuffer]);
+      },
+    },
+    [ServerPacketType.YOU_ARE]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const actorId = dataBuffer.readUInt16LE(0);
+        return [actorId];
+      },
+      toBuffer([actorId]) {
+        const actorIdBuffer = Buffer.alloc(2);
+        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
+        return actorIdBuffer;
+      },
+    },
+    [ServerPacketType.SYNC_CLOCK]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const serverTimestamp = dataBuffer.readUInt32LE(0); // 4 bytes
+        return [serverTimestamp];
+      },
+      toBuffer([serverTimestamp]) {
+        const serverTimestampBuffer = Buffer.alloc(4);
+        serverTimestampBuffer.writeUInt32LE(serverTimestamp);
+        return serverTimestampBuffer;
+      },
+    },
+    [ServerPacketType.NEW_MINUTE]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const minute = dataBuffer.readUInt16LE(0);
+        return [minute];
+      },
+      toBuffer([minute]) {
+        const minuteBuffer = Buffer.alloc(2);
+        minuteBuffer.writeUInt16LE(minute); // 2 bytes
+        return minuteBuffer;
+      },
+    },
+    [ServerPacketType.CHANGE_MAP]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const [_, mapFilePath] = dataBuffer
+          .toString('ascii')
+          .match(/^(.+)\0$/)!;
+        return [mapFilePath];
+      },
+      toBuffer([mapFilePath]) {
+        // A string representing the path to a map file, ending with a null-terminator.
+        return Buffer.from(`${mapFilePath}\0`, 'ascii');
       },
     },
     [ServerPacketType.PONG]: {

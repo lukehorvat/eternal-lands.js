@@ -34,6 +34,10 @@ test('Server packet data parsing', () => {
     [Type in ServerPacketType]: ServerPacketData[Type];
   } = {
     [ServerPacketType.RAW_TEXT]: [ChatChannel.LOCAL, 'test'],
+    [ServerPacketType.YOU_ARE]: [5],
+    [ServerPacketType.SYNC_CLOCK]: [123456789],
+    [ServerPacketType.NEW_MINUTE]: [138],
+    [ServerPacketType.CHANGE_MAP]: ['./maps/startmap_insides.elm'],
     [ServerPacketType.PONG]: [123],
     [ServerPacketType.PING_REQUEST]: [321],
     [ServerPacketType.YOU_DONT_EXIST]: [],
