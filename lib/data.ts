@@ -2,6 +2,7 @@ import { ClientPacketType, ServerPacketType } from './types';
 import {
   ActorBoots,
   ActorCape,
+  ActorCommand,
   ActorHair,
   ActorHead,
   ActorHelmet,
@@ -34,6 +35,10 @@ export interface ServerPacketData extends Record<ServerPacketType, any[]> {
     maxHealth: number,
     currentHealth: number,
     name: string
+  ];
+  [ServerPacketType.ADD_ACTOR_COMMAND]: [
+    actorId: number,
+    command: ActorCommand
   ];
   [ServerPacketType.YOU_ARE]: [actorId: number];
   [ServerPacketType.SYNC_CLOCK]: [serverTimestamp: number];
@@ -215,6 +220,20 @@ export const packetDataParsers: {
           Buffer.alloc(1),
           nameBuffer,
         ]);
+      },
+    },
+    [ServerPacketType.ADD_ACTOR_COMMAND]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const actorId = dataBuffer.readUInt16LE(0); // 2 bytes
+        const command = dataBuffer.readUInt8(2); // 1 byte
+        return [actorId, command];
+      },
+      toBuffer([actorId, command]) {
+        const actorIdBuffer = Buffer.alloc(2);
+        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
+        const commandBuffer = Buffer.alloc(1);
+        commandBuffer.writeUInt8(command); // 1 byte
+        return Buffer.concat([actorIdBuffer, commandBuffer]);
       },
     },
     [ServerPacketType.YOU_ARE]: {

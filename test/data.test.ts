@@ -7,6 +7,7 @@ import { ClientPacketType, ServerPacketType } from '../lib/types';
 import {
   ActorBoots,
   ActorCape,
+  ActorCommand,
   ActorHair,
   ActorHead,
   ActorHelmet,
@@ -58,11 +59,12 @@ test('Server packet data parsing', () => {
       10,
       'Rat',
     ],
+    [ServerPacketType.ADD_ACTOR_COMMAND]: [42, ActorCommand.MOVE_NW],
     [ServerPacketType.YOU_ARE]: [42],
     [ServerPacketType.SYNC_CLOCK]: [123456789],
     [ServerPacketType.NEW_MINUTE]: [138],
     [ServerPacketType.REMOVE_ACTOR]: [42],
-    [ServerPacketType.CHANGE_MAP]: ['./maps/startmap_insides.elm'],
+    [ServerPacketType.CHANGE_MAP]: ['./maps/startmap.elm'],
     [ServerPacketType.PONG]: [123],
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: [
       42,

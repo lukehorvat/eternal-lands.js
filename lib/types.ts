@@ -9,6 +9,7 @@ export enum ClientPacketType {
 export enum ServerPacketType {
   RAW_TEXT = 0,
   ADD_NEW_ACTOR = 1,
+  ADD_ACTOR_COMMAND = 2,
   YOU_ARE = 3,
   SYNC_CLOCK = 4,
   NEW_MINUTE = 5,
