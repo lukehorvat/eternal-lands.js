@@ -29,8 +29,8 @@ import { ELPackets, ELPacketType } from '../lib';
   }
 
   heartbeatIntervalId = setInterval(() => {
-    elp.client.emit(ELPacketType.client.HEARTBEAT, {});
-    console.log('Sent HEARTBEAT');
+    elp.client.emit(ELPacketType.client.HEART_BEAT, {});
+    console.log('Sent HEART_BEAT');
   }, 25000);
 
   elp.server.on(ELPacketType.server.PING_REQUEST, ({ echo }) => {

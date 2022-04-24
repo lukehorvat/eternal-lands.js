@@ -1,9 +1,9 @@
 export enum ClientPacketType {
   RAW_TEXT = 0,
   PING = 13,
-  HEARTBEAT = 14,
+  HEART_BEAT = 14,
   PING_RESPONSE = 60,
-  LOGIN = 140,
+  LOG_IN = 140,
 }
 
 export enum ServerPacketType {
@@ -19,6 +19,6 @@ export enum ServerPacketType {
   ADD_NEW_ENHANCED_ACTOR = 51,
   PING_REQUEST = 60,
   YOU_DONT_EXIST = 249,
-  LOGIN_SUCCESSFUL = 250,
-  LOGIN_FAILED = 251,
+  LOG_IN_OK = 250,
+  LOG_IN_NOT_OK = 251,
 }

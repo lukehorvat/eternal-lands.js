@@ -27,10 +27,10 @@ test('Client packet data parsing', () => {
   } = {
     [ClientPacketType.RAW_TEXT]: { message: 'test' },
     [ClientPacketType.PING]: { echo: 123 },
-    [ClientPacketType.HEARTBEAT]: {},
+    [ClientPacketType.HEART_BEAT]: {},
     [ClientPacketType.PING_RESPONSE]: { echo: 321 },
     [ClientPacketType.PING_RESPONSE]: { echo: 321 },
-    [ClientPacketType.LOGIN]: { username: 'foo', password: 'bar' },
+    [ClientPacketType.LOG_IN]: { username: 'foo', password: 'bar' },
   };
 
   (Object.values(ClientPacketType) as ClientPacketType[])
@@ -96,8 +96,8 @@ test('Server packet data parsing', () => {
     },
     [ServerPacketType.PING_REQUEST]: { echo: 321 },
     [ServerPacketType.YOU_DONT_EXIST]: {},
-    [ServerPacketType.LOGIN_SUCCESSFUL]: {},
-    [ServerPacketType.LOGIN_FAILED]: { reason: 'Wrong password!' },
+    [ServerPacketType.LOG_IN_OK]: {},
+    [ServerPacketType.LOG_IN_NOT_OK]: { reason: 'Wrong password!' },
   };
 
   (Object.values(ServerPacketType) as ServerPacketType[])

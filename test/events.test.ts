@@ -12,7 +12,7 @@ describe('ClientPacketEventEmitter', () => {
     const sendPacketMock = jest.fn();
     const eventEmitter = new ClientPacketEventEmitter(sendPacketMock);
 
-    await eventEmitter.emit(ClientPacketType.HEARTBEAT, {});
+    await eventEmitter.emit(ClientPacketType.HEART_BEAT, {});
     await eventEmitter.emit(ClientPacketType.PING, { echo: 123 });
     await eventEmitter.emit(ClientPacketType.PING_RESPONSE, { echo: 321 });
 
@@ -20,8 +20,8 @@ describe('ClientPacketEventEmitter', () => {
     expect(sendPacketMock).nthCalledWith(
       1,
       new Packet(
-        ClientPacketType.HEARTBEAT,
-        packetDataParsers.client[ClientPacketType.HEARTBEAT].toBuffer({})
+        ClientPacketType.HEART_BEAT,
+        packetDataParsers.client[ClientPacketType.HEART_BEAT].toBuffer({})
       )
     );
     expect(sendPacketMock).nthCalledWith(

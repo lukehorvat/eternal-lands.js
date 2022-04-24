@@ -35,8 +35,8 @@ const password = process.env.EL_PASSWORD!;
   }
 
   heartbeatIntervalId = setInterval(() => {
-    elp.client.emit(ELPacketType.client.HEARTBEAT, {});
-    console.log('Sent HEARTBEAT');
+    elp.client.emit(ELPacketType.client.HEART_BEAT, {});
+    console.log('Sent HEART_BEAT');
   }, 25000);
 
   elp.server.on(ELPacketType.server.PING_REQUEST, ({ echo }) => {
@@ -46,12 +46,12 @@ const password = process.env.EL_PASSWORD!;
   });
 
   loginTimeoutId = setTimeout(() => {
-    elp.client.emit(ELPacketType.client.LOGIN, { username, password });
-    console.log('Sent LOGIN');
+    elp.client.emit(ELPacketType.client.LOG_IN, { username, password });
+    console.log('Sent LOG_IN');
   }, 3000);
 
-  elp.server.on(ELPacketType.server.LOGIN_SUCCESSFUL, () => {
-    console.log('Received LOGIN_SUCCESSFUL 😎');
+  elp.server.on(ELPacketType.server.LOG_IN_OK, () => {
+    console.log('Received LOG_IN_OK 😎');
 
     chatTimeoutId = setTimeout(() => {
       const message = 'Hello, world!';
@@ -64,7 +64,7 @@ const password = process.env.EL_PASSWORD!;
     });
   });
 
-  elp.server.on(ELPacketType.server.LOGIN_FAILED, () => {
-    console.log('Received LOGIN_FAILED 🙁');
+  elp.server.on(ELPacketType.server.LOG_IN_NOT_OK, () => {
+    console.log('Received LOG_IN_NOT_OK 🙁');
   });
 })();

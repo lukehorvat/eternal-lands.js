@@ -23,9 +23,9 @@ export interface ClientPacketData
   extends Record<ClientPacketType, PacketData | PacketDataEmpty> {
   [ClientPacketType.RAW_TEXT]: { message: string };
   [ClientPacketType.PING]: { echo: number };
-  [ClientPacketType.HEARTBEAT]: PacketDataEmpty;
+  [ClientPacketType.HEART_BEAT]: PacketDataEmpty;
   [ClientPacketType.PING_RESPONSE]: { echo: number };
-  [ClientPacketType.LOGIN]: { username: string; password: string };
+  [ClientPacketType.LOG_IN]: { username: string; password: string };
 }
 
 export interface ServerPacketData
@@ -75,8 +75,8 @@ export interface ServerPacketData
   };
   [ServerPacketType.PING_REQUEST]: { echo: number };
   [ServerPacketType.YOU_DONT_EXIST]: PacketDataEmpty;
-  [ServerPacketType.LOGIN_SUCCESSFUL]: PacketDataEmpty;
-  [ServerPacketType.LOGIN_FAILED]: { reason: string };
+  [ServerPacketType.LOG_IN_OK]: PacketDataEmpty;
+  [ServerPacketType.LOG_IN_NOT_OK]: { reason: string };
 }
 
 export const packetDataParsers: {
@@ -114,7 +114,7 @@ export const packetDataParsers: {
         return echoBuffer;
       },
     },
-    [ClientPacketType.HEARTBEAT]: {
+    [ClientPacketType.HEART_BEAT]: {
       fromBuffer(dataBuffer: Buffer) {
         return {};
       },
@@ -133,7 +133,7 @@ export const packetDataParsers: {
         return echoBuffer;
       },
     },
-    [ClientPacketType.LOGIN]: {
+    [ClientPacketType.LOG_IN]: {
       fromBuffer(dataBuffer: Buffer) {
         const [_, username, password] = dataBuffer
           .toString('ascii')
@@ -465,7 +465,7 @@ export const packetDataParsers: {
         return Buffer.alloc(0);
       },
     },
-    [ServerPacketType.LOGIN_SUCCESSFUL]: {
+    [ServerPacketType.LOG_IN_OK]: {
       fromBuffer(dataBuffer: Buffer) {
         return {};
       },
@@ -473,7 +473,7 @@ export const packetDataParsers: {
         return Buffer.alloc(0);
       },
     },
-    [ServerPacketType.LOGIN_FAILED]: {
+    [ServerPacketType.LOG_IN_NOT_OK]: {
       fromBuffer(dataBuffer: Buffer) {
         const reason = dataBuffer.toString('ascii');
         return { reason };
