@@ -13,6 +13,7 @@ export enum ServerPacketType {
   NEW_MINUTE = 5,
   CHANGE_MAP = 7,
   PONG = 11,
+  ADD_NEW_ENHANCED_ACTOR = 51,
   PING_REQUEST = 60,
   YOU_DONT_EXIST = 249,
   LOGIN_SUCCESSFUL = 250,

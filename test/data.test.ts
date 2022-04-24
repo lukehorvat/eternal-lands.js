@@ -4,7 +4,21 @@ import {
   packetDataParsers,
 } from '../lib/data';
 import { ClientPacketType, ServerPacketType } from '../lib/types';
-import { ChatChannel } from '../lib/constants';
+import {
+  ActorBoots,
+  ActorCape,
+  ActorHair,
+  ActorHead,
+  ActorHelmet,
+  ActorKind,
+  ActorPants,
+  ActorShield,
+  ActorShirt,
+  ActorSkin,
+  ActorType,
+  ActorWeapon,
+  ChatChannel,
+} from '../lib/constants';
 
 test('Client packet data parsing', () => {
   const packetData: {
@@ -39,6 +53,28 @@ test('Server packet data parsing', () => {
     [ServerPacketType.NEW_MINUTE]: [138],
     [ServerPacketType.CHANGE_MAP]: ['./maps/startmap_insides.elm'],
     [ServerPacketType.PONG]: [123],
+    [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: [
+      123,
+      100,
+      100,
+      270,
+      ActorType.HUMAN_MALE,
+      ActorSkin.PALE,
+      ActorHair.BROWN,
+      ActorShirt.STEEL_PLATE_ARMOR,
+      ActorPants.STEEL_CUISSES,
+      ActorBoots.STEEL_GREAVE,
+      ActorHead.ONE,
+      ActorShield.STEEL,
+      ActorWeapon.SWORD_ORC_SLAYER,
+      ActorCape.FUR,
+      ActorHelmet.CROWN_OF_LIFE,
+      200,
+      150,
+      ActorKind.HUMAN,
+      'Player',
+      'TEST',
+    ],
     [ServerPacketType.PING_REQUEST]: [321],
     [ServerPacketType.YOU_DONT_EXIST]: [],
     [ServerPacketType.LOGIN_SUCCESSFUL]: [],
