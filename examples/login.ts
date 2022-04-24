@@ -35,18 +35,18 @@ const password = process.env.EL_PASSWORD!;
   }
 
   heartbeatIntervalId = setInterval(() => {
-    elp.client.emit(ELPacketType.client.HEARTBEAT, []);
+    elp.client.emit(ELPacketType.client.HEARTBEAT, {});
     console.log('Sent HEARTBEAT');
   }, 25000);
 
-  elp.server.on(ELPacketType.server.PING_REQUEST, ([echo]) => {
+  elp.server.on(ELPacketType.server.PING_REQUEST, ({ echo }) => {
     console.log('Received PING_REQUEST', { echo });
-    elp.client.emit(ELPacketType.client.PING_RESPONSE, [echo]);
+    elp.client.emit(ELPacketType.client.PING_RESPONSE, { echo });
     console.log('Sent PING_RESPONSE', { echo });
   });
 
   loginTimeoutId = setTimeout(() => {
-    elp.client.emit(ELPacketType.client.LOGIN, [username, password]);
+    elp.client.emit(ELPacketType.client.LOGIN, { username, password });
     console.log('Sent LOGIN');
   }, 3000);
 
@@ -55,11 +55,11 @@ const password = process.env.EL_PASSWORD!;
 
     chatTimeoutId = setTimeout(() => {
       const message = 'Hello, world!';
-      elp.client.emit(ELPacketType.client.RAW_TEXT, [message]);
+      elp.client.emit(ELPacketType.client.RAW_TEXT, { message });
       console.log('Sent RAW_TEXT', { message });
     }, 3000);
 
-    elp.server.on(ELPacketType.server.RAW_TEXT, ([channel, message]) => {
+    elp.server.on(ELPacketType.server.RAW_TEXT, ({ channel, message }) => {
       console.log('Received RAW_TEXT', { channel, message });
     });
   });

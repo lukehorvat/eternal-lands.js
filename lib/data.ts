@@ -16,62 +16,67 @@ import {
   ChatChannel,
 } from './constants';
 
-export interface ClientPacketData extends Record<ClientPacketType, any[]> {
-  [ClientPacketType.RAW_TEXT]: [message: string];
-  [ClientPacketType.PING]: [echo: number];
-  [ClientPacketType.HEARTBEAT]: [];
-  [ClientPacketType.PING_RESPONSE]: [echo: number];
-  [ClientPacketType.LOGIN]: [username: string, password: string];
+type PacketData = Record<string, any>;
+type PacketDataEmpty = Record<string, never>;
+
+export interface ClientPacketData
+  extends Record<ClientPacketType, PacketData | PacketDataEmpty> {
+  [ClientPacketType.RAW_TEXT]: { message: string };
+  [ClientPacketType.PING]: { echo: number };
+  [ClientPacketType.HEARTBEAT]: PacketDataEmpty;
+  [ClientPacketType.PING_RESPONSE]: { echo: number };
+  [ClientPacketType.LOGIN]: { username: string; password: string };
 }
 
-export interface ServerPacketData extends Record<ServerPacketType, any[]> {
-  [ServerPacketType.RAW_TEXT]: [channel: ChatChannel, message: string];
-  [ServerPacketType.ADD_NEW_ACTOR]: [
-    id: number,
-    xPos: number,
-    yPos: number,
-    zRotation: number,
-    type: ActorType,
-    maxHealth: number,
-    currentHealth: number,
-    name: string
-  ];
-  [ServerPacketType.ADD_ACTOR_COMMAND]: [
-    actorId: number,
-    command: ActorCommand
-  ];
-  [ServerPacketType.YOU_ARE]: [actorId: number];
-  [ServerPacketType.SYNC_CLOCK]: [serverTimestamp: number];
-  [ServerPacketType.NEW_MINUTE]: [minute: number];
-  [ServerPacketType.REMOVE_ACTOR]: [actorId: number];
-  [ServerPacketType.CHANGE_MAP]: [mapFilePath: string];
-  [ServerPacketType.PONG]: [echo: number];
-  [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: [
-    id: number,
-    xPos: number,
-    yPos: number,
-    zRotation: number,
-    type: ActorType,
-    skin: ActorSkin,
-    hair: ActorHair,
-    shirt: ActorShirt,
-    pants: ActorPants,
-    boots: ActorBoots,
-    head: ActorHead,
-    shield: ActorShield,
-    weapon: ActorWeapon,
-    cape: ActorCape,
-    helmet: ActorHelmet,
-    maxHealth: number,
-    currentHealth: number,
-    kind: ActorKind,
-    name: string,
-    guild?: string
-  ];
-  [ServerPacketType.PING_REQUEST]: [echo: number];
-  [ServerPacketType.YOU_DONT_EXIST]: [];
-  [ServerPacketType.LOGIN_SUCCESSFUL]: [];
-  [ServerPacketType.LOGIN_FAILED]: [reason: string];
+export interface ServerPacketData
+  extends Record<ServerPacketType, PacketData | PacketDataEmpty> {
+  [ServerPacketType.RAW_TEXT]: { channel: ChatChannel; message: string };
+  [ServerPacketType.ADD_NEW_ACTOR]: {
+    id: number;
+    xPos: number;
+    yPos: number;
+    zRotation: number;
+    type: ActorType;
+    maxHealth: number;
+    currentHealth: number;
+    name: string;
+  };
+  [ServerPacketType.ADD_ACTOR_COMMAND]: {
+    actorId: number;
+    command: ActorCommand;
+  };
+  [ServerPacketType.YOU_ARE]: { actorId: number };
+  [ServerPacketType.SYNC_CLOCK]: { serverTimestamp: number };
+  [ServerPacketType.NEW_MINUTE]: { minute: number };
+  [ServerPacketType.REMOVE_ACTOR]: { actorId: number };
+  [ServerPacketType.CHANGE_MAP]: { mapFilePath: string };
+  [ServerPacketType.PONG]: { echo: number };
+  [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
+    id: number;
+    xPos: number;
+    yPos: number;
+    zRotation: number;
+    type: ActorType;
+    skin: ActorSkin;
+    hair: ActorHair;
+    shirt: ActorShirt;
+    pants: ActorPants;
+    boots: ActorBoots;
+    head: ActorHead;
+    shield: ActorShield;
+    weapon: ActorWeapon;
+    cape: ActorCape;
+    helmet: ActorHelmet;
+    maxHealth: number;
+    currentHealth: number;
+    kind: ActorKind;
+    name: string;
+    guild?: string;
+  };
+  [ServerPacketType.PING_REQUEST]: { echo: number };
+  [ServerPacketType.YOU_DONT_EXIST]: PacketDataEmpty;
+  [ServerPacketType.LOGIN_SUCCESSFUL]: PacketDataEmpty;
+  [ServerPacketType.LOGIN_FAILED]: { reason: string };
 }
 
 export const packetDataParsers: {
@@ -92,18 +97,18 @@ export const packetDataParsers: {
     [ClientPacketType.RAW_TEXT]: {
       fromBuffer(dataBuffer: Buffer) {
         const message = dataBuffer.toString('ascii');
-        return [message];
+        return { message };
       },
-      toBuffer([message]) {
+      toBuffer({ message }) {
         return Buffer.from(message, 'ascii');
       },
     },
     [ClientPacketType.PING]: {
       fromBuffer(dataBuffer: Buffer) {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return [echo];
+        return { echo };
       },
-      toBuffer([echo]) {
+      toBuffer({ echo }) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -111,7 +116,7 @@ export const packetDataParsers: {
     },
     [ClientPacketType.HEARTBEAT]: {
       fromBuffer(dataBuffer: Buffer) {
-        return [];
+        return {};
       },
       toBuffer() {
         return Buffer.alloc(0);
@@ -120,9 +125,9 @@ export const packetDataParsers: {
     [ClientPacketType.PING_RESPONSE]: {
       fromBuffer(dataBuffer: Buffer) {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return [echo];
+        return { echo };
       },
-      toBuffer([echo]) {
+      toBuffer({ echo }) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -133,9 +138,9 @@ export const packetDataParsers: {
         const [_, username, password] = dataBuffer
           .toString('ascii')
           .match(/^(\w+)\s(.+)\0$/)!;
-        return [username, password];
+        return { username, password };
       },
-      toBuffer([username, password]) {
+      toBuffer({ username, password }) {
         // A string with username and password separated by a space, ending with
         // a null-terminator.
         return Buffer.from(`${username} ${password}\0`, 'ascii');
@@ -147,9 +152,9 @@ export const packetDataParsers: {
       fromBuffer(dataBuffer: Buffer) {
         const channel = dataBuffer.readUInt8(0); // 1 byte
         const message = dataBuffer.toString('ascii', 1);
-        return [channel, message];
+        return { channel, message };
       },
-      toBuffer([channel, message]) {
+      toBuffer({ channel, message }) {
         const channelBuffer = Buffer.alloc(1);
         channelBuffer.writeUInt8(channel); // 1 byte
         const messageBuffer = Buffer.from(message, 'ascii');
@@ -170,7 +175,7 @@ export const packetDataParsers: {
           .toString('ascii')
           .match(/^(.+?)\0/)!; // Capture until we encounter a null-terminator.
 
-        return [
+        return {
           id,
           xPos,
           yPos,
@@ -179,9 +184,9 @@ export const packetDataParsers: {
           maxHealth,
           currentHealth,
           name,
-        ];
+        };
       },
-      toBuffer([
+      toBuffer({
         id,
         xPos,
         yPos,
@@ -190,7 +195,7 @@ export const packetDataParsers: {
         maxHealth,
         currentHealth,
         name,
-      ]) {
+      }) {
         const idBuffer = Buffer.alloc(2);
         idBuffer.writeUInt16LE(id);
         const xPosBuffer = Buffer.alloc(2);
@@ -226,9 +231,9 @@ export const packetDataParsers: {
       fromBuffer(dataBuffer: Buffer) {
         const actorId = dataBuffer.readUInt16LE(0); // 2 bytes
         const command = dataBuffer.readUInt8(2); // 1 byte
-        return [actorId, command];
+        return { actorId, command };
       },
-      toBuffer([actorId, command]) {
+      toBuffer({ actorId, command }) {
         const actorIdBuffer = Buffer.alloc(2);
         actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
         const commandBuffer = Buffer.alloc(1);
@@ -239,9 +244,9 @@ export const packetDataParsers: {
     [ServerPacketType.YOU_ARE]: {
       fromBuffer(dataBuffer: Buffer) {
         const actorId = dataBuffer.readUInt16LE(0);
-        return [actorId];
+        return { actorId };
       },
-      toBuffer([actorId]) {
+      toBuffer({ actorId }) {
         const actorIdBuffer = Buffer.alloc(2);
         actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
         return actorIdBuffer;
@@ -250,9 +255,9 @@ export const packetDataParsers: {
     [ServerPacketType.SYNC_CLOCK]: {
       fromBuffer(dataBuffer: Buffer) {
         const serverTimestamp = dataBuffer.readUInt32LE(0); // 4 bytes
-        return [serverTimestamp];
+        return { serverTimestamp };
       },
-      toBuffer([serverTimestamp]) {
+      toBuffer({ serverTimestamp }) {
         const serverTimestampBuffer = Buffer.alloc(4);
         serverTimestampBuffer.writeUInt32LE(serverTimestamp);
         return serverTimestampBuffer;
@@ -261,9 +266,9 @@ export const packetDataParsers: {
     [ServerPacketType.NEW_MINUTE]: {
       fromBuffer(dataBuffer: Buffer) {
         const minute = dataBuffer.readUInt16LE(0);
-        return [minute];
+        return { minute };
       },
-      toBuffer([minute]) {
+      toBuffer({ minute }) {
         const minuteBuffer = Buffer.alloc(2);
         minuteBuffer.writeUInt16LE(minute); // 2 bytes
         return minuteBuffer;
@@ -272,9 +277,9 @@ export const packetDataParsers: {
     [ServerPacketType.REMOVE_ACTOR]: {
       fromBuffer(dataBuffer: Buffer) {
         const actorId = dataBuffer.readUInt16LE(0);
-        return [actorId];
+        return { actorId };
       },
-      toBuffer([actorId]) {
+      toBuffer({ actorId }) {
         const actorIdBuffer = Buffer.alloc(2);
         actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
         return actorIdBuffer;
@@ -285,9 +290,9 @@ export const packetDataParsers: {
         const [_, mapFilePath] = dataBuffer
           .toString('ascii')
           .match(/^(.+)\0$/)!;
-        return [mapFilePath];
+        return { mapFilePath };
       },
-      toBuffer([mapFilePath]) {
+      toBuffer({ mapFilePath }) {
         // A string representing the path to a map file, ending with a null-terminator.
         return Buffer.from(`${mapFilePath}\0`, 'ascii');
       },
@@ -295,9 +300,9 @@ export const packetDataParsers: {
     [ServerPacketType.PONG]: {
       fromBuffer(dataBuffer: Buffer) {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return [echo];
+        return { echo };
       },
-      toBuffer([echo]) {
+      toBuffer({ echo }) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -332,7 +337,7 @@ export const packetDataParsers: {
           .match(/^(.+?)\0/)![1] // Capture until we encounter a null-terminator.
           .split(' '); // Name and guild are separated by a space.
 
-        return [
+        return {
           id,
           xPos,
           yPos,
@@ -353,9 +358,9 @@ export const packetDataParsers: {
           kind,
           name,
           guild,
-        ];
+        };
       },
-      toBuffer([
+      toBuffer({
         id,
         xPos,
         yPos,
@@ -376,7 +381,7 @@ export const packetDataParsers: {
         kind,
         name,
         guild,
-      ]) {
+      }) {
         const idBuffer = Buffer.alloc(2);
         idBuffer.writeUInt16LE(id);
         const xPosBuffer = Buffer.alloc(2);
@@ -444,9 +449,9 @@ export const packetDataParsers: {
     [ServerPacketType.PING_REQUEST]: {
       fromBuffer(dataBuffer: Buffer) {
         const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return [echo];
+        return { echo };
       },
-      toBuffer([echo]) {
+      toBuffer({ echo }) {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
@@ -454,7 +459,7 @@ export const packetDataParsers: {
     },
     [ServerPacketType.YOU_DONT_EXIST]: {
       fromBuffer(dataBuffer: Buffer) {
-        return [];
+        return {};
       },
       toBuffer() {
         return Buffer.alloc(0);
@@ -462,7 +467,7 @@ export const packetDataParsers: {
     },
     [ServerPacketType.LOGIN_SUCCESSFUL]: {
       fromBuffer(dataBuffer: Buffer) {
-        return [];
+        return {};
       },
       toBuffer() {
         return Buffer.alloc(0);
@@ -471,9 +476,9 @@ export const packetDataParsers: {
     [ServerPacketType.LOGIN_FAILED]: {
       fromBuffer(dataBuffer: Buffer) {
         const reason = dataBuffer.toString('ascii');
-        return [reason];
+        return { reason };
       },
-      toBuffer([reason]) {
+      toBuffer({ reason }) {
         return Buffer.from(reason, 'ascii');
       },
     },

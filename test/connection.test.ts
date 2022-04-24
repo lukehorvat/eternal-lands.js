@@ -24,8 +24,8 @@ test('Connects, sends, and receives packets', async () => {
   await server.start();
   await connection.connect();
 
-  connection.client.emit(ClientPacketType.PING, [123]);
-  const [echo] = await connection.server.once(ServerPacketType.PONG);
+  connection.client.emit(ClientPacketType.PING, { echo: 123 });
+  const { echo } = await connection.server.once(ServerPacketType.PONG);
   expect(echo).toBe(123);
 });
 
@@ -69,15 +69,15 @@ class MockELServer {
 
   private onPacketReceived(socket: Socket, packet: Packet) {
     if (packet.type === ClientPacketType.PING) {
-      const [echo] = packetDataParsers.client[ClientPacketType.PING].fromBuffer(
-        packet.dataBuffer
-      );
+      const { echo } = packetDataParsers.client[
+        ClientPacketType.PING
+      ].fromBuffer(packet.dataBuffer);
 
       this.sendPacket(
         socket,
         new Packet(
           ServerPacketType.PONG,
-          packetDataParsers.server[ServerPacketType.PONG].toBuffer([echo])
+          packetDataParsers.server[ServerPacketType.PONG].toBuffer({ echo })
         )
       );
     }
