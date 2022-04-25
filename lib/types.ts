@@ -16,6 +16,7 @@ export enum ServerPacketType {
   REMOVE_ACTOR = 6,
   CHANGE_MAP = 7,
   PONG = 11,
+  HERE_YOUR_INVENTORY = 19,
   ADD_NEW_ENHANCED_ACTOR = 51,
   PING_REQUEST = 60,
   YOU_DONT_EXIST = 249,

@@ -72,6 +72,13 @@ test('Server packet data parsing', () => {
     [ServerPacketType.REMOVE_ACTOR]: { actorId: 42 },
     [ServerPacketType.CHANGE_MAP]: { mapFilePath: './maps/startmap.elm' },
     [ServerPacketType.PONG]: { echo: 123 },
+    [ServerPacketType.HERE_YOUR_INVENTORY]: {
+      items: [
+        { imageId: 28, quantity: 79, position: 0, flags: 7, id: 3 },
+        { imageId: 3, quantity: 11, position: 1, flags: 4, id: 20 },
+        { imageId: 59, quantity: 36, position: 3, flags: 6, id: 40 },
+      ],
+    },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
       id: 42,
       xPos: 100,

@@ -51,6 +51,15 @@ export interface ServerPacketData
   [ServerPacketType.REMOVE_ACTOR]: { actorId: number };
   [ServerPacketType.CHANGE_MAP]: { mapFilePath: string };
   [ServerPacketType.PONG]: { echo: number };
+  [ServerPacketType.HERE_YOUR_INVENTORY]: {
+    items: {
+      imageId: number;
+      quantity: number;
+      position: number;
+      flags: number;
+      id?: number; // Defined when item UIDs is enabled.
+    }[];
+  };
   [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
     id: number;
     xPos: number;
@@ -306,6 +315,63 @@ export const packetDataParsers: {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
+      },
+    },
+    [ServerPacketType.HERE_YOUR_INVENTORY]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const itemsCount = dataBuffer.readUInt8(0);
+        const itemsBuffer = dataBuffer.slice(1);
+        const itemUidsEnabled = itemsCount * 10 === itemsBuffer.byteLength;
+        const items = itemsBuffer
+          .reduce<Buffer[]>((arr, byte, index) => {
+            const itemBuffer =
+              index % (itemUidsEnabled ? 10 : 8) === 0
+                ? Buffer.alloc(0)
+                : arr.pop()!;
+            return [...arr, Buffer.from([...itemBuffer.values(), byte])];
+          }, [])
+          .map((itemBuffer) => {
+            const imageId = itemBuffer.readUInt16LE(0);
+            const quantity = itemBuffer.readUInt32LE(2);
+            const position = itemBuffer.readUInt8(6);
+            const flags = itemBuffer.readUInt8(7);
+            const id = itemUidsEnabled ? itemBuffer.readUInt16LE(8) : undefined;
+            return { imageId, quantity, position, flags, id };
+          });
+
+        return { items };
+      },
+      toBuffer({ items }) {
+        const itemsCountBuffer = Buffer.alloc(1);
+        itemsCountBuffer.writeUInt8(items.length);
+        const itemBuffers = items.map(
+          ({ imageId, quantity, position, flags, id }) => {
+            const imageIdBuffer = Buffer.alloc(2);
+            imageIdBuffer.writeUInt16LE(imageId);
+            const quantityBuffer = Buffer.alloc(4);
+            quantityBuffer.writeUInt32LE(quantity);
+            const positionBuffer = Buffer.alloc(1);
+            positionBuffer.writeUInt8(position);
+            const flagsBuffer = Buffer.alloc(1);
+            flagsBuffer.writeUInt8(flags);
+
+            let idBuffer = Buffer.alloc(0);
+            if (id != null) {
+              idBuffer = Buffer.alloc(2);
+              idBuffer.writeUInt16LE(id);
+            }
+
+            return Buffer.concat([
+              imageIdBuffer,
+              quantityBuffer,
+              positionBuffer,
+              flagsBuffer,
+              idBuffer,
+            ]);
+          }
+        );
+
+        return Buffer.concat([itemsCountBuffer, ...itemBuffers]);
       },
     },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
