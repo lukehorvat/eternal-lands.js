@@ -51,6 +51,130 @@ export interface ServerPacketData
   [ServerPacketType.REMOVE_ACTOR]: { actorId: number };
   [ServerPacketType.CHANGE_MAP]: { mapFilePath: string };
   [ServerPacketType.PONG]: { echo: number };
+  [ServerPacketType.HERE_YOUR_STATS]: {
+    attributes: {
+      physique: {
+        current: number;
+        base: number;
+      };
+      coordination: {
+        current: number;
+        base: number;
+      };
+      reasoning: {
+        current: number;
+        base: number;
+      };
+      will: {
+        current: number;
+        base: number;
+      };
+      instinct: {
+        current: number;
+        base: number;
+      };
+      vitality: {
+        current: number;
+        base: number;
+      };
+    };
+    nexus: {
+      human: {
+        current: number;
+        base: number;
+      };
+      animal: {
+        current: number;
+        base: number;
+      };
+      vegetal: {
+        current: number;
+        base: number;
+      };
+      inorganic: {
+        current: number;
+        base: number;
+      };
+      artificial: {
+        current: number;
+        base: number;
+      };
+      magic: {
+        current: number;
+        base: number;
+      };
+    };
+    skills: {
+      attack: {
+        current: number;
+        base: number;
+      };
+      defense: {
+        current: number;
+        base: number;
+      };
+      harvesting: {
+        current: number;
+        base: number;
+      };
+      alchemy: {
+        current: number;
+        base: number;
+      };
+      magic: {
+        current: number;
+        base: number;
+      };
+      potion: {
+        current: number;
+        base: number;
+      };
+      summoning: {
+        current: number;
+        base: number;
+      };
+      manufacturing: {
+        current: number;
+        base: number;
+      };
+      crafting: {
+        current: number;
+        base: number;
+      };
+      engineering: {
+        current: number;
+        base: number;
+      };
+      tailoring: {
+        current: number;
+        base: number;
+      };
+      ranging: {
+        current: number;
+        base: number;
+      };
+      overall: {
+        current: number;
+        base: number;
+      };
+    };
+    carryCapacity: {
+      current: number;
+      base: number;
+    };
+    materialPoints: {
+      current: number;
+      base: number;
+    };
+    etherealPoints: {
+      current: number;
+      base: number;
+    };
+    actionPoints: {
+      current: number;
+      base: number;
+    };
+  };
   [ServerPacketType.HERE_YOUR_INVENTORY]: {
     items: {
       imageId: number;
@@ -315,6 +439,269 @@ export const packetDataParsers: {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
+      },
+    },
+    [ServerPacketType.HERE_YOUR_STATS]: {
+      fromBuffer(dataBuffer: Buffer) {
+        return {
+          attributes: {
+            physique: {
+              current: dataBuffer.readUInt16LE(0),
+              base: dataBuffer.readUInt16LE(2),
+            },
+            coordination: {
+              current: dataBuffer.readUInt16LE(4),
+              base: dataBuffer.readUInt16LE(6),
+            },
+            reasoning: {
+              current: dataBuffer.readUInt16LE(8),
+              base: dataBuffer.readUInt16LE(10),
+            },
+            will: {
+              current: dataBuffer.readUInt16LE(12),
+              base: dataBuffer.readUInt16LE(14),
+            },
+            instinct: {
+              current: dataBuffer.readUInt16LE(16),
+              base: dataBuffer.readUInt16LE(18),
+            },
+            vitality: {
+              current: dataBuffer.readUInt16LE(20),
+              base: dataBuffer.readUInt16LE(22),
+            },
+          },
+          nexus: {
+            human: {
+              current: dataBuffer.readUInt16LE(24),
+              base: dataBuffer.readUInt16LE(26),
+            },
+            animal: {
+              current: dataBuffer.readUInt16LE(28),
+              base: dataBuffer.readUInt16LE(30),
+            },
+            vegetal: {
+              current: dataBuffer.readUInt16LE(32),
+              base: dataBuffer.readUInt16LE(34),
+            },
+            inorganic: {
+              current: dataBuffer.readUInt16LE(36),
+              base: dataBuffer.readUInt16LE(38),
+            },
+            artificial: {
+              current: dataBuffer.readUInt16LE(40),
+              base: dataBuffer.readUInt16LE(42),
+            },
+            magic: {
+              current: dataBuffer.readUInt16LE(44),
+              base: dataBuffer.readUInt16LE(46),
+            },
+          },
+          skills: {
+            attack: {
+              current: dataBuffer.readUInt16LE(64),
+              base: dataBuffer.readUInt16LE(66),
+            },
+            defense: {
+              current: dataBuffer.readUInt16LE(68),
+              base: dataBuffer.readUInt16LE(70),
+            },
+            harvesting: {
+              current: dataBuffer.readUInt16LE(52),
+              base: dataBuffer.readUInt16LE(54),
+            },
+            alchemy: {
+              current: dataBuffer.readUInt16LE(56),
+              base: dataBuffer.readUInt16LE(58),
+            },
+            magic: {
+              current: dataBuffer.readUInt16LE(72),
+              base: dataBuffer.readUInt16LE(74),
+            },
+            potion: {
+              current: dataBuffer.readUInt16LE(76),
+              base: dataBuffer.readUInt16LE(78),
+            },
+            summoning: {
+              current: dataBuffer.readUInt16LE(166),
+              base: dataBuffer.readUInt16LE(168),
+            },
+            manufacturing: {
+              current: dataBuffer.readUInt16LE(48),
+              base: dataBuffer.readUInt16LE(50),
+            },
+            crafting: {
+              current: dataBuffer.readUInt16LE(178),
+              base: dataBuffer.readUInt16LE(180),
+            },
+            engineering: {
+              current: dataBuffer.readUInt16LE(190),
+              base: dataBuffer.readUInt16LE(192),
+            },
+            tailoring: {
+              current: dataBuffer.readUInt16LE(202),
+              base: dataBuffer.readUInt16LE(204),
+            },
+            ranging: {
+              current: dataBuffer.readUInt16LE(214),
+              base: dataBuffer.readUInt16LE(216),
+            },
+            overall: {
+              current: dataBuffer.readUInt16LE(60),
+              base: dataBuffer.readUInt16LE(62),
+            },
+          },
+          carryCapacity: {
+            current: dataBuffer.readUInt16LE(80),
+            base: dataBuffer.readUInt16LE(82),
+          },
+          materialPoints: {
+            current: dataBuffer.readUInt16LE(84),
+            base: dataBuffer.readUInt16LE(86),
+          },
+          etherealPoints: {
+            current: dataBuffer.readUInt16LE(88),
+            base: dataBuffer.readUInt16LE(90),
+          },
+          actionPoints: {
+            current: dataBuffer.readUInt16LE(226),
+            base: dataBuffer.readUInt16LE(228),
+          },
+        };
+      },
+      toBuffer({
+        attributes,
+        nexus,
+        skills,
+        carryCapacity,
+        materialPoints,
+        etherealPoints,
+        actionPoints,
+      }) {
+        const physiqueBuffer = Buffer.alloc(4);
+        physiqueBuffer.writeUInt16LE(attributes.physique.current, 0);
+        physiqueBuffer.writeUInt16LE(attributes.physique.base, 2);
+        const coordinationBuffer = Buffer.alloc(4);
+        coordinationBuffer.writeUInt16LE(attributes.coordination.current, 0);
+        coordinationBuffer.writeUInt16LE(attributes.coordination.base, 2);
+        const reasoningBuffer = Buffer.alloc(4);
+        reasoningBuffer.writeUInt16LE(attributes.reasoning.current, 0);
+        reasoningBuffer.writeUInt16LE(attributes.reasoning.base, 2);
+        const willBuffer = Buffer.alloc(4);
+        willBuffer.writeUInt16LE(attributes.will.current, 0);
+        willBuffer.writeUInt16LE(attributes.will.base, 2);
+        const instinctBuffer = Buffer.alloc(4);
+        instinctBuffer.writeUInt16LE(attributes.instinct.current, 0);
+        instinctBuffer.writeUInt16LE(attributes.instinct.base, 2);
+        const vitalityBuffer = Buffer.alloc(4);
+        vitalityBuffer.writeUInt16LE(attributes.vitality.current, 0);
+        vitalityBuffer.writeUInt16LE(attributes.vitality.base, 2);
+        const humanBuffer = Buffer.alloc(4);
+        humanBuffer.writeUInt16LE(nexus.human.current, 0);
+        humanBuffer.writeUInt16LE(nexus.human.base, 2);
+        const animalBuffer = Buffer.alloc(4);
+        animalBuffer.writeUInt16LE(nexus.animal.current, 0);
+        animalBuffer.writeUInt16LE(nexus.animal.base, 2);
+        const vegetalBuffer = Buffer.alloc(4);
+        vegetalBuffer.writeUInt16LE(nexus.vegetal.current, 0);
+        vegetalBuffer.writeUInt16LE(nexus.vegetal.base, 2);
+        const inorganicBuffer = Buffer.alloc(4);
+        inorganicBuffer.writeUInt16LE(nexus.inorganic.current, 0);
+        inorganicBuffer.writeUInt16LE(nexus.inorganic.base, 2);
+        const artificialBuffer = Buffer.alloc(4);
+        artificialBuffer.writeUInt16LE(nexus.artificial.current, 0);
+        artificialBuffer.writeUInt16LE(nexus.artificial.base, 2);
+        const magicBuffer = Buffer.alloc(4);
+        magicBuffer.writeUInt16LE(nexus.magic.current, 0);
+        magicBuffer.writeUInt16LE(nexus.magic.base, 2);
+        const attackBuffer = Buffer.alloc(4);
+        attackBuffer.writeUInt16LE(skills.attack.current, 0);
+        attackBuffer.writeUInt16LE(skills.attack.base, 2);
+        const defenseBuffer = Buffer.alloc(4);
+        defenseBuffer.writeUInt16LE(skills.defense.current, 0);
+        defenseBuffer.writeUInt16LE(skills.defense.base, 2);
+        const harvestingBuffer = Buffer.alloc(4);
+        harvestingBuffer.writeUInt16LE(skills.harvesting.current, 0);
+        harvestingBuffer.writeUInt16LE(skills.harvesting.base, 2);
+        const alchemyBuffer = Buffer.alloc(4);
+        alchemyBuffer.writeUInt16LE(skills.alchemy.current, 0);
+        alchemyBuffer.writeUInt16LE(skills.alchemy.base, 2);
+        const magicSkillBuffer = Buffer.alloc(4);
+        magicSkillBuffer.writeUInt16LE(skills.magic.current, 0);
+        magicSkillBuffer.writeUInt16LE(skills.magic.base, 2);
+        const potionBuffer = Buffer.alloc(4);
+        potionBuffer.writeUInt16LE(skills.potion.current, 0);
+        potionBuffer.writeUInt16LE(skills.potion.base, 2);
+        const summoningBuffer = Buffer.alloc(4);
+        summoningBuffer.writeUInt16LE(skills.summoning.current, 0);
+        summoningBuffer.writeUInt16LE(skills.summoning.base, 2);
+        const manufacturingBuffer = Buffer.alloc(4);
+        manufacturingBuffer.writeUInt16LE(skills.manufacturing.current, 0);
+        manufacturingBuffer.writeUInt16LE(skills.manufacturing.base, 2);
+        const craftingBuffer = Buffer.alloc(4);
+        craftingBuffer.writeUInt16LE(skills.crafting.current, 0);
+        craftingBuffer.writeUInt16LE(skills.crafting.base, 2);
+        const engineeringBuffer = Buffer.alloc(4);
+        engineeringBuffer.writeUInt16LE(skills.engineering.current, 0);
+        engineeringBuffer.writeUInt16LE(skills.engineering.base, 2);
+        const tailoringBuffer = Buffer.alloc(4);
+        tailoringBuffer.writeUInt16LE(skills.tailoring.current, 0);
+        tailoringBuffer.writeUInt16LE(skills.tailoring.base, 2);
+        const rangingBuffer = Buffer.alloc(4);
+        rangingBuffer.writeUInt16LE(skills.ranging.current, 0);
+        rangingBuffer.writeUInt16LE(skills.ranging.base, 2);
+        const overallBuffer = Buffer.alloc(4);
+        overallBuffer.writeUInt16LE(skills.overall.current, 0);
+        overallBuffer.writeUInt16LE(skills.overall.base, 2);
+        const carryCapacityBuffer = Buffer.alloc(4);
+        carryCapacityBuffer.writeUInt16LE(carryCapacity.current, 0);
+        carryCapacityBuffer.writeUInt16LE(carryCapacity.base, 2);
+        const materialPointsBuffer = Buffer.alloc(4);
+        materialPointsBuffer.writeUInt16LE(materialPoints.current, 0);
+        materialPointsBuffer.writeUInt16LE(materialPoints.base, 2);
+        const etherealPointsBuffer = Buffer.alloc(4);
+        etherealPointsBuffer.writeUInt16LE(etherealPoints.current, 0);
+        etherealPointsBuffer.writeUInt16LE(etherealPoints.base, 2);
+        const actionPointsBuffer = Buffer.alloc(4);
+        actionPointsBuffer.writeUInt16LE(actionPoints.current, 0);
+        actionPointsBuffer.writeUInt16LE(actionPoints.base, 2);
+
+        return Buffer.concat([
+          physiqueBuffer,
+          coordinationBuffer,
+          reasoningBuffer,
+          willBuffer,
+          instinctBuffer,
+          vitalityBuffer,
+          humanBuffer,
+          animalBuffer,
+          vegetalBuffer,
+          inorganicBuffer,
+          artificialBuffer,
+          magicBuffer,
+          manufacturingBuffer,
+          harvestingBuffer,
+          alchemyBuffer,
+          overallBuffer,
+          attackBuffer,
+          defenseBuffer,
+          magicSkillBuffer,
+          potionBuffer,
+          carryCapacityBuffer,
+          materialPointsBuffer,
+          etherealPointsBuffer,
+          Buffer.alloc(74),
+          summoningBuffer,
+          Buffer.alloc(8),
+          craftingBuffer,
+          Buffer.alloc(8),
+          engineeringBuffer,
+          Buffer.alloc(8),
+          tailoringBuffer,
+          Buffer.alloc(8),
+          rangingBuffer,
+          Buffer.alloc(8),
+          actionPointsBuffer,
+        ]);
       },
     },
     [ServerPacketType.HERE_YOUR_INVENTORY]: {
