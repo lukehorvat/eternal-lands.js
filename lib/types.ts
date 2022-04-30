@@ -2,6 +2,7 @@ export enum ClientPacketType {
   RAW_TEXT = 0,
   PING = 13,
   HEART_BEAT = 14,
+  TRADE_WITH = 32,
   PING_RESPONSE = 60,
   LOG_IN = 140,
 }

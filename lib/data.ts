@@ -24,6 +24,7 @@ export interface ClientPacketData
   [ClientPacketType.RAW_TEXT]: { message: string };
   [ClientPacketType.PING]: { echo: number };
   [ClientPacketType.HEART_BEAT]: PacketDataEmpty;
+  [ClientPacketType.TRADE_WITH]: { actorId: number };
   [ClientPacketType.PING_RESPONSE]: { echo: number };
   [ClientPacketType.LOG_IN]: { username: string; password: string };
 }
@@ -259,6 +260,17 @@ export const packetDataParsers: {
       },
       toBuffer() {
         return Buffer.alloc(0);
+      },
+    },
+    [ClientPacketType.TRADE_WITH]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const actorId = dataBuffer.readUInt32LE(0);
+        return { actorId };
+      },
+      toBuffer({ actorId }) {
+        const actorIdBuffer = Buffer.alloc(4);
+        actorIdBuffer.writeUInt32LE(actorId);
+        return actorIdBuffer;
       },
     },
     [ClientPacketType.PING_RESPONSE]: {
