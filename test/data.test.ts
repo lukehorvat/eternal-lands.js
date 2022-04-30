@@ -139,6 +139,11 @@ test('Server packet data parsing', () => {
       guild: 'TEST',
     },
     [ServerPacketType.PING_REQUEST]: { echo: 321 },
+    [ServerPacketType.GET_ACTIVE_CHANNELS]: {
+      activeChannel: 80100,
+      channel1: 6,
+      channel2: 80100,
+    },
     [ServerPacketType.YOU_DONT_EXIST]: {},
     [ServerPacketType.LOG_IN_OK]: {},
     [ServerPacketType.LOG_IN_NOT_OK]: { reason: 'Wrong password!' },

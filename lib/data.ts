@@ -207,6 +207,12 @@ export interface ServerPacketData
     guild?: string;
   };
   [ServerPacketType.PING_REQUEST]: { echo: number };
+  [ServerPacketType.GET_ACTIVE_CHANNELS]: {
+    activeChannel?: number;
+    channel1?: number;
+    channel2?: number;
+    channel3?: number;
+  };
   [ServerPacketType.YOU_DONT_EXIST]: PacketDataEmpty;
   [ServerPacketType.LOG_IN_OK]: PacketDataEmpty;
   [ServerPacketType.LOG_IN_NOT_OK]: { reason: string };
@@ -908,6 +914,35 @@ export const packetDataParsers: {
         const echoBuffer = Buffer.alloc(4);
         echoBuffer.writeUInt32LE(echo);
         return echoBuffer;
+      },
+    },
+    [ServerPacketType.GET_ACTIVE_CHANNELS]: {
+      fromBuffer(dataBuffer: Buffer) {
+        const activeChannelIndex = dataBuffer.readUInt8(0);
+        const joinedChannels = [
+          dataBuffer.readUInt32LE(1),
+          dataBuffer.readUInt32LE(5),
+          dataBuffer.readUInt32LE(9),
+        ].filter((channel) => channel !== 0); // zero means no channel assigned
+
+        const activeChannel = joinedChannels[activeChannelIndex];
+        const [channel1, channel2, channel3] = joinedChannels;
+        return { activeChannel, channel1, channel2, channel3 };
+      },
+      toBuffer({ activeChannel, channel1, channel2, channel3 }) {
+        const joinedChannels = [channel1, channel2, channel3];
+        const activeChannelIndex = activeChannel
+          ? joinedChannels.indexOf(activeChannel)
+          : 0;
+
+        const activeChannelBuffer = Buffer.alloc(1);
+        activeChannelBuffer.writeUInt8(activeChannelIndex);
+        const joinedChannelBuffers = joinedChannels.map((channel) => {
+          const channelBuffer = Buffer.alloc(4);
+          channelBuffer.writeUInt32LE(channel ?? 0); // zero means no channel assigned
+          return channelBuffer;
+        });
+        return Buffer.concat([activeChannelBuffer, ...joinedChannelBuffers]);
       },
     },
     [ServerPacketType.YOU_DONT_EXIST]: {
