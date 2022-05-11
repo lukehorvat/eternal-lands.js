@@ -28,6 +28,7 @@ test('Client packet data parsing', () => {
     [ClientPacketType.RAW_TEXT]: { message: 'test' },
     [ClientPacketType.PING]: { echo: 123 },
     [ClientPacketType.HEART_BEAT]: {},
+    [ClientPacketType.LOCATE_ME]: {},
     [ClientPacketType.TRADE_WITH]: { actorId: 42 },
     [ClientPacketType.PING_RESPONSE]: { echo: 321 },
     [ClientPacketType.PING_RESPONSE]: { echo: 321 },
