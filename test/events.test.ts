@@ -2,9 +2,9 @@ import {
   ClientPacketEventEmitter,
   ServerPacketEventEmitter,
 } from '../lib/events';
-import { packetDataParsers } from '../lib/data';
-import { ClientPacketType, ServerPacketType } from '../lib/types';
-import { Packet } from '../lib/packet';
+import { ClientPacketDataParsers, ClientPacketType } from '../lib/data/client';
+import { ServerPacketDataParsers, ServerPacketType } from '../lib/data/server';
+import { Packet } from '../lib/data/packets';
 import { ChatChannel } from '../lib/constants';
 
 describe('ClientPacketEventEmitter', () => {
@@ -21,21 +21,21 @@ describe('ClientPacketEventEmitter', () => {
       1,
       new Packet(
         ClientPacketType.HEART_BEAT,
-        packetDataParsers.client[ClientPacketType.HEART_BEAT].toBuffer({})
+        ClientPacketDataParsers[ClientPacketType.HEART_BEAT].toBuffer({})
       )
     );
     expect(sendPacketMock).nthCalledWith(
       2,
       new Packet(
         ClientPacketType.PING,
-        packetDataParsers.client[ClientPacketType.PING].toBuffer({ echo: 123 })
+        ClientPacketDataParsers[ClientPacketType.PING].toBuffer({ echo: 123 })
       )
     );
     expect(sendPacketMock).nthCalledWith(
       3,
       new Packet(
         ClientPacketType.PING_RESPONSE,
-        packetDataParsers.client[ClientPacketType.PING_RESPONSE].toBuffer({
+        ClientPacketDataParsers[ClientPacketType.PING_RESPONSE].toBuffer({
           echo: 321,
         })
       )
@@ -64,7 +64,7 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.RAW_TEXT,
-        packetDataParsers.server[ServerPacketType.RAW_TEXT].toBuffer({
+        ServerPacketDataParsers[ServerPacketType.RAW_TEXT].toBuffer({
           channel: ChatChannel.LOCAL,
           message: 'test',
         })
@@ -73,13 +73,13 @@ describe('ServerPacketEventEmitter', () => {
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.PONG,
-        packetDataParsers.server[ServerPacketType.PONG].toBuffer({ echo: 123 })
+        ServerPacketDataParsers[ServerPacketType.PONG].toBuffer({ echo: 123 })
       )
     );
     eventEmitter.receivePacket(
       new Packet(
         ServerPacketType.PING_REQUEST,
-        packetDataParsers.server[ServerPacketType.PING_REQUEST].toBuffer({
+        ServerPacketDataParsers[ServerPacketType.PING_REQUEST].toBuffer({
           echo: 321,
         })
       )

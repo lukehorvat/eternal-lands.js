@@ -1,6 +1,6 @@
 import { Socket } from 'net';
 import { ClientPacketEventEmitter, ServerPacketEventEmitter } from './events';
-import { Packet } from './packet';
+import { Packet } from './data/packets';
 import { SERVER_HOST, ServerPort } from './constants';
 
 export class Connection {

@@ -1,9 +1,13 @@
 import {
   ClientPacketData,
+  ClientPacketDataParsers,
+  ClientPacketType,
+} from '../lib/data/client';
+import {
   ServerPacketData,
-  packetDataParsers,
-} from '../lib/data';
-import { ClientPacketType, ServerPacketType } from '../lib/types';
+  ServerPacketDataParsers,
+  ServerPacketType,
+} from '../lib/data/server';
 import {
   ActorBoots,
   ActorCape,
@@ -38,7 +42,7 @@ test('Client packet data parsing', () => {
   (Object.values(ClientPacketType) as ClientPacketType[])
     .filter((value) => !isNaN(Number(value))) // TS enums... 🙈
     .forEach((type) => {
-      const dataParser = packetDataParsers.client[type];
+      const dataParser = ClientPacketDataParsers[type];
       const data = packetData[type];
       const dataBuffer = dataParser.toBuffer(data as any);
 
@@ -153,7 +157,7 @@ test('Server packet data parsing', () => {
   (Object.values(ServerPacketType) as ServerPacketType[])
     .filter((value) => !isNaN(Number(value))) // TS enums... 🙈
     .forEach((type) => {
-      const dataParser = packetDataParsers.server[type];
+      const dataParser = ServerPacketDataParsers[type];
       const data = packetData[type];
       const dataBuffer = dataParser.toBuffer(data as any);
 

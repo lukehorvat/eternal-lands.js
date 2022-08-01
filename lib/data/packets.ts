@@ -39,3 +39,8 @@ export class Packet {
     return { packets, partial: buffer };
   }
 }
+
+export interface PacketDataParser<T> {
+  fromBuffer(dataBuffer: Buffer): T;
+  toBuffer(data: T): Buffer;
+}

@@ -1,7 +1,15 @@
 import Emittery from 'emittery';
-import { ClientPacketType, ServerPacketType } from './types';
-import { ClientPacketData, ServerPacketData, packetDataParsers } from './data';
-import { Packet } from './packet';
+import {
+  ClientPacketData,
+  ClientPacketDataParsers,
+  ClientPacketType,
+} from './data/client';
+import {
+  ServerPacketData,
+  ServerPacketDataParsers,
+  ServerPacketType,
+} from './data/server';
+import { Packet } from './data/packets';
 
 export class ClientPacketEventEmitter extends Emittery<ClientPacketData> {
   constructor(sendPacket: (packet: Packet) => void) {
@@ -12,7 +20,7 @@ export class ClientPacketEventEmitter extends Emittery<ClientPacketData> {
         throw new Error(`Unsupported packet type '${type}'.`);
       }
 
-      const dataBuffer = packetDataParsers.client[type].toBuffer(data as any);
+      const dataBuffer = ClientPacketDataParsers[type].toBuffer(data as any);
       const packet = new Packet(type, dataBuffer);
       sendPacket(packet);
     });
@@ -30,7 +38,7 @@ export class ServerPacketEventEmitter extends Emittery<
       return;
     }
 
-    const data = packetDataParsers.server[type].fromBuffer(packet.dataBuffer);
+    const data = ServerPacketDataParsers[type].fromBuffer(packet.dataBuffer);
     this.emit(type, data);
   }
 }

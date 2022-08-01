@@ -1,8 +1,8 @@
 import { Socket, Server, createServer } from 'net';
 import { Connection } from '../lib/connection';
-import { packetDataParsers } from '../lib/data';
-import { ClientPacketType, ServerPacketType } from '../lib/types';
-import { Packet } from '../lib/packet';
+import { ClientPacketDataParsers, ClientPacketType } from '../lib/data/client';
+import { ServerPacketDataParsers, ServerPacketType } from '../lib/data/server';
+import { Packet } from '../lib/data/packets';
 
 let server: MockELServer;
 let connection: Connection;
@@ -69,7 +69,7 @@ class MockELServer {
 
   private onPacketReceived(socket: Socket, packet: Packet) {
     if (packet.type === ClientPacketType.PING) {
-      const { echo } = packetDataParsers.client[
+      const { echo } = ClientPacketDataParsers[
         ClientPacketType.PING
       ].fromBuffer(packet.dataBuffer);
 
@@ -77,7 +77,7 @@ class MockELServer {
         socket,
         new Packet(
           ServerPacketType.PONG,
-          packetDataParsers.server[ServerPacketType.PONG].toBuffer({ echo })
+          ServerPacketDataParsers[ServerPacketType.PONG].toBuffer({ echo })
         )
       );
     }

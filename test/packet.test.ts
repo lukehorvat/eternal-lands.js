@@ -1,5 +1,5 @@
 import { BufferReader } from 'easy-buffer';
-import { Packet } from '../lib/packet';
+import { Packet } from '../lib/data/packets';
 
 describe('toBuffer()', () => {
   test('Handles packet with no data', () => {

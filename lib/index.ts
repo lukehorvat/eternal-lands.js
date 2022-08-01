@@ -1,4 +1,5 @@
-import { ClientPacketType, ServerPacketType } from './types';
+import { ClientPacketType } from './data/client';
+import { ServerPacketType } from './data/server';
 
 export { Connection as ELPackets } from './connection';
 
