@@ -1,3 +1,5 @@
+import { BufferReader, BufferWriter } from 'easy-buffer';
+
 export class Packet {
   type: number;
   dataBuffer: Buffer;
@@ -8,31 +10,30 @@ export class Packet {
   }
 
   toBuffer(): Buffer {
-    const typeBuffer = Buffer.alloc(1);
-    typeBuffer.writeUInt8(this.type); // 1 byte
-
-    const lengthBuffer = Buffer.alloc(2);
-    lengthBuffer.writeUInt16LE(1 + this.dataBuffer.byteLength); // 2 bytes
-
-    return Buffer.concat([typeBuffer, lengthBuffer, this.dataBuffer]);
+    return new BufferWriter()
+      .write({ type: 'UInt8', value: this.type })
+      .write({ type: 'UInt16LE', value: this.dataBuffer.length + 1 })
+      .write({ type: 'Buffer', value: this.dataBuffer })
+      .buffer();
   }
 
   static fromBuffer(buffer: Buffer): { packets: Packet[]; partial: Buffer } {
     const packets: Packet[] = [];
 
     // Is buffer large enough to contain a packet's type and length?
-    while (buffer.byteLength >= 3) {
-      const type = buffer.readUInt8(0); // 1 byte
-      const length = buffer.readUInt16LE(1); // 2 bytes
-      const dataBuffer = buffer.slice(3, 3 + length - 1);
+    while (buffer.length >= 3) {
+      const reader = new BufferReader(buffer);
+      const type = reader.read({ type: 'UInt8' });
+      const length = reader.read({ type: 'UInt16LE' }) - 1;
 
       // Is buffer too small to contain a packet's data?
-      if (dataBuffer.byteLength < length - 1) {
+      if (length > reader.bufferRemaining().length) {
         break;
       }
 
+      const dataBuffer = reader.read({ type: 'Buffer', length });
       packets.push(new Packet(type, dataBuffer));
-      buffer = buffer.slice(3 + length - 1);
+      buffer = reader.bufferRemaining();
     }
 
     return { packets, partial: buffer };

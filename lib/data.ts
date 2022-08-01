@@ -1,3 +1,4 @@
+import { BufferReader, BufferWriter } from 'easy-buffer';
 import { ClientPacketType, ServerPacketType } from './types';
 import {
   ActorBoots,
@@ -211,9 +212,7 @@ export interface ServerPacketData
   [ServerPacketType.PING_REQUEST]: { echo: number };
   [ServerPacketType.GET_ACTIVE_CHANNELS]: {
     activeChannel?: number;
-    channel1?: number;
-    channel2?: number;
-    channel3?: number;
+    channels: number[];
   };
   [ServerPacketType.YOU_DONT_EXIST]: PacketDataEmpty;
   [ServerPacketType.LOG_IN_OK]: PacketDataEmpty;
@@ -237,22 +236,28 @@ export const packetDataParsers: {
   client: {
     [ClientPacketType.RAW_TEXT]: {
       fromBuffer(dataBuffer: Buffer) {
-        const message = dataBuffer.toString('ascii');
-        return { message };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          message: reader.read({ type: 'String', encoding: 'ascii' }),
+        };
       },
       toBuffer({ message }) {
-        return Buffer.from(message, 'ascii');
+        return new BufferWriter()
+          .write({ type: 'String', value: message, encoding: 'ascii' })
+          .buffer();
       },
     },
     [ClientPacketType.PING]: {
       fromBuffer(dataBuffer: Buffer) {
-        const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return { echo };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          echo: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ echo }) {
-        const echoBuffer = Buffer.alloc(4);
-        echoBuffer.writeUInt32LE(echo);
-        return echoBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: echo })
+          .buffer();
       },
     },
     [ClientPacketType.HEART_BEAT]: {
@@ -260,7 +265,7 @@ export const packetDataParsers: {
         return {};
       },
       toBuffer() {
-        return Buffer.alloc(0);
+        return new BufferWriter().buffer();
       },
     },
     [ClientPacketType.LOCATE_ME]: {
@@ -268,82 +273,82 @@ export const packetDataParsers: {
         return {};
       },
       toBuffer() {
-        return Buffer.alloc(0);
+        return new BufferWriter().buffer();
       },
     },
     [ClientPacketType.TRADE_WITH]: {
       fromBuffer(dataBuffer: Buffer) {
-        const actorId = dataBuffer.readUInt32LE(0);
-        return { actorId };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          actorId: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ actorId }) {
-        const actorIdBuffer = Buffer.alloc(4);
-        actorIdBuffer.writeUInt32LE(actorId);
-        return actorIdBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: actorId })
+          .buffer();
       },
     },
     [ClientPacketType.PING_RESPONSE]: {
       fromBuffer(dataBuffer: Buffer) {
-        const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return { echo };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          echo: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ echo }) {
-        const echoBuffer = Buffer.alloc(4);
-        echoBuffer.writeUInt32LE(echo);
-        return echoBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: echo })
+          .buffer();
       },
     },
     [ClientPacketType.LOG_IN]: {
       fromBuffer(dataBuffer: Buffer) {
-        const [_, username, password] = dataBuffer
-          .toString('ascii')
-          .match(/^(\w+)\s(.+)\0$/)!;
+        const reader = new BufferReader(dataBuffer);
+        const [username, password] = reader
+          .read({ type: 'StringNT', encoding: 'ascii' })
+          .split(' ');
         return { username, password };
       },
       toBuffer({ username, password }) {
-        // A string with username and password separated by a space, ending with
-        // a null-terminator.
-        return Buffer.from(`${username} ${password}\0`, 'ascii');
+        return new BufferWriter()
+          .write({
+            type: 'StringNT',
+            value: `${username} ${password}`,
+            encoding: 'ascii',
+          })
+          .buffer();
       },
     },
   },
   server: {
     [ServerPacketType.RAW_TEXT]: {
       fromBuffer(dataBuffer: Buffer) {
-        const channel = dataBuffer.readUInt8(0); // 1 byte
-        const message = dataBuffer.toString('ascii', 1);
-        return { channel, message };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          channel: reader.read({ type: 'UInt8' }),
+          message: reader.read({ type: 'String', encoding: 'ascii' }),
+        };
       },
       toBuffer({ channel, message }) {
-        const channelBuffer = Buffer.alloc(1);
-        channelBuffer.writeUInt8(channel); // 1 byte
-        const messageBuffer = Buffer.from(message, 'ascii');
-        return Buffer.concat([channelBuffer, messageBuffer]);
+        return new BufferWriter()
+          .write({ type: 'UInt8', value: channel })
+          .write({ type: 'String', value: message, encoding: 'ascii' })
+          .buffer();
       },
     },
     [ServerPacketType.ADD_NEW_ACTOR]: {
       fromBuffer(dataBuffer: Buffer) {
-        const id = dataBuffer.readUInt16LE(0);
-        const xPos = dataBuffer.readUInt16LE(2);
-        const yPos = dataBuffer.readUInt16LE(4);
-        const zRotation = dataBuffer.readUInt16LE(8);
-        const type = dataBuffer.readUInt8(10);
-        const maxHealth = dataBuffer.readUInt16LE(12);
-        const currentHealth = dataBuffer.readUInt16LE(14);
-        const [_, name] = dataBuffer
-          .slice(17)
-          .toString('ascii')
-          .match(/^(.+?)\0/)!; // Capture until we encounter a null-terminator.
-
+        const reader = new BufferReader(dataBuffer);
         return {
-          id,
-          xPos,
-          yPos,
-          zRotation,
-          type,
-          maxHealth,
-          currentHealth,
-          name,
+          id: reader.read({ type: 'UInt16LE' }),
+          xPos: reader.read({ type: 'UInt16LE' }),
+          yPos: reader.read({ type: 'UInt16LE' }),
+          zRotation: reader.offset(2).read({ type: 'UInt16LE' }),
+          type: reader.read({ type: 'UInt8' }),
+          maxHealth: reader.offset(1).read({ type: 'UInt16LE' }),
+          currentHealth: reader.read({ type: 'UInt16LE' }),
+          name: reader.offset(1).read({ type: 'StringNT', encoding: 'ascii' }),
         };
       },
       toBuffer({
@@ -356,242 +361,240 @@ export const packetDataParsers: {
         currentHealth,
         name,
       }) {
-        const idBuffer = Buffer.alloc(2);
-        idBuffer.writeUInt16LE(id);
-        const xPosBuffer = Buffer.alloc(2);
-        xPosBuffer.writeUInt16LE(xPos);
-        const yPosBuffer = Buffer.alloc(2);
-        yPosBuffer.writeUInt16LE(yPos);
-        const zRotationBuffer = Buffer.alloc(2);
-        zRotationBuffer.writeUInt16LE(zRotation);
-        const typeBuffer = Buffer.alloc(1);
-        typeBuffer.writeUInt8(type);
-        const maxHealthBuffer = Buffer.alloc(2);
-        maxHealthBuffer.writeUInt16LE(maxHealth);
-        const currentHealthBuffer = Buffer.alloc(2);
-        currentHealthBuffer.writeUInt16LE(currentHealth);
-        const nameBuffer = Buffer.from(`${name}\0`, 'ascii');
-
-        return Buffer.concat([
-          idBuffer,
-          xPosBuffer,
-          yPosBuffer,
-          Buffer.alloc(2),
-          zRotationBuffer,
-          typeBuffer,
-          Buffer.alloc(1),
-          maxHealthBuffer,
-          currentHealthBuffer,
-          Buffer.alloc(1),
-          nameBuffer,
-        ]);
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: id })
+          .write({ type: 'UInt16LE', value: xPos })
+          .write({ type: 'UInt16LE', value: yPos })
+          .offset(2)
+          .write({ type: 'UInt16LE', value: zRotation })
+          .write({ type: 'UInt8', value: type })
+          .offset(1)
+          .write({ type: 'UInt16LE', value: maxHealth })
+          .write({ type: 'UInt16LE', value: currentHealth })
+          .offset(1)
+          .write({ type: 'StringNT', value: name, encoding: 'ascii' })
+          .buffer();
       },
     },
     [ServerPacketType.ADD_ACTOR_COMMAND]: {
       fromBuffer(dataBuffer: Buffer) {
-        const actorId = dataBuffer.readUInt16LE(0); // 2 bytes
-        const command = dataBuffer.readUInt8(2); // 1 byte
-        return { actorId, command };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          actorId: reader.read({ type: 'UInt16LE' }),
+          command: reader.read({ type: 'UInt8' }),
+        };
       },
       toBuffer({ actorId, command }) {
-        const actorIdBuffer = Buffer.alloc(2);
-        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
-        const commandBuffer = Buffer.alloc(1);
-        commandBuffer.writeUInt8(command); // 1 byte
-        return Buffer.concat([actorIdBuffer, commandBuffer]);
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: actorId })
+          .write({ type: 'UInt8', value: command })
+          .buffer();
       },
     },
     [ServerPacketType.YOU_ARE]: {
       fromBuffer(dataBuffer: Buffer) {
-        const actorId = dataBuffer.readUInt16LE(0);
-        return { actorId };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          actorId: reader.read({ type: 'UInt16LE' }),
+        };
       },
       toBuffer({ actorId }) {
-        const actorIdBuffer = Buffer.alloc(2);
-        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
-        return actorIdBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: actorId })
+          .buffer();
       },
     },
     [ServerPacketType.SYNC_CLOCK]: {
       fromBuffer(dataBuffer: Buffer) {
-        const serverTimestamp = dataBuffer.readUInt32LE(0); // 4 bytes
-        return { serverTimestamp };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          serverTimestamp: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ serverTimestamp }) {
-        const serverTimestampBuffer = Buffer.alloc(4);
-        serverTimestampBuffer.writeUInt32LE(serverTimestamp);
-        return serverTimestampBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: serverTimestamp })
+          .buffer();
       },
     },
     [ServerPacketType.NEW_MINUTE]: {
       fromBuffer(dataBuffer: Buffer) {
-        const minute = dataBuffer.readUInt16LE(0);
-        return { minute };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          minute: reader.read({ type: 'UInt16LE' }),
+        };
       },
       toBuffer({ minute }) {
-        const minuteBuffer = Buffer.alloc(2);
-        minuteBuffer.writeUInt16LE(minute); // 2 bytes
-        return minuteBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: minute })
+          .buffer();
       },
     },
     [ServerPacketType.REMOVE_ACTOR]: {
       fromBuffer(dataBuffer: Buffer) {
-        const actorId = dataBuffer.readUInt16LE(0);
-        return { actorId };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          actorId: reader.read({ type: 'UInt16LE' }),
+        };
       },
       toBuffer({ actorId }) {
-        const actorIdBuffer = Buffer.alloc(2);
-        actorIdBuffer.writeUInt16LE(actorId); // 2 bytes
-        return actorIdBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: actorId })
+          .buffer();
       },
     },
     [ServerPacketType.CHANGE_MAP]: {
       fromBuffer(dataBuffer: Buffer) {
-        const [_, mapFilePath] = dataBuffer
-          .toString('ascii')
-          .match(/^(.+)\0$/)!;
-        return { mapFilePath };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          mapFilePath: reader.read({ type: 'StringNT', encoding: 'ascii' }),
+        };
       },
       toBuffer({ mapFilePath }) {
-        // A string representing the path to a map file, ending with a null-terminator.
-        return Buffer.from(`${mapFilePath}\0`, 'ascii');
+        return new BufferWriter()
+          .write({ type: 'StringNT', value: mapFilePath, encoding: 'ascii' })
+          .buffer();
       },
     },
     [ServerPacketType.PONG]: {
       fromBuffer(dataBuffer: Buffer) {
-        const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return { echo };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          echo: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ echo }) {
-        const echoBuffer = Buffer.alloc(4);
-        echoBuffer.writeUInt32LE(echo);
-        return echoBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: echo })
+          .buffer();
       },
     },
     [ServerPacketType.HERE_YOUR_STATS]: {
       fromBuffer(dataBuffer: Buffer) {
+        const reader = new BufferReader(dataBuffer);
+
         return {
           attributes: {
             physique: {
-              current: dataBuffer.readUInt16LE(0),
-              base: dataBuffer.readUInt16LE(2),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             coordination: {
-              current: dataBuffer.readUInt16LE(4),
-              base: dataBuffer.readUInt16LE(6),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             reasoning: {
-              current: dataBuffer.readUInt16LE(8),
-              base: dataBuffer.readUInt16LE(10),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             will: {
-              current: dataBuffer.readUInt16LE(12),
-              base: dataBuffer.readUInt16LE(14),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             instinct: {
-              current: dataBuffer.readUInt16LE(16),
-              base: dataBuffer.readUInt16LE(18),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             vitality: {
-              current: dataBuffer.readUInt16LE(20),
-              base: dataBuffer.readUInt16LE(22),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
           },
           nexus: {
             human: {
-              current: dataBuffer.readUInt16LE(24),
-              base: dataBuffer.readUInt16LE(26),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             animal: {
-              current: dataBuffer.readUInt16LE(28),
-              base: dataBuffer.readUInt16LE(30),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             vegetal: {
-              current: dataBuffer.readUInt16LE(32),
-              base: dataBuffer.readUInt16LE(34),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             inorganic: {
-              current: dataBuffer.readUInt16LE(36),
-              base: dataBuffer.readUInt16LE(38),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             artificial: {
-              current: dataBuffer.readUInt16LE(40),
-              base: dataBuffer.readUInt16LE(42),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             magic: {
-              current: dataBuffer.readUInt16LE(44),
-              base: dataBuffer.readUInt16LE(46),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
           },
           skills: {
             attack: {
-              current: dataBuffer.readUInt16LE(64),
-              base: dataBuffer.readUInt16LE(66),
+              current: reader.offset(16).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             defense: {
-              current: dataBuffer.readUInt16LE(68),
-              base: dataBuffer.readUInt16LE(70),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             harvesting: {
-              current: dataBuffer.readUInt16LE(52),
-              base: dataBuffer.readUInt16LE(54),
+              current: reader.offset(-20).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             alchemy: {
-              current: dataBuffer.readUInt16LE(56),
-              base: dataBuffer.readUInt16LE(58),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             magic: {
-              current: dataBuffer.readUInt16LE(72),
-              base: dataBuffer.readUInt16LE(74),
+              current: reader.offset(12).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             potion: {
-              current: dataBuffer.readUInt16LE(76),
-              base: dataBuffer.readUInt16LE(78),
+              current: reader.read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             summoning: {
-              current: dataBuffer.readUInt16LE(166),
-              base: dataBuffer.readUInt16LE(168),
+              current: reader.offset(86).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             manufacturing: {
-              current: dataBuffer.readUInt16LE(48),
-              base: dataBuffer.readUInt16LE(50),
+              current: reader.offset(-122).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             crafting: {
-              current: dataBuffer.readUInt16LE(178),
-              base: dataBuffer.readUInt16LE(180),
+              current: reader.offset(126).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             engineering: {
-              current: dataBuffer.readUInt16LE(190),
-              base: dataBuffer.readUInt16LE(192),
+              current: reader.offset(8).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             tailoring: {
-              current: dataBuffer.readUInt16LE(202),
-              base: dataBuffer.readUInt16LE(204),
+              current: reader.offset(8).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             ranging: {
-              current: dataBuffer.readUInt16LE(214),
-              base: dataBuffer.readUInt16LE(216),
+              current: reader.offset(8).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
             overall: {
-              current: dataBuffer.readUInt16LE(60),
-              base: dataBuffer.readUInt16LE(62),
+              current: reader.offset(-158).read({ type: 'UInt16LE' }),
+              base: reader.read({ type: 'UInt16LE' }),
             },
           },
           carryCapacity: {
-            current: dataBuffer.readUInt16LE(80),
-            base: dataBuffer.readUInt16LE(82),
+            current: reader.offset(16).read({ type: 'UInt16LE' }),
+            base: reader.read({ type: 'UInt16LE' }),
           },
           materialPoints: {
-            current: dataBuffer.readUInt16LE(84),
-            base: dataBuffer.readUInt16LE(86),
+            current: reader.read({ type: 'UInt16LE' }),
+            base: reader.read({ type: 'UInt16LE' }),
           },
           etherealPoints: {
-            current: dataBuffer.readUInt16LE(88),
-            base: dataBuffer.readUInt16LE(90),
+            current: reader.read({ type: 'UInt16LE' }),
+            base: reader.read({ type: 'UInt16LE' }),
           },
           actionPoints: {
-            current: dataBuffer.readUInt16LE(226),
-            base: dataBuffer.readUInt16LE(228),
+            current: reader.offset(134).read({ type: 'UInt16LE' }),
+            base: reader.read({ type: 'UInt16LE' }),
           },
         };
       },
@@ -604,240 +607,138 @@ export const packetDataParsers: {
         etherealPoints,
         actionPoints,
       }) {
-        const physiqueBuffer = Buffer.alloc(4);
-        physiqueBuffer.writeUInt16LE(attributes.physique.current, 0);
-        physiqueBuffer.writeUInt16LE(attributes.physique.base, 2);
-        const coordinationBuffer = Buffer.alloc(4);
-        coordinationBuffer.writeUInt16LE(attributes.coordination.current, 0);
-        coordinationBuffer.writeUInt16LE(attributes.coordination.base, 2);
-        const reasoningBuffer = Buffer.alloc(4);
-        reasoningBuffer.writeUInt16LE(attributes.reasoning.current, 0);
-        reasoningBuffer.writeUInt16LE(attributes.reasoning.base, 2);
-        const willBuffer = Buffer.alloc(4);
-        willBuffer.writeUInt16LE(attributes.will.current, 0);
-        willBuffer.writeUInt16LE(attributes.will.base, 2);
-        const instinctBuffer = Buffer.alloc(4);
-        instinctBuffer.writeUInt16LE(attributes.instinct.current, 0);
-        instinctBuffer.writeUInt16LE(attributes.instinct.base, 2);
-        const vitalityBuffer = Buffer.alloc(4);
-        vitalityBuffer.writeUInt16LE(attributes.vitality.current, 0);
-        vitalityBuffer.writeUInt16LE(attributes.vitality.base, 2);
-        const humanBuffer = Buffer.alloc(4);
-        humanBuffer.writeUInt16LE(nexus.human.current, 0);
-        humanBuffer.writeUInt16LE(nexus.human.base, 2);
-        const animalBuffer = Buffer.alloc(4);
-        animalBuffer.writeUInt16LE(nexus.animal.current, 0);
-        animalBuffer.writeUInt16LE(nexus.animal.base, 2);
-        const vegetalBuffer = Buffer.alloc(4);
-        vegetalBuffer.writeUInt16LE(nexus.vegetal.current, 0);
-        vegetalBuffer.writeUInt16LE(nexus.vegetal.base, 2);
-        const inorganicBuffer = Buffer.alloc(4);
-        inorganicBuffer.writeUInt16LE(nexus.inorganic.current, 0);
-        inorganicBuffer.writeUInt16LE(nexus.inorganic.base, 2);
-        const artificialBuffer = Buffer.alloc(4);
-        artificialBuffer.writeUInt16LE(nexus.artificial.current, 0);
-        artificialBuffer.writeUInt16LE(nexus.artificial.base, 2);
-        const magicBuffer = Buffer.alloc(4);
-        magicBuffer.writeUInt16LE(nexus.magic.current, 0);
-        magicBuffer.writeUInt16LE(nexus.magic.base, 2);
-        const attackBuffer = Buffer.alloc(4);
-        attackBuffer.writeUInt16LE(skills.attack.current, 0);
-        attackBuffer.writeUInt16LE(skills.attack.base, 2);
-        const defenseBuffer = Buffer.alloc(4);
-        defenseBuffer.writeUInt16LE(skills.defense.current, 0);
-        defenseBuffer.writeUInt16LE(skills.defense.base, 2);
-        const harvestingBuffer = Buffer.alloc(4);
-        harvestingBuffer.writeUInt16LE(skills.harvesting.current, 0);
-        harvestingBuffer.writeUInt16LE(skills.harvesting.base, 2);
-        const alchemyBuffer = Buffer.alloc(4);
-        alchemyBuffer.writeUInt16LE(skills.alchemy.current, 0);
-        alchemyBuffer.writeUInt16LE(skills.alchemy.base, 2);
-        const magicSkillBuffer = Buffer.alloc(4);
-        magicSkillBuffer.writeUInt16LE(skills.magic.current, 0);
-        magicSkillBuffer.writeUInt16LE(skills.magic.base, 2);
-        const potionBuffer = Buffer.alloc(4);
-        potionBuffer.writeUInt16LE(skills.potion.current, 0);
-        potionBuffer.writeUInt16LE(skills.potion.base, 2);
-        const summoningBuffer = Buffer.alloc(4);
-        summoningBuffer.writeUInt16LE(skills.summoning.current, 0);
-        summoningBuffer.writeUInt16LE(skills.summoning.base, 2);
-        const manufacturingBuffer = Buffer.alloc(4);
-        manufacturingBuffer.writeUInt16LE(skills.manufacturing.current, 0);
-        manufacturingBuffer.writeUInt16LE(skills.manufacturing.base, 2);
-        const craftingBuffer = Buffer.alloc(4);
-        craftingBuffer.writeUInt16LE(skills.crafting.current, 0);
-        craftingBuffer.writeUInt16LE(skills.crafting.base, 2);
-        const engineeringBuffer = Buffer.alloc(4);
-        engineeringBuffer.writeUInt16LE(skills.engineering.current, 0);
-        engineeringBuffer.writeUInt16LE(skills.engineering.base, 2);
-        const tailoringBuffer = Buffer.alloc(4);
-        tailoringBuffer.writeUInt16LE(skills.tailoring.current, 0);
-        tailoringBuffer.writeUInt16LE(skills.tailoring.base, 2);
-        const rangingBuffer = Buffer.alloc(4);
-        rangingBuffer.writeUInt16LE(skills.ranging.current, 0);
-        rangingBuffer.writeUInt16LE(skills.ranging.base, 2);
-        const overallBuffer = Buffer.alloc(4);
-        overallBuffer.writeUInt16LE(skills.overall.current, 0);
-        overallBuffer.writeUInt16LE(skills.overall.base, 2);
-        const carryCapacityBuffer = Buffer.alloc(4);
-        carryCapacityBuffer.writeUInt16LE(carryCapacity.current, 0);
-        carryCapacityBuffer.writeUInt16LE(carryCapacity.base, 2);
-        const materialPointsBuffer = Buffer.alloc(4);
-        materialPointsBuffer.writeUInt16LE(materialPoints.current, 0);
-        materialPointsBuffer.writeUInt16LE(materialPoints.base, 2);
-        const etherealPointsBuffer = Buffer.alloc(4);
-        etherealPointsBuffer.writeUInt16LE(etherealPoints.current, 0);
-        etherealPointsBuffer.writeUInt16LE(etherealPoints.base, 2);
-        const actionPointsBuffer = Buffer.alloc(4);
-        actionPointsBuffer.writeUInt16LE(actionPoints.current, 0);
-        actionPointsBuffer.writeUInt16LE(actionPoints.base, 2);
-
-        return Buffer.concat([
-          physiqueBuffer,
-          coordinationBuffer,
-          reasoningBuffer,
-          willBuffer,
-          instinctBuffer,
-          vitalityBuffer,
-          humanBuffer,
-          animalBuffer,
-          vegetalBuffer,
-          inorganicBuffer,
-          artificialBuffer,
-          magicBuffer,
-          manufacturingBuffer,
-          harvestingBuffer,
-          alchemyBuffer,
-          overallBuffer,
-          attackBuffer,
-          defenseBuffer,
-          magicSkillBuffer,
-          potionBuffer,
-          carryCapacityBuffer,
-          materialPointsBuffer,
-          etherealPointsBuffer,
-          Buffer.alloc(74),
-          summoningBuffer,
-          Buffer.alloc(8),
-          craftingBuffer,
-          Buffer.alloc(8),
-          engineeringBuffer,
-          Buffer.alloc(8),
-          tailoringBuffer,
-          Buffer.alloc(8),
-          rangingBuffer,
-          Buffer.alloc(8),
-          actionPointsBuffer,
-        ]);
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: attributes.physique.current })
+          .write({ type: 'UInt16LE', value: attributes.physique.base })
+          .write({ type: 'UInt16LE', value: attributes.coordination.current })
+          .write({ type: 'UInt16LE', value: attributes.coordination.base })
+          .write({ type: 'UInt16LE', value: attributes.reasoning.current })
+          .write({ type: 'UInt16LE', value: attributes.reasoning.base })
+          .write({ type: 'UInt16LE', value: attributes.will.current })
+          .write({ type: 'UInt16LE', value: attributes.will.base })
+          .write({ type: 'UInt16LE', value: attributes.instinct.current })
+          .write({ type: 'UInt16LE', value: attributes.instinct.base })
+          .write({ type: 'UInt16LE', value: attributes.vitality.current })
+          .write({ type: 'UInt16LE', value: attributes.vitality.base })
+          .write({ type: 'UInt16LE', value: nexus.human.current })
+          .write({ type: 'UInt16LE', value: nexus.human.base })
+          .write({ type: 'UInt16LE', value: nexus.animal.current })
+          .write({ type: 'UInt16LE', value: nexus.animal.base })
+          .write({ type: 'UInt16LE', value: nexus.vegetal.current })
+          .write({ type: 'UInt16LE', value: nexus.vegetal.base })
+          .write({ type: 'UInt16LE', value: nexus.inorganic.current })
+          .write({ type: 'UInt16LE', value: nexus.inorganic.base })
+          .write({ type: 'UInt16LE', value: nexus.artificial.current })
+          .write({ type: 'UInt16LE', value: nexus.artificial.base })
+          .write({ type: 'UInt16LE', value: nexus.magic.current })
+          .write({ type: 'UInt16LE', value: nexus.magic.base })
+          .write({ type: 'UInt16LE', value: skills.manufacturing.current })
+          .write({ type: 'UInt16LE', value: skills.manufacturing.base })
+          .write({ type: 'UInt16LE', value: skills.harvesting.current })
+          .write({ type: 'UInt16LE', value: skills.harvesting.base })
+          .write({ type: 'UInt16LE', value: skills.alchemy.current })
+          .write({ type: 'UInt16LE', value: skills.alchemy.base })
+          .write({ type: 'UInt16LE', value: skills.overall.current })
+          .write({ type: 'UInt16LE', value: skills.overall.base })
+          .write({ type: 'UInt16LE', value: skills.attack.current })
+          .write({ type: 'UInt16LE', value: skills.attack.base })
+          .write({ type: 'UInt16LE', value: skills.defense.current })
+          .write({ type: 'UInt16LE', value: skills.defense.base })
+          .write({ type: 'UInt16LE', value: skills.magic.current })
+          .write({ type: 'UInt16LE', value: skills.magic.base })
+          .write({ type: 'UInt16LE', value: skills.potion.current })
+          .write({ type: 'UInt16LE', value: skills.potion.base })
+          .write({ type: 'UInt16LE', value: carryCapacity.current })
+          .write({ type: 'UInt16LE', value: carryCapacity.base })
+          .write({ type: 'UInt16LE', value: materialPoints.current })
+          .write({ type: 'UInt16LE', value: materialPoints.base })
+          .write({ type: 'UInt16LE', value: etherealPoints.current })
+          .write({ type: 'UInt16LE', value: etherealPoints.base })
+          .offset(74)
+          .write({ type: 'UInt16LE', value: skills.summoning.current })
+          .write({ type: 'UInt16LE', value: skills.summoning.base })
+          .offset(8)
+          .write({ type: 'UInt16LE', value: skills.crafting.current })
+          .write({ type: 'UInt16LE', value: skills.crafting.base })
+          .offset(8)
+          .write({ type: 'UInt16LE', value: skills.engineering.current })
+          .write({ type: 'UInt16LE', value: skills.engineering.base })
+          .offset(8)
+          .write({ type: 'UInt16LE', value: skills.tailoring.current })
+          .write({ type: 'UInt16LE', value: skills.tailoring.base })
+          .offset(8)
+          .write({ type: 'UInt16LE', value: skills.ranging.current })
+          .write({ type: 'UInt16LE', value: skills.ranging.base })
+          .offset(8)
+          .write({ type: 'UInt16LE', value: actionPoints.current })
+          .write({ type: 'UInt16LE', value: actionPoints.base })
+          .buffer();
       },
     },
     [ServerPacketType.HERE_YOUR_INVENTORY]: {
       fromBuffer(dataBuffer: Buffer) {
-        const itemsCount = dataBuffer.readUInt8(0);
-        const itemsBuffer = dataBuffer.slice(1);
-        const itemUidsEnabled = itemsCount * 10 === itemsBuffer.byteLength;
-        const items = itemsBuffer
-          .reduce<Buffer[]>((arr, byte, index) => {
-            const itemBuffer =
-              index % (itemUidsEnabled ? 10 : 8) === 0
-                ? Buffer.alloc(0)
-                : arr.pop()!;
-            return [...arr, Buffer.from([...itemBuffer.values(), byte])];
-          }, [])
-          .map((itemBuffer) => {
-            const imageId = itemBuffer.readUInt16LE(0);
-            const quantity = itemBuffer.readUInt32LE(2);
-            const position = itemBuffer.readUInt8(6);
-            const flags = itemBuffer.readUInt8(7);
-            const id = itemUidsEnabled ? itemBuffer.readUInt16LE(8) : undefined;
-            return { imageId, quantity, position, flags, id };
-          });
-
+        const reader = new BufferReader(dataBuffer);
+        const itemsCount = reader.read({ type: 'UInt8' });
+        const itemUidsEnabled =
+          itemsCount * 10 === reader.bufferRemaining().length;
+        const items = reader.readArray(() => {
+          const imageId = reader.read({ type: 'UInt16LE' });
+          const quantity = reader.read({ type: 'UInt32LE' });
+          const position = reader.read({ type: 'UInt8' });
+          const flags = reader.read({ type: 'UInt8' });
+          const id = itemUidsEnabled
+            ? reader.read({ type: 'UInt16LE' })
+            : undefined;
+          return { imageId, quantity, position, flags, id };
+        });
         return { items };
       },
       toBuffer({ items }) {
-        const itemsCountBuffer = Buffer.alloc(1);
-        itemsCountBuffer.writeUInt8(items.length);
-        const itemBuffers = items.map(
-          ({ imageId, quantity, position, flags, id }) => {
-            const imageIdBuffer = Buffer.alloc(2);
-            imageIdBuffer.writeUInt16LE(imageId);
-            const quantityBuffer = Buffer.alloc(4);
-            quantityBuffer.writeUInt32LE(quantity);
-            const positionBuffer = Buffer.alloc(1);
-            positionBuffer.writeUInt8(position);
-            const flagsBuffer = Buffer.alloc(1);
-            flagsBuffer.writeUInt8(flags);
+        return new BufferWriter()
+          .write({ type: 'UInt8', value: items.length })
+          .writeArray(items, (writer, item) => {
+            writer.write({ type: 'UInt16LE', value: item.imageId });
+            writer.write({ type: 'UInt32LE', value: item.quantity });
+            writer.write({ type: 'UInt8', value: item.position });
+            writer.write({ type: 'UInt8', value: item.flags });
 
-            let idBuffer = Buffer.alloc(0);
-            if (id != null) {
-              idBuffer = Buffer.alloc(2);
-              idBuffer.writeUInt16LE(id);
+            if (item.id != null) {
+              writer.write({ type: 'UInt16LE', value: item.id });
             }
-
-            return Buffer.concat([
-              imageIdBuffer,
-              quantityBuffer,
-              positionBuffer,
-              flagsBuffer,
-              idBuffer,
-            ]);
-          }
-        );
-
-        return Buffer.concat([itemsCountBuffer, ...itemBuffers]);
+          })
+          .buffer();
       },
     },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
       fromBuffer(dataBuffer: Buffer) {
-        const id = dataBuffer.readUInt16LE(0);
-        const xPos = dataBuffer.readUInt16LE(2);
-        const yPos = dataBuffer.readUInt16LE(4);
-        const zRotation = dataBuffer.readUInt16LE(8);
-        const type = dataBuffer.readUInt8(10);
-        const skin = dataBuffer.readUInt8(12);
-        const hair = dataBuffer.readUInt8(13);
-        const shirt = dataBuffer.readUInt8(14);
-        const pants = dataBuffer.readUInt8(15);
-        const boots = dataBuffer.readUInt8(16);
-        const head = dataBuffer.readUInt8(17);
-        const shield = dataBuffer.readUInt8(18);
-        const weapon = dataBuffer.readUInt8(19);
-        const cape = dataBuffer.readUInt8(20);
-        const helmet = dataBuffer.readUInt8(21);
-        const maxHealth = dataBuffer.readUInt16LE(23);
-        const currentHealth = dataBuffer.readUInt16LE(25);
-        const kind = dataBuffer.readUInt8(27);
-
-        // TODO: Need to strip out any leading color codes from name and guild.
-        // https://github.com/raduprv/Eternal-Lands/blob/0c6335c3bf8bdbfbb7bcfb2eab75f00e26ad1a7b/new_actors.c#L312
-        const [name, guild] = dataBuffer
-          .slice(28)
-          .toString('ascii')
-          .match(/^(.+?)\0/)![1] // Capture until we encounter a null-terminator.
-          .split(' '); // Name and guild are separated by a space.
-
+        const reader = new BufferReader(dataBuffer);
         return {
-          id,
-          xPos,
-          yPos,
-          zRotation,
-          type,
-          skin,
-          hair,
-          shirt,
-          pants,
-          boots,
-          head,
-          shield,
-          weapon,
-          cape,
-          helmet,
-          maxHealth,
-          currentHealth,
-          kind,
-          name,
-          guild,
+          id: reader.read({ type: 'UInt16LE' }),
+          xPos: reader.read({ type: 'UInt16LE' }),
+          yPos: reader.read({ type: 'UInt16LE' }),
+          zRotation: reader.offset(2).read({ type: 'UInt16LE' }),
+          type: reader.read({ type: 'UInt8' }),
+          skin: reader.offset(1).read({ type: 'UInt8' }),
+          hair: reader.read({ type: 'UInt8' }),
+          shirt: reader.read({ type: 'UInt8' }),
+          pants: reader.read({ type: 'UInt8' }),
+          boots: reader.read({ type: 'UInt8' }),
+          head: reader.read({ type: 'UInt8' }),
+          shield: reader.read({ type: 'UInt8' }),
+          weapon: reader.read({ type: 'UInt8' }),
+          cape: reader.read({ type: 'UInt8' }),
+          helmet: reader.read({ type: 'UInt8' }),
+          maxHealth: reader.offset(1).read({ type: 'UInt16LE' }),
+          currentHealth: reader.read({ type: 'UInt16LE' }),
+          kind: reader.read({ type: 'UInt8' }),
+          ...(() => {
+            // TODO: Need to strip out any leading color codes from name and guild.
+            // https://github.com/raduprv/Eternal-Lands/blob/0c6335c3bf8bdbfbb7bcfb2eab75f00e26ad1a7b/new_actors.c#L312
+            const [name, guild] = reader
+              .read({ type: 'StringNT', encoding: 'ascii' })
+              .split(' ');
+            return { name, guild };
+          })(),
         };
       },
       toBuffer({
@@ -862,108 +763,70 @@ export const packetDataParsers: {
         name,
         guild,
       }) {
-        const idBuffer = Buffer.alloc(2);
-        idBuffer.writeUInt16LE(id);
-        const xPosBuffer = Buffer.alloc(2);
-        xPosBuffer.writeUInt16LE(xPos);
-        const yPosBuffer = Buffer.alloc(2);
-        yPosBuffer.writeUInt16LE(yPos);
-        const zRotationBuffer = Buffer.alloc(2);
-        zRotationBuffer.writeUInt16LE(zRotation);
-        const typeBuffer = Buffer.alloc(1);
-        typeBuffer.writeUInt8(type);
-        const skinBuffer = Buffer.alloc(1);
-        skinBuffer.writeUInt8(skin);
-        const hairBuffer = Buffer.alloc(1);
-        hairBuffer.writeUInt8(hair);
-        const shirtBuffer = Buffer.alloc(1);
-        shirtBuffer.writeUInt8(shirt);
-        const pantsBuffer = Buffer.alloc(1);
-        pantsBuffer.writeUInt8(pants);
-        const bootsBuffer = Buffer.alloc(1);
-        bootsBuffer.writeUInt8(boots);
-        const headBuffer = Buffer.alloc(1);
-        headBuffer.writeUInt8(head);
-        const shieldBuffer = Buffer.alloc(1);
-        shieldBuffer.writeUInt8(shield);
-        const weaponBuffer = Buffer.alloc(1);
-        weaponBuffer.writeUInt8(weapon);
-        const capeBuffer = Buffer.alloc(1);
-        capeBuffer.writeUInt8(cape);
-        const helmetBuffer = Buffer.alloc(1);
-        helmetBuffer.writeUInt8(helmet);
-        const maxHealthBuffer = Buffer.alloc(2);
-        maxHealthBuffer.writeUInt16LE(maxHealth);
-        const currentHealthBuffer = Buffer.alloc(2);
-        currentHealthBuffer.writeUInt16LE(currentHealth);
-        const kindBuffer = Buffer.alloc(1);
-        kindBuffer.writeUInt8(kind);
-        const nameAndGuildBuffer = Buffer.from(`${name} ${guild}\0`, 'ascii');
-
-        return Buffer.concat([
-          idBuffer,
-          xPosBuffer,
-          yPosBuffer,
-          Buffer.alloc(2),
-          zRotationBuffer,
-          typeBuffer,
-          Buffer.alloc(1),
-          skinBuffer,
-          hairBuffer,
-          shirtBuffer,
-          pantsBuffer,
-          bootsBuffer,
-          headBuffer,
-          shieldBuffer,
-          weaponBuffer,
-          capeBuffer,
-          helmetBuffer,
-          Buffer.alloc(1),
-          maxHealthBuffer,
-          currentHealthBuffer,
-          kindBuffer,
-          nameAndGuildBuffer,
-        ]);
+        return new BufferWriter()
+          .write({ type: 'UInt16LE', value: id })
+          .write({ type: 'UInt16LE', value: xPos })
+          .write({ type: 'UInt16LE', value: yPos })
+          .offset(2)
+          .write({ type: 'UInt16LE', value: zRotation })
+          .write({ type: 'UInt8', value: type })
+          .offset(1)
+          .write({ type: 'UInt8', value: skin })
+          .write({ type: 'UInt8', value: hair })
+          .write({ type: 'UInt8', value: shirt })
+          .write({ type: 'UInt8', value: pants })
+          .write({ type: 'UInt8', value: boots })
+          .write({ type: 'UInt8', value: head })
+          .write({ type: 'UInt8', value: shield })
+          .write({ type: 'UInt8', value: weapon })
+          .write({ type: 'UInt8', value: cape })
+          .write({ type: 'UInt8', value: helmet })
+          .offset(1)
+          .write({ type: 'UInt16LE', value: maxHealth })
+          .write({ type: 'UInt16LE', value: currentHealth })
+          .write({ type: 'UInt8', value: kind })
+          .write({
+            type: 'StringNT',
+            value: `${name} ${guild}`,
+            encoding: 'ascii',
+          })
+          .buffer();
       },
     },
     [ServerPacketType.PING_REQUEST]: {
       fromBuffer(dataBuffer: Buffer) {
-        const echo = dataBuffer.readUInt32LE(0); // 4 bytes
-        return { echo };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          echo: reader.read({ type: 'UInt32LE' }),
+        };
       },
       toBuffer({ echo }) {
-        const echoBuffer = Buffer.alloc(4);
-        echoBuffer.writeUInt32LE(echo);
-        return echoBuffer;
+        return new BufferWriter()
+          .write({ type: 'UInt32LE', value: echo })
+          .buffer();
       },
     },
     [ServerPacketType.GET_ACTIVE_CHANNELS]: {
       fromBuffer(dataBuffer: Buffer) {
-        const activeChannelIndex = dataBuffer.readUInt8(0);
-        const joinedChannels = [
-          dataBuffer.readUInt32LE(1),
-          dataBuffer.readUInt32LE(5),
-          dataBuffer.readUInt32LE(9),
-        ].filter((channel) => channel !== 0); // zero means no channel assigned
+        const reader = new BufferReader(dataBuffer);
+        const activeChannelIndex = reader.read({ type: 'UInt8' });
+        const channels = reader
+          .readArray(() => reader.read({ type: 'UInt32LE' }))
+          .filter((channel) => channel !== 0); // zero = no channel assigned
 
-        const activeChannel = joinedChannels[activeChannelIndex];
-        const [channel1, channel2, channel3] = joinedChannels;
-        return { activeChannel, channel1, channel2, channel3 };
+        const activeChannel = channels[activeChannelIndex];
+        return { activeChannel, channels };
       },
-      toBuffer({ activeChannel, channel1, channel2, channel3 }) {
-        const joinedChannels = [channel1, channel2, channel3];
+      toBuffer({ activeChannel, channels }) {
         const activeChannelIndex = activeChannel
-          ? joinedChannels.indexOf(activeChannel)
+          ? channels.indexOf(activeChannel)
           : 0;
-
-        const activeChannelBuffer = Buffer.alloc(1);
-        activeChannelBuffer.writeUInt8(activeChannelIndex);
-        const joinedChannelBuffers = joinedChannels.map((channel) => {
-          const channelBuffer = Buffer.alloc(4);
-          channelBuffer.writeUInt32LE(channel ?? 0); // zero means no channel assigned
-          return channelBuffer;
-        });
-        return Buffer.concat([activeChannelBuffer, ...joinedChannelBuffers]);
+        return new BufferWriter()
+          .write({ type: 'UInt8', value: activeChannelIndex })
+          .writeArray(channels, (writer, channel) => {
+            writer.write({ type: 'UInt32LE', value: channel ?? 0 }); // zero = no channel assigned
+          })
+          .buffer();
       },
     },
     [ServerPacketType.YOU_DONT_EXIST]: {
@@ -971,7 +834,7 @@ export const packetDataParsers: {
         return {};
       },
       toBuffer() {
-        return Buffer.alloc(0);
+        return new BufferWriter().buffer();
       },
     },
     [ServerPacketType.LOG_IN_OK]: {
@@ -979,16 +842,20 @@ export const packetDataParsers: {
         return {};
       },
       toBuffer() {
-        return Buffer.alloc(0);
+        return new BufferWriter().buffer();
       },
     },
     [ServerPacketType.LOG_IN_NOT_OK]: {
       fromBuffer(dataBuffer: Buffer) {
-        const reason = dataBuffer.toString('ascii');
-        return { reason };
+        const reader = new BufferReader(dataBuffer);
+        return {
+          reason: reader.read({ type: 'String', encoding: 'ascii' }),
+        };
       },
       toBuffer({ reason }) {
-        return Buffer.from(reason, 'ascii');
+        return new BufferWriter()
+          .write({ type: 'String', value: reason, encoding: 'ascii' })
+          .buffer();
       },
     },
   },

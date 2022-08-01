@@ -1,23 +1,24 @@
+import { BufferReader } from 'easy-buffer';
 import { Packet } from '../lib/packet';
 
 describe('toBuffer()', () => {
   test('Handles packet with no data', () => {
     const packet = new Packet(123);
-    const buffer = packet.toBuffer();
+    const reader = new BufferReader(packet.toBuffer());
 
-    expect(buffer.byteLength).toBe(3); // type + length
-    expect(buffer.readUInt8(0)).toBe(123); // type
-    expect(buffer.readUInt16LE(1)).toBe(1); // length
+    expect(reader.bufferRemaining().length).toBe(3); // type + length
+    expect(reader.read({ type: 'UInt8' })).toBe(123); // type
+    expect(reader.read({ type: 'UInt16LE' })).toBe(1); // length
   });
 
   test('Handles packet with data', () => {
     const packet = new Packet(123, Buffer.from('test', 'ascii'));
-    const buffer = packet.toBuffer();
+    const reader = new BufferReader(packet.toBuffer());
 
-    expect(buffer.byteLength).toBe(7); // type + length + data
-    expect(buffer.readUInt8(0)).toBe(123); // type
-    expect(buffer.readUInt16LE(1)).toBe(5); // length
-    expect(buffer.toString('ascii', 3)).toBe('test'); // data
+    expect(reader.bufferRemaining().length).toBe(7); // type + length + data
+    expect(reader.read({ type: 'UInt8' })).toBe(123); // type
+    expect(reader.read({ type: 'UInt16LE' })).toBe(5); // length
+    expect(reader.read({ type: 'String', encoding: 'ascii' })).toBe('test'); // data
   });
 });
 
@@ -40,7 +41,7 @@ describe('fromBuffer()', () => {
     expect(packets[1].dataBuffer.toString('ascii')).toBe('BBB');
     expect(packets[2].type).toBe(30);
     expect(packets[2].dataBuffer.toString('ascii')).toBe('CCC');
-    expect(partial.byteLength).toBe(0);
+    expect(partial.length).toBe(0);
   });
 
   test('Handles buffer containing a partial packet (data omitted)', () => {
@@ -50,7 +51,7 @@ describe('fromBuffer()', () => {
     );
 
     expect(packets.length).toBe(0);
-    expect(partial.byteLength).toBe(3);
+    expect(partial.length).toBe(3);
     expect(partial.readUInt8(0)).toBe(123);
     expect(partial.readUInt16LE(1)).toBe(4);
   });
@@ -62,7 +63,7 @@ describe('fromBuffer()', () => {
     );
 
     expect(packets.length).toBe(0);
-    expect(partial.byteLength).toBe(1);
+    expect(partial.length).toBe(1);
     expect(partial.readUInt8(0)).toBe(123);
   });
 
@@ -80,7 +81,7 @@ describe('fromBuffer()', () => {
     expect(packets[0].dataBuffer.toString('ascii')).toBe('AAA');
     expect(packets[1].type).toBe(20);
     expect(packets[1].dataBuffer.toString('ascii')).toBe('BBB');
-    expect(partial.byteLength).toBe(3);
+    expect(partial.length).toBe(3);
     expect(partial.readUInt8(0)).toBe(30);
     expect(partial.readUInt16LE(1)).toBe(4);
   });

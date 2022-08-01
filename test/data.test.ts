@@ -92,7 +92,7 @@ test('Server packet data parsing', () => {
         magic: { current: 0, base: 0 },
       },
       skills: {
-        overall: { current: 70, base: 70 },
+        overall: { current: 101, base: 103 },
         attack: { current: 42, base: 42 },
         defense: { current: 43, base: 43 },
         harvesting: { current: 44, base: 44 },
@@ -143,8 +143,7 @@ test('Server packet data parsing', () => {
     [ServerPacketType.PING_REQUEST]: { echo: 321 },
     [ServerPacketType.GET_ACTIVE_CHANNELS]: {
       activeChannel: 80100,
-      channel1: 6,
-      channel2: 80100,
+      channels: [6, 80100],
     },
     [ServerPacketType.YOU_DONT_EXIST]: {},
     [ServerPacketType.LOG_IN_OK]: {},
