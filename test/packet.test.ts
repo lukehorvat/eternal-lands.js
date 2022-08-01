@@ -47,7 +47,7 @@ describe('fromBuffer()', () => {
   test('Handles buffer containing a partial packet (data omitted)', () => {
     const packet = new Packet(123, Buffer.from('AAA', 'ascii'));
     const { packets, partial } = Packet.fromBuffer(
-      packet.toBuffer().slice(0, 3) // Omit packet data
+      packet.toBuffer().subarray(0, 3) // Omit packet data
     );
 
     expect(packets.length).toBe(0);
@@ -59,7 +59,7 @@ describe('fromBuffer()', () => {
   test('Handles buffer containing a partial packet (length and data omitted)', () => {
     const packet = new Packet(123, Buffer.from('AAA', 'ascii'));
     const { packets, partial } = Packet.fromBuffer(
-      packet.toBuffer().slice(0, 1) // Omit packet length and data
+      packet.toBuffer().subarray(0, 1) // Omit packet length and data
     );
 
     expect(packets.length).toBe(0);
@@ -72,7 +72,7 @@ describe('fromBuffer()', () => {
       Buffer.concat([
         new Packet(10, Buffer.from('AAA', 'ascii')).toBuffer(),
         new Packet(20, Buffer.from('BBB', 'ascii')).toBuffer(),
-        new Packet(30, Buffer.from('CCC', 'ascii')).toBuffer().slice(0, 3), // Omit packet data
+        new Packet(30, Buffer.from('CCC', 'ascii')).toBuffer().subarray(0, 3), // Omit packet data
       ])
     );
 
