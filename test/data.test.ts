@@ -1,11 +1,11 @@
 import {
+  ClientPacket,
   ClientPacketData,
-  ClientPacketDataParsers,
   ClientPacketType,
 } from '../lib/data/client';
 import {
+  ServerPacket,
   ServerPacketData,
-  ServerPacketDataParsers,
   ServerPacketType,
 } from '../lib/data/server';
 import {
@@ -25,10 +25,14 @@ import {
   ChatChannel,
 } from '../lib/constants';
 
-test('Client packet data parsing', () => {
+test('Parsing complete and incomplete client packets', () => {
   const packetData: {
     [Type in ClientPacketType]: ClientPacketData[Type];
   } = {
+    [ClientPacketType.UNSUPPORTED]: {
+      type: 255,
+      data: Buffer.from([0x01, 0x02, 0x03]),
+    },
     [ClientPacketType.RAW_TEXT]: { message: 'test' },
     [ClientPacketType.PING]: { echo: 123 },
     [ClientPacketType.HEART_BEAT]: {},
@@ -41,19 +45,37 @@ test('Client packet data parsing', () => {
 
   (Object.values(ClientPacketType) as ClientPacketType[])
     .filter((value) => !isNaN(Number(value))) // TS enums... 🙈
-    .forEach((type) => {
-      const dataParser = ClientPacketDataParsers[type];
-      const data = packetData[type];
-      const dataBuffer = dataParser.toBuffer(data as any);
+    .map((type) => new ClientPacket(type, packetData[type]))
+    .forEach((_, index, arr) => {
+      const packets = arr.slice(0, index + 1);
+      const packetBuffers = packets.map((packet) => packet.toBuffer());
+      const lastPacketBuffer = packetBuffers.pop()!;
 
-      expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
+      for (let i = 0; i <= lastPacketBuffer.length; i++) {
+        const slicedLastPacketBuffer = lastPacketBuffer.subarray(0, i);
+        const { packets: parsedPackets, remainingBuffer } =
+          ClientPacket.fromBuffer(
+            Buffer.concat([...packetBuffers, slicedLastPacketBuffer])
+          );
+        if (slicedLastPacketBuffer.length < lastPacketBuffer.length) {
+          expect(parsedPackets).toEqual(packets.slice(0, packets.length - 1));
+          expect(remainingBuffer).toEqual(slicedLastPacketBuffer);
+        } else {
+          expect(parsedPackets).toEqual(packets);
+          expect(remainingBuffer.length).toBe(0);
+        }
+      }
     });
 });
 
-test('Server packet data parsing', () => {
+test('Parsing complete and incomplete server packets', () => {
   const packetData: {
     [Type in ServerPacketType]: ServerPacketData[Type];
   } = {
+    [ServerPacketType.UNSUPPORTED]: {
+      type: 255,
+      data: Buffer.from([0x01, 0x02, 0x03]),
+    },
     [ServerPacketType.RAW_TEXT]: {
       channel: ChatChannel.LOCAL,
       message: 'test',
@@ -156,11 +178,25 @@ test('Server packet data parsing', () => {
 
   (Object.values(ServerPacketType) as ServerPacketType[])
     .filter((value) => !isNaN(Number(value))) // TS enums... 🙈
-    .forEach((type) => {
-      const dataParser = ServerPacketDataParsers[type];
-      const data = packetData[type];
-      const dataBuffer = dataParser.toBuffer(data as any);
+    .map((type) => new ServerPacket(type, packetData[type]))
+    .forEach((_, index, arr) => {
+      const packets = arr.slice(0, index + 1);
+      const packetBuffers = packets.map((packet) => packet.toBuffer());
+      const lastPacketBuffer = packetBuffers.pop()!;
 
-      expect(dataParser.fromBuffer(dataBuffer)).toEqual(data);
+      for (let i = 0; i <= lastPacketBuffer.length; i++) {
+        const partialLastPacketBuffer = lastPacketBuffer.subarray(0, i);
+        const { packets: parsedPackets, remainingBuffer } =
+          ServerPacket.fromBuffer(
+            Buffer.concat([...packetBuffers, partialLastPacketBuffer])
+          );
+        if (partialLastPacketBuffer.length < lastPacketBuffer.length) {
+          expect(parsedPackets).toEqual(packets.slice(0, packets.length - 1));
+          expect(remainingBuffer).toEqual(partialLastPacketBuffer);
+        } else {
+          expect(parsedPackets).toEqual(packets);
+          expect(remainingBuffer.length).toBe(0);
+        }
+      }
     });
 });

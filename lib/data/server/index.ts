@@ -1,4 +1,12 @@
-import { PacketDataParser } from '../packets';
+import {
+  PacketData,
+  PacketDataParser,
+  PacketWithBufferedData,
+  PacketWithParsedData,
+  readPacketsFromBuffer,
+  writePacketsToBuffer,
+} from '../packets';
+import * as Unsupported from './unsupported';
 import * as RawText from './raw-text';
 import * as AddNewActor from './add-new-actor';
 import * as AddActorCommand from './add-actor-command';
@@ -18,6 +26,7 @@ import * as LogInOk from './log-in-ok';
 import * as LogInNotOk from './log-in-not-ok';
 
 export enum ServerPacketType {
+  UNSUPPORTED = -1,
   RAW_TEXT = 0,
   ADD_NEW_ACTOR = 1,
   ADD_ACTOR_COMMAND = 2,
@@ -37,8 +46,13 @@ export enum ServerPacketType {
   LOG_IN_NOT_OK = 251,
 }
 
-export interface ServerPacketData
-  extends Record<ServerPacketType, Record<string, any | never>> {
+type SupportedServerPacketType = Exclude<
+  ServerPacketType,
+  ServerPacketType.UNSUPPORTED
+>;
+
+export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
+  [ServerPacketType.UNSUPPORTED]: Unsupported.PacketData;
   [ServerPacketType.RAW_TEXT]: RawText.PacketData;
   [ServerPacketType.ADD_NEW_ACTOR]: AddNewActor.PacketData;
   [ServerPacketType.ADD_ACTOR_COMMAND]: AddActorCommand.PacketData;
@@ -59,7 +73,7 @@ export interface ServerPacketData
 }
 
 export const ServerPacketDataParsers: {
-  [Type in ServerPacketType]: PacketDataParser<ServerPacketData[Type]>;
+  [Type in SupportedServerPacketType]: PacketDataParser<ServerPacketData[Type]>;
 } = {
   [ServerPacketType.RAW_TEXT]: RawText.DataParser,
   [ServerPacketType.ADD_NEW_ACTOR]: AddNewActor.DataParser,
@@ -79,3 +93,51 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.LOG_IN_OK]: LogInOk.DataParser,
   [ServerPacketType.LOG_IN_NOT_OK]: LogInNotOk.DataParser,
 };
+
+export class ServerPacket<
+  Type extends ServerPacketType
+> extends PacketWithParsedData<Type, ServerPacketData[Type]> {
+  constructor(type: Type, data: ServerPacketData[Type]) {
+    super(type, data);
+
+    if (!(type in ServerPacketType)) {
+      throw new Error('Unsupported server packet type.');
+    }
+  }
+
+  toBuffer(): Buffer {
+    return writePacketsToBuffer([this], (packet) => {
+      return ServerPacket.isType(packet, ServerPacketType.UNSUPPORTED)
+        ? new PacketWithBufferedData(packet.data.type, packet.data.data)
+        : new PacketWithBufferedData(
+            packet.type,
+            ServerPacketDataParsers[
+              packet.type as SupportedServerPacketType
+            ].toBuffer(packet.data as any /* TODO: Don't use `any`. */)
+          );
+    });
+  }
+
+  static fromBuffer(buffer: Buffer) {
+    return readPacketsFromBuffer(buffer, (packet: PacketWithBufferedData) => {
+      return packet.type in ServerPacketType
+        ? new ServerPacket(
+            packet.type as SupportedServerPacketType,
+            ServerPacketDataParsers[
+              packet.type as SupportedServerPacketType
+            ].fromBuffer(packet.dataBuffer)
+          )
+        : new ServerPacket(ServerPacketType.UNSUPPORTED, {
+            type: packet.type,
+            data: packet.dataBuffer,
+          });
+    });
+  }
+
+  static isType<Type extends ServerPacketType>(
+    packet: ServerPacket<ServerPacketType>,
+    type: Type
+  ): packet is ServerPacket<Type> {
+    return packet.type === type;
+  }
+}

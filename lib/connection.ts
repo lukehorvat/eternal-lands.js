@@ -1,6 +1,7 @@
 import { Socket } from 'net';
-import { ClientPacketEventEmitter, ServerPacketEventEmitter } from './events';
-import { Packet } from './data/packets';
+import Emittery from 'emittery';
+import { ServerPacket, ServerPacketData } from './data/server';
+import { ClientPacket, ClientPacketData } from './data/client';
 import { SERVER_HOST, ServerPort } from './constants';
 
 export class Connection {
@@ -9,8 +10,8 @@ export class Connection {
   private onDisconnect?: () => void;
   private socket: Socket;
 
-  client: ClientPacketEventEmitter;
-  server: ServerPacketEventEmitter;
+  client: Emittery<ClientPacketData>;
+  server: Emittery<ServerPacketData>;
 
   constructor({
     host = SERVER_HOST,
@@ -25,10 +26,8 @@ export class Connection {
     this.port = port;
     this.onDisconnect = onDisconnect;
     this.socket = new Socket();
-    this.client = new ClientPacketEventEmitter((packet) => {
-      this.socket.write(packet.toBuffer());
-    });
-    this.server = new ServerPacketEventEmitter();
+    this.client = new Emittery<ClientPacketData>();
+    this.server = new Emittery<ServerPacketData>();
   }
 
   connect(): Promise<void> {
@@ -39,16 +38,30 @@ export class Connection {
         .on('error', reject)
         .on('close', () => this.onDisconnect?.())
         .on('data', (buffer) => {
-          const { packets, partial } = Packet.fromBuffer(
+          const { packets, remainingBuffer } = ServerPacket.fromBuffer(
             // Prepend any partial (overflow/underflow) packet data received previously.
             Buffer.concat([previousBuffer, buffer])
           );
 
           packets.forEach((packet) => {
-            this.server.receivePacket(packet);
+            this.server.emit(packet.type, packet.data);
           });
 
-          previousBuffer = partial;
+          previousBuffer = remainingBuffer;
+        })
+        .on('connect', () => {
+          // TODO: Would be better to send packet on client.emit() so that
+          // client.on() and client.onAny() (which userland might use) are
+          // only triggered after a packet has been successfully sent.
+          this.client.onAny((type, data) => {
+            return new Promise((resolve, reject) => {
+              const packet = new ClientPacket(type, data);
+              this.socket.write(packet.toBuffer(), (err) => {
+                if (err) return reject(err);
+                resolve();
+              });
+            });
+          });
         })
         .connect(this.port, this.host, resolve);
     });

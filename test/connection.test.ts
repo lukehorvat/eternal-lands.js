@@ -1,8 +1,7 @@
 import { Socket, Server, createServer } from 'net';
 import { Connection } from '../lib/connection';
-import { ClientPacketDataParsers, ClientPacketType } from '../lib/data/client';
-import { ServerPacketDataParsers, ServerPacketType } from '../lib/data/server';
-import { Packet } from '../lib/data/packets';
+import { ClientPacket, ClientPacketType } from '../lib/data/client';
+import { ServerPacket, ServerPacketType } from '../lib/data/server';
 
 let server: MockELServer;
 let connection: Connection;
@@ -23,6 +22,21 @@ afterEach(() => {
 test('Connects, sends, and receives packets', async () => {
   await server.start();
   await connection.connect();
+
+  connection.client.emit(ClientPacketType.LOG_IN, {
+    username: 'Test',
+    password: 'incorrect_password',
+  });
+  const { reason } = await connection.server.once(
+    ServerPacketType.LOG_IN_NOT_OK
+  );
+  expect(reason).toBe('Wrong password.');
+
+  connection.client.emit(ClientPacketType.LOG_IN, {
+    username: 'Test',
+    password: 'correct_password',
+  });
+  await connection.server.once(ServerPacketType.LOG_IN_OK);
 
   connection.client.emit(ClientPacketType.PING, { echo: 123 });
   const { echo } = await connection.server.once(ServerPacketType.PONG);
@@ -58,32 +72,55 @@ class MockELServer {
   }
 
   private onClientConnected(socket: Socket) {
+    let previousBuffer = Buffer.alloc(0);
+
     socket.on('data', (buffer) => {
-      const { packets } = Packet.fromBuffer(buffer);
+      const { packets, remainingBuffer } = ClientPacket.fromBuffer(
+        // Prepend any partial (overflow/underflow) packet data received previously.
+        Buffer.concat([previousBuffer, buffer])
+      );
 
       packets.forEach((packet) => {
         this.onPacketReceived(socket, packet);
       });
+
+      previousBuffer = remainingBuffer;
     });
   }
 
-  private onPacketReceived(socket: Socket, packet: Packet) {
-    if (packet.type === ClientPacketType.PING) {
-      const { echo } = ClientPacketDataParsers[
-        ClientPacketType.PING
-      ].fromBuffer(packet.dataBuffer);
-
+  private onPacketReceived<Type extends ClientPacketType>(
+    socket: Socket,
+    packet: ClientPacket<Type>
+  ) {
+    if (ClientPacket.isType(packet, ClientPacketType.LOG_IN)) {
+      if (
+        packet.data.username === 'Test' &&
+        packet.data.password === 'correct_password'
+      ) {
+        this.sendPacket(
+          socket,
+          new ServerPacket(ServerPacketType.LOG_IN_OK, {})
+        );
+      } else {
+        this.sendPacket(
+          socket,
+          new ServerPacket(ServerPacketType.LOG_IN_NOT_OK, {
+            reason: 'Wrong password.',
+          })
+        );
+      }
+    } else if (ClientPacket.isType(packet, ClientPacketType.PING)) {
       this.sendPacket(
         socket,
-        new Packet(
-          ServerPacketType.PONG,
-          ServerPacketDataParsers[ServerPacketType.PONG].toBuffer({ echo })
-        )
+        new ServerPacket(ServerPacketType.PONG, { echo: packet.data.echo })
       );
     }
   }
 
-  private sendPacket(socket: Socket, packet: Packet) {
+  private sendPacket<Type extends ServerPacketType>(
+    socket: Socket,
+    packet: ServerPacket<Type>
+  ) {
     socket.write(packet.toBuffer());
   }
 }
