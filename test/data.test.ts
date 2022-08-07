@@ -149,6 +149,14 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.INVENTORY_ITEM_TEXT]: {
       text: `You can't wear this item!`,
     },
+    [ServerPacketType.GET_ACTOR_DAMAGE]: {
+      actorId: 123,
+      damageAmount: 46,
+    },
+    [ServerPacketType.GET_ACTOR_HEAL]: {
+      actorId: 456,
+      healAmount: 218,
+    },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
       id: 42,
       xPos: 100,
