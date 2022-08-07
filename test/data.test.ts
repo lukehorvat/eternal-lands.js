@@ -160,6 +160,7 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]: {
       position: 9,
     },
+    [ServerPacketType.CLOSE_BAG]: {},
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,

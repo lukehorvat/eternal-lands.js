@@ -21,6 +21,7 @@ import * as HereYourInventory from './here-your-inventory';
 import * as InventoryItemText from './inventory-item-text';
 import * as GetNewInventoryItem from './get-new-inventory-item';
 import * as RemoveItemFromInventory from './remove-item-from-inventory';
+import * as CloseBag from './close-bag';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
 import * as SendPartialStat from './send-partial-stat';
@@ -47,6 +48,7 @@ export enum ServerPacketType {
   INVENTORY_ITEM_TEXT = 20,
   GET_NEW_INVENTORY_ITEM = 21,
   REMOVE_ITEM_FROM_INVENTORY = 22,
+  CLOSE_BAG = 26,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
   SEND_PARTIAL_STAT = 49,
@@ -79,6 +81,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.PacketData;
   [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.PacketData;
   [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]: RemoveItemFromInventory.PacketData;
+  [ServerPacketType.CLOSE_BAG]: CloseBag.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.PacketData;
@@ -108,6 +111,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.DataParser,
   [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]:
     RemoveItemFromInventory.DataParser,
+  [ServerPacketType.CLOSE_BAG]: CloseBag.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.DataParser,
