@@ -203,6 +203,12 @@ test('Parsing complete and incomplete server packets', () => {
       y: 159,
       bagId: 1,
     },
+    [ServerPacketType.GET_BAGS_LIST]: {
+      bags: [
+        { x: 266, y: 61, bagId: 0 },
+        { x: 268, y: 62, bagId: 1 },
+      ],
+    },
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
     },
