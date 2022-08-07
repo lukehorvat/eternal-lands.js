@@ -146,6 +146,9 @@ test('Parsing complete and incomplete server packets', () => {
         { imageId: 59, quantity: 36, position: 3, flags: 6, id: 40 },
       ],
     },
+    [ServerPacketType.INVENTORY_ITEM_TEXT]: {
+      text: `You can't wear this item!`,
+    },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
       id: 42,
       xPos: 100,
