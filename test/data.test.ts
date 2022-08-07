@@ -161,6 +161,9 @@ test('Parsing complete and incomplete server packets', () => {
       position: 9,
     },
     [ServerPacketType.CLOSE_BAG]: {},
+    [ServerPacketType.DESTROY_BAG]: {
+      bagId: 2,
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,
