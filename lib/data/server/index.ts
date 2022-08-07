@@ -19,6 +19,7 @@ import * as Pong from './pong';
 import * as HereYourStats from './here-your-stats';
 import * as HereYourInventory from './here-your-inventory';
 import * as InventoryItemText from './inventory-item-text';
+import * as GetNewInventoryItem from './get-new-inventory-item';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
 import * as SendPartialStat from './send-partial-stat';
@@ -43,6 +44,7 @@ export enum ServerPacketType {
   HERE_YOUR_STATS = 18,
   HERE_YOUR_INVENTORY = 19,
   INVENTORY_ITEM_TEXT = 20,
+  GET_NEW_INVENTORY_ITEM = 21,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
   SEND_PARTIAL_STAT = 49,
@@ -73,6 +75,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.PacketData;
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.PacketData;
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.PacketData;
+  [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.PacketData;
@@ -99,6 +102,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.DataParser,
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.DataParser,
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.DataParser,
+  [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.DataParser,

@@ -150,6 +150,13 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.INVENTORY_ITEM_TEXT]: {
       text: `You can't wear this item!`,
     },
+    [ServerPacketType.GET_NEW_INVENTORY_ITEM]: {
+      imageId: 473,
+      quantity: 154,
+      position: 1,
+      flags: 6,
+      id: 719,
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,
