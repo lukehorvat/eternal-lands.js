@@ -25,6 +25,7 @@ import * as HereYourGroundItems from './here-your-ground-items';
 import * as GetNewGroundItem from './get-new-ground-item';
 import * as RemoveItemFromGround from './remove-item-from-ground';
 import * as CloseBag from './close-bag';
+import * as GetNewBag from './get-new-bag';
 import * as DestroyBag from './destroy-bag';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
@@ -56,6 +57,7 @@ export enum ServerPacketType {
   GET_NEW_GROUND_ITEM = 24,
   REMOVE_ITEM_FROM_GROUND = 25,
   CLOSE_BAG = 26,
+  GET_NEW_BAG = 27,
   DESTROY_BAG = 29,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
@@ -93,6 +95,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.GET_NEW_GROUND_ITEM]: GetNewGroundItem.PacketData;
   [ServerPacketType.REMOVE_ITEM_FROM_GROUND]: RemoveItemFromGround.PacketData;
   [ServerPacketType.CLOSE_BAG]: CloseBag.PacketData;
+  [ServerPacketType.GET_NEW_BAG]: GetNewBag.PacketData;
   [ServerPacketType.DESTROY_BAG]: DestroyBag.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
@@ -127,6 +130,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.GET_NEW_GROUND_ITEM]: GetNewGroundItem.DataParser,
   [ServerPacketType.REMOVE_ITEM_FROM_GROUND]: RemoveItemFromGround.DataParser,
   [ServerPacketType.CLOSE_BAG]: CloseBag.DataParser,
+  [ServerPacketType.GET_NEW_BAG]: GetNewBag.DataParser,
   [ServerPacketType.DESTROY_BAG]: DestroyBag.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,

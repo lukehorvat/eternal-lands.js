@@ -34,14 +34,24 @@ test('Parsing complete and incomplete client packets', () => {
       type: 255,
       data: Buffer.from([0x01, 0x02, 0x03]),
     },
-    [ClientPacketType.RAW_TEXT]: { message: 'test' },
-    [ClientPacketType.PING]: { echo: 123 },
+    [ClientPacketType.RAW_TEXT]: {
+      message: 'test',
+    },
+    [ClientPacketType.PING]: {
+      echo: 123,
+    },
     [ClientPacketType.HEART_BEAT]: {},
     [ClientPacketType.LOCATE_ME]: {},
-    [ClientPacketType.TRADE_WITH]: { actorId: 42 },
-    [ClientPacketType.PING_RESPONSE]: { echo: 321 },
-    [ClientPacketType.PING_RESPONSE]: { echo: 321 },
-    [ClientPacketType.LOG_IN]: { username: 'foo', password: 'bar' },
+    [ClientPacketType.TRADE_WITH]: {
+      actorId: 42,
+    },
+    [ClientPacketType.PING_RESPONSE]: {
+      echo: 321,
+    },
+    [ClientPacketType.LOG_IN]: {
+      username: 'foo',
+      password: 'bar',
+    },
   };
 
   (Object.values(ClientPacketType) as ClientPacketType[])
@@ -97,12 +107,24 @@ test('Parsing complete and incomplete server packets', () => {
       actorId: 42,
       command: ActorCommand.MOVE_NW,
     },
-    [ServerPacketType.YOU_ARE]: { actorId: 42 },
-    [ServerPacketType.SYNC_CLOCK]: { serverTimestamp: 123456789 },
-    [ServerPacketType.NEW_MINUTE]: { minute: 138 },
-    [ServerPacketType.REMOVE_ACTOR]: { actorId: 42 },
-    [ServerPacketType.CHANGE_MAP]: { mapFilePath: './maps/startmap.elm' },
-    [ServerPacketType.PONG]: { echo: 123 },
+    [ServerPacketType.YOU_ARE]: {
+      actorId: 42,
+    },
+    [ServerPacketType.SYNC_CLOCK]: {
+      serverTimestamp: 123456789,
+    },
+    [ServerPacketType.NEW_MINUTE]: {
+      minute: 138,
+    },
+    [ServerPacketType.REMOVE_ACTOR]: {
+      actorId: 42,
+    },
+    [ServerPacketType.CHANGE_MAP]: {
+      mapFilePath: './maps/startmap.elm',
+    },
+    [ServerPacketType.PONG]: {
+      echo: 123,
+    },
     [ServerPacketType.HERE_YOUR_STATS]: {
       attributes: {
         physique: { current: 24, base: 24 },
@@ -175,6 +197,11 @@ test('Parsing complete and incomplete server packets', () => {
       position: 4,
     },
     [ServerPacketType.CLOSE_BAG]: {},
+    [ServerPacketType.GET_NEW_BAG]: {
+      x: 134,
+      y: 159,
+      bagId: 1,
+    },
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
     },
@@ -212,14 +239,18 @@ test('Parsing complete and incomplete server packets', () => {
       name: 'Player',
       guild: 'TEST',
     },
-    [ServerPacketType.PING_REQUEST]: { echo: 321 },
+    [ServerPacketType.PING_REQUEST]: {
+      echo: 321,
+    },
     [ServerPacketType.GET_ACTIVE_CHANNELS]: {
       activeChannel: 80100,
       channels: [6, 80100],
     },
     [ServerPacketType.YOU_DONT_EXIST]: {},
     [ServerPacketType.LOG_IN_OK]: {},
-    [ServerPacketType.LOG_IN_NOT_OK]: { reason: 'Wrong password!' },
+    [ServerPacketType.LOG_IN_NOT_OK]: {
+      reason: 'Wrong password!',
+    },
   };
 
   (Object.values(ServerPacketType) as ServerPacketType[])
