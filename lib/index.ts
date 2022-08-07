@@ -1,11 +1,10 @@
-import { ClientPacketType } from './data/client';
-import { ServerPacketType } from './data/server';
-
-export { Connection as ELPackets } from './connection';
-
+export { Connection as ELConnection } from './connection';
 export * as ELConstants from './constants';
-
-export const ELPacketType = {
-  client: ClientPacketType,
-  server: ServerPacketType,
-};
+export {
+  ClientPacket as ELClientPacketPacket,
+  ClientPacketType as ELClientPacketType,
+} from './data/client';
+export {
+  ServerPacket as ELServerPacket,
+  ServerPacketType as ELServerPacketType,
+} from './data/server';

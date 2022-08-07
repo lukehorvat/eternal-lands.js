@@ -58,10 +58,12 @@ test('Parsing complete and incomplete client packets', () => {
             Buffer.concat([...packetBuffers, slicedLastPacketBuffer])
           );
         if (slicedLastPacketBuffer.length < lastPacketBuffer.length) {
-          expect(parsedPackets).toEqual(packets.slice(0, packets.length - 1));
-          expect(remainingBuffer).toEqual(slicedLastPacketBuffer);
+          expect(parsedPackets).toStrictEqual(
+            packets.slice(0, packets.length - 1)
+          );
+          expect(remainingBuffer).toStrictEqual(slicedLastPacketBuffer);
         } else {
-          expect(parsedPackets).toEqual(packets);
+          expect(parsedPackets).toStrictEqual(packets);
           expect(remainingBuffer.length).toBe(0);
         }
       }
@@ -185,16 +187,18 @@ test('Parsing complete and incomplete server packets', () => {
       const lastPacketBuffer = packetBuffers.pop()!;
 
       for (let i = 0; i <= lastPacketBuffer.length; i++) {
-        const partialLastPacketBuffer = lastPacketBuffer.subarray(0, i);
+        const slicedLastPacketBuffer = lastPacketBuffer.subarray(0, i);
         const { packets: parsedPackets, remainingBuffer } =
           ServerPacket.fromBuffer(
-            Buffer.concat([...packetBuffers, partialLastPacketBuffer])
+            Buffer.concat([...packetBuffers, slicedLastPacketBuffer])
           );
-        if (partialLastPacketBuffer.length < lastPacketBuffer.length) {
-          expect(parsedPackets).toEqual(packets.slice(0, packets.length - 1));
-          expect(remainingBuffer).toEqual(partialLastPacketBuffer);
+        if (slicedLastPacketBuffer.length < lastPacketBuffer.length) {
+          expect(parsedPackets).toStrictEqual(
+            packets.slice(0, packets.length - 1)
+          );
+          expect(remainingBuffer).toStrictEqual(slicedLastPacketBuffer);
         } else {
-          expect(parsedPackets).toEqual(packets);
+          expect(parsedPackets).toStrictEqual(packets);
           expect(remainingBuffer.length).toBe(0);
         }
       }
