@@ -171,6 +171,9 @@ test('Parsing complete and incomplete server packets', () => {
       quantity: 3,
       position: 1,
     },
+    [ServerPacketType.REMOVE_ITEM_FROM_GROUND]: {
+      position: 4,
+    },
     [ServerPacketType.CLOSE_BAG]: {},
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
