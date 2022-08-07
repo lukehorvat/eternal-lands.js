@@ -21,6 +21,7 @@ import * as HereYourInventory from './here-your-inventory';
 import * as InventoryItemText from './inventory-item-text';
 import * as GetNewInventoryItem from './get-new-inventory-item';
 import * as RemoveItemFromInventory from './remove-item-from-inventory';
+import * as HereYourGroundItems from './here-your-ground-items';
 import * as CloseBag from './close-bag';
 import * as DestroyBag from './destroy-bag';
 import * as GetActorDamage from './get-actor-damage';
@@ -49,6 +50,7 @@ export enum ServerPacketType {
   INVENTORY_ITEM_TEXT = 20,
   GET_NEW_INVENTORY_ITEM = 21,
   REMOVE_ITEM_FROM_INVENTORY = 22,
+  HERE_YOUR_GROUND_ITEMS = 23,
   CLOSE_BAG = 26,
   DESTROY_BAG = 29,
   GET_ACTOR_DAMAGE = 47,
@@ -83,6 +85,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.PacketData;
   [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.PacketData;
   [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]: RemoveItemFromInventory.PacketData;
+  [ServerPacketType.HERE_YOUR_GROUND_ITEMS]: HereYourGroundItems.PacketData;
   [ServerPacketType.CLOSE_BAG]: CloseBag.PacketData;
   [ServerPacketType.DESTROY_BAG]: DestroyBag.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
@@ -114,6 +117,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.GET_NEW_INVENTORY_ITEM]: GetNewInventoryItem.DataParser,
   [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]:
     RemoveItemFromInventory.DataParser,
+  [ServerPacketType.HERE_YOUR_GROUND_ITEMS]: HereYourGroundItems.DataParser,
   [ServerPacketType.CLOSE_BAG]: CloseBag.DataParser,
   [ServerPacketType.DESTROY_BAG]: DestroyBag.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,

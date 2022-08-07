@@ -160,6 +160,12 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]: {
       position: 9,
     },
+    [ServerPacketType.HERE_YOUR_GROUND_ITEMS]: {
+      items: [
+        { imageId: 77, quantity: 2, position: 0 },
+        { imageId: 59, quantity: 8, position: 1 },
+      ],
+    },
     [ServerPacketType.CLOSE_BAG]: {},
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
