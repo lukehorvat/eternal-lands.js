@@ -166,6 +166,11 @@ test('Parsing complete and incomplete server packets', () => {
         { imageId: 59, quantity: 8, position: 1 },
       ],
     },
+    [ServerPacketType.GET_NEW_GROUND_ITEM]: {
+      imageId: 86,
+      quantity: 3,
+      position: 1,
+    },
     [ServerPacketType.CLOSE_BAG]: {},
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
