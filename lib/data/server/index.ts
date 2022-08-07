@@ -15,6 +15,7 @@ import * as SyncClock from './sync-clock';
 import * as NewMinute from './new-minute';
 import * as RemoveActor from './remove-actor';
 import * as ChangeMap from './change-map';
+import * as KillAllActors from './kill-all-actors';
 import * as Pong from './pong';
 import * as HereYourStats from './here-your-stats';
 import * as HereYourInventory from './here-your-inventory';
@@ -47,6 +48,7 @@ export enum ServerPacketType {
   NEW_MINUTE = 5,
   REMOVE_ACTOR = 6,
   CHANGE_MAP = 7,
+  KILL_ALL_ACTORS = 9,
   PONG = 11,
   HERE_YOUR_STATS = 18,
   HERE_YOUR_INVENTORY = 19,
@@ -85,6 +87,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.NEW_MINUTE]: NewMinute.PacketData;
   [ServerPacketType.REMOVE_ACTOR]: RemoveActor.PacketData;
   [ServerPacketType.CHANGE_MAP]: ChangeMap.PacketData;
+  [ServerPacketType.KILL_ALL_ACTORS]: KillAllActors.PacketData;
   [ServerPacketType.PONG]: Pong.PacketData;
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.PacketData;
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.PacketData;
@@ -119,6 +122,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.NEW_MINUTE]: NewMinute.DataParser,
   [ServerPacketType.REMOVE_ACTOR]: RemoveActor.DataParser,
   [ServerPacketType.CHANGE_MAP]: ChangeMap.DataParser,
+  [ServerPacketType.KILL_ALL_ACTORS]: KillAllActors.DataParser,
   [ServerPacketType.PONG]: Pong.DataParser,
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.DataParser,
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.DataParser,

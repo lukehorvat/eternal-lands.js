@@ -122,6 +122,7 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.CHANGE_MAP]: {
       mapFilePath: './maps/startmap.elm',
     },
+    [ServerPacketType.KILL_ALL_ACTORS]: {},
     [ServerPacketType.PONG]: {
       echo: 123,
     },
