@@ -21,6 +21,7 @@ import * as HereYourInventory from './here-your-inventory';
 import * as InventoryItemText from './inventory-item-text';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
+import * as SendPartialStat from './send-partial-stat';
 import * as AddNewEnhancedActor from './add-new-enhanced-actor';
 import * as PingRequest from './ping-request';
 import * as GetActiveChannels from './get-active-channels';
@@ -44,6 +45,7 @@ export enum ServerPacketType {
   INVENTORY_ITEM_TEXT = 20,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
+  SEND_PARTIAL_STAT = 49,
   ADD_NEW_ENHANCED_ACTOR = 51,
   PING_REQUEST = 60,
   GET_ACTIVE_CHANNELS = 71,
@@ -73,6 +75,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
+  [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.PacketData;
   [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: AddNewEnhancedActor.PacketData;
   [ServerPacketType.PING_REQUEST]: PingRequest.PacketData;
   [ServerPacketType.GET_ACTIVE_CHANNELS]: GetActiveChannels.PacketData;
@@ -98,6 +101,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
+  [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.DataParser,
   [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: AddNewEnhancedActor.DataParser,
   [ServerPacketType.PING_REQUEST]: PingRequest.DataParser,
   [ServerPacketType.GET_ACTIVE_CHANNELS]: GetActiveChannels.DataParser,

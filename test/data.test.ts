@@ -23,6 +23,7 @@ import {
   ActorType,
   ActorWeapon,
   ChatChannel,
+  StatType,
 } from '../lib/constants';
 
 test('Parsing complete and incomplete client packets', () => {
@@ -156,6 +157,10 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.GET_ACTOR_HEAL]: {
       actorId: 456,
       healAmount: 218,
+    },
+    [ServerPacketType.SEND_PARTIAL_STAT]: {
+      statType: StatType.FOOD_LEVEL,
+      statValue: -16,
     },
     [ServerPacketType.ADD_NEW_ENHANCED_ACTOR]: {
       id: 42,
