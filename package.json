@@ -19,7 +19,7 @@
     "example-login": "ts-node examples/login"
   },
   "dependencies": {
-    "easy-buffer": "1.1.0",
+    "easy-buffer": "1.1.1",
     "emittery": "0.11.0"
   },
   "devDependencies": {

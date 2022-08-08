@@ -123,8 +123,24 @@ test('Parsing complete and incomplete server packets', () => {
       mapFilePath: './maps/startmap.elm',
     },
     [ServerPacketType.KILL_ALL_ACTORS]: {},
+    [ServerPacketType.GET_TELEPORTERS_LIST]: {
+      teleporters: [
+        { x: 509, y: 147 },
+        { x: 84, y: 520 },
+        { x: 143, y: 259 },
+        { x: 484, y: 518 },
+      ],
+    },
     [ServerPacketType.PONG]: {
       echo: 123,
+    },
+    [ServerPacketType.TELEPORT_IN]: {
+      x: 150,
+      y: 555,
+    },
+    [ServerPacketType.TELEPORT_OUT]: {
+      x: 63,
+      y: 26,
     },
     [ServerPacketType.HERE_YOUR_STATS]: {
       attributes: {

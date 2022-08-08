@@ -16,7 +16,10 @@ import * as NewMinute from './new-minute';
 import * as RemoveActor from './remove-actor';
 import * as ChangeMap from './change-map';
 import * as KillAllActors from './kill-all-actors';
+import * as GetTeleportersList from './get-teleporters-list';
 import * as Pong from './pong';
+import * as TeleportIn from './teleport-in';
+import * as TeleportOut from './teleport-out';
 import * as HereYourStats from './here-your-stats';
 import * as HereYourInventory from './here-your-inventory';
 import * as InventoryItemText from './inventory-item-text';
@@ -50,7 +53,10 @@ export enum ServerPacketType {
   REMOVE_ACTOR = 6,
   CHANGE_MAP = 7,
   KILL_ALL_ACTORS = 9,
+  GET_TELEPORTERS_LIST = 10,
   PONG = 11,
+  TELEPORT_IN = 12,
+  TELEPORT_OUT = 13,
   HERE_YOUR_STATS = 18,
   HERE_YOUR_INVENTORY = 19,
   INVENTORY_ITEM_TEXT = 20,
@@ -90,7 +96,10 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.REMOVE_ACTOR]: RemoveActor.PacketData;
   [ServerPacketType.CHANGE_MAP]: ChangeMap.PacketData;
   [ServerPacketType.KILL_ALL_ACTORS]: KillAllActors.PacketData;
+  [ServerPacketType.GET_TELEPORTERS_LIST]: GetTeleportersList.PacketData;
   [ServerPacketType.PONG]: Pong.PacketData;
+  [ServerPacketType.TELEPORT_IN]: TeleportIn.PacketData;
+  [ServerPacketType.TELEPORT_OUT]: TeleportOut.PacketData;
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.PacketData;
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.PacketData;
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.PacketData;
@@ -126,7 +135,10 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.REMOVE_ACTOR]: RemoveActor.DataParser,
   [ServerPacketType.CHANGE_MAP]: ChangeMap.DataParser,
   [ServerPacketType.KILL_ALL_ACTORS]: KillAllActors.DataParser,
+  [ServerPacketType.GET_TELEPORTERS_LIST]: GetTeleportersList.DataParser,
   [ServerPacketType.PONG]: Pong.DataParser,
+  [ServerPacketType.TELEPORT_IN]: TeleportIn.DataParser,
+  [ServerPacketType.TELEPORT_OUT]: TeleportOut.DataParser,
   [ServerPacketType.HERE_YOUR_STATS]: HereYourStats.DataParser,
   [ServerPacketType.HERE_YOUR_INVENTORY]: HereYourInventory.DataParser,
   [ServerPacketType.INVENTORY_ITEM_TEXT]: InventoryItemText.DataParser,
