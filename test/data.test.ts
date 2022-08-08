@@ -228,6 +228,9 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.DESTROY_BAG]: {
       bagId: 2,
     },
+    [ServerPacketType.NPC_TEXT]: {
+      text: 'What would you like to buy?',
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,
