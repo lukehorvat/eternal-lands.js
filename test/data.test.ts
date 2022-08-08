@@ -231,6 +231,25 @@ test('Parsing complete and incomplete server packets', () => {
     [ServerPacketType.NPC_TEXT]: {
       text: 'What would you like to buy?',
     },
+    [ServerPacketType.NPC_OPTIONS_LIST]: {
+      options: [
+        {
+          responseText: 'Buy',
+          responseId: 1,
+          toActorId: 3024,
+        },
+        {
+          responseText: 'Sell',
+          responseId: 2,
+          toActorId: 3024,
+        },
+        {
+          responseText: 'Just passing by...',
+          responseId: 3,
+          toActorId: 3024,
+        },
+      ],
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,
