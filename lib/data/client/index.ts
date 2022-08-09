@@ -19,6 +19,7 @@ import * as HeartBeat from './heart-beat';
 import * as LocateMe from './locate-me';
 import * as UseMapObject from './use-map-object';
 import * as LookAtInventoryItem from './look-at-inventory-item';
+import * as MoveInventoryItem from './move-inventory-item';
 import * as Harvest from './harvest';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
@@ -38,6 +39,7 @@ export enum ClientPacketType {
   LOCATE_ME = 15,
   USE_MAP_OBJECT = 16,
   LOOK_AT_INVENTORY_ITEM = 19,
+  MOVE_INVENTORY_ITEM = 20,
   HARVEST = 21,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
@@ -63,6 +65,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.LOCATE_ME]: LocateMe.Data;
   [ClientPacketType.USE_MAP_OBJECT]: UseMapObject.Data;
   [ClientPacketType.LOOK_AT_INVENTORY_ITEM]: LookAtInventoryItem.Data;
+  [ClientPacketType.MOVE_INVENTORY_ITEM]: MoveInventoryItem.Data;
   [ClientPacketType.HARVEST]: Harvest.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
@@ -84,6 +87,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.LOCATE_ME]: LocateMe.DataParser,
   [ClientPacketType.USE_MAP_OBJECT]: UseMapObject.DataParser,
   [ClientPacketType.LOOK_AT_INVENTORY_ITEM]: LookAtInventoryItem.DataParser,
+  [ClientPacketType.MOVE_INVENTORY_ITEM]: MoveInventoryItem.DataParser,
   [ClientPacketType.HARVEST]: Harvest.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,

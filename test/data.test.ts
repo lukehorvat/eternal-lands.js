@@ -65,6 +65,10 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.LOOK_AT_INVENTORY_ITEM]: {
       position: 27,
     },
+    [ClientPacketType.MOVE_INVENTORY_ITEM]: {
+      positionFrom: 7,
+      positionTo: 12,
+    },
     [ClientPacketType.HARVEST]: {
       objectId: 1859,
     },
