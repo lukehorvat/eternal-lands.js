@@ -254,6 +254,14 @@ test('Parsing complete and incomplete server packets', () => {
       npcName: 'Xaquelina',
       npcPortrait: 60,
     },
+    [ServerPacketType.GET_TRADE_OBJECT]: {
+      imageId: 316,
+      quantity: 120,
+      position: 1,
+      id: 505,
+      isFromStorage: false,
+      isFromYou: true,
+    },
     [ServerPacketType.GET_TRADE_ACCEPT]: {
       youAccepted: true,
     },

@@ -35,6 +35,7 @@ import * as DestroyBag from './destroy-bag';
 import * as NpcText from './npc-text';
 import * as NpcOptionsList from './npc-options-list';
 import * as SendNpcInfo from './send-npc-info';
+import * as GetTradeObject from './get-trade-object';
 import * as GetTradeAccept from './get-trade-accept';
 import * as GetTradeReject from './get-trade-reject';
 import * as GetTradeExit from './get-trade-exit';
@@ -80,6 +81,7 @@ export enum ServerPacketType {
   NPC_TEXT = 30,
   NPC_OPTIONS_LIST = 31,
   SEND_NPC_INFO = 33,
+  GET_TRADE_OBJECT = 35,
   GET_TRADE_ACCEPT = 36,
   GET_TRADE_REJECT = 37,
   GET_TRADE_EXIT = 38,
@@ -131,6 +133,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.NPC_TEXT]: NpcText.PacketData;
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.PacketData;
   [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.PacketData;
+  [ServerPacketType.GET_TRADE_OBJECT]: GetTradeObject.PacketData;
   [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.PacketData;
   [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.PacketData;
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.PacketData;
@@ -179,6 +182,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.NPC_TEXT]: NpcText.DataParser,
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.DataParser,
   [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.DataParser,
+  [ServerPacketType.GET_TRADE_OBJECT]: GetTradeObject.DataParser,
   [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.DataParser,
   [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.DataParser,
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.DataParser,
