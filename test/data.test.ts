@@ -261,6 +261,17 @@ test('Parsing complete and incomplete server packets', () => {
       youRejected: false,
     },
     [ServerPacketType.GET_TRADE_EXIT]: {},
+    [ServerPacketType.GET_YOUR_TRADEOBJECTS]: {
+      items: [
+        { imageId: 1, quantity: 20, position: 0, flags: 14, id: 43 },
+        { imageId: 54, quantity: 6, position: 27, flags: 6, id: 35 },
+        { imageId: 55, quantity: 6, position: 28, flags: 6, id: 36 },
+        { imageId: 56, quantity: 30, position: 29, flags: 6, id: 37 },
+        { imageId: 86, quantity: 1, position: 32, flags: 0, id: 93 },
+        { imageId: 421, quantity: 1, position: 33, flags: 0, id: 620 },
+        { imageId: 59, quantity: 8, position: 34, flags: 6, id: 40 },
+      ],
+    },
     [ServerPacketType.GET_TRADE_PARTNER_NAME]: {
       isStorageAvailable: true,
       tradePartnerName: 'Player',
