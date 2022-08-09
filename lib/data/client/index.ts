@@ -11,6 +11,7 @@ import * as RawText from './raw-text';
 import * as Ping from './ping';
 import * as HeartBeat from './heart-beat';
 import * as LocateMe from './locate-me';
+import * as Harvest from './harvest';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
 import * as LogIn from './log-in';
@@ -21,6 +22,7 @@ export enum ClientPacketType {
   PING = 13,
   HEART_BEAT = 14,
   LOCATE_ME = 15,
+  HARVEST = 21,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
   LOG_IN = 140,
@@ -37,6 +39,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.PING]: Ping.Data;
   [ClientPacketType.HEART_BEAT]: HeartBeat.Data;
   [ClientPacketType.LOCATE_ME]: LocateMe.Data;
+  [ClientPacketType.HARVEST]: Harvest.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -49,6 +52,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.PING]: Ping.DataParser,
   [ClientPacketType.HEART_BEAT]: HeartBeat.DataParser,
   [ClientPacketType.LOCATE_ME]: LocateMe.DataParser,
+  [ClientPacketType.HARVEST]: Harvest.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,

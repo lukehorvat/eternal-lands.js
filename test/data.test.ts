@@ -42,6 +42,9 @@ test('Parsing complete and incomplete client packets', () => {
     },
     [ClientPacketType.HEART_BEAT]: {},
     [ClientPacketType.LOCATE_ME]: {},
+    [ClientPacketType.HARVEST]: {
+      objectId: 1859,
+    },
     [ClientPacketType.TRADE_WITH]: {
       actorId: 42,
     },
