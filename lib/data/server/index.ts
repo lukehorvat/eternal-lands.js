@@ -35,6 +35,8 @@ import * as DestroyBag from './destroy-bag';
 import * as NpcText from './npc-text';
 import * as NpcOptionsList from './npc-options-list';
 import * as SendNpcInfo from './send-npc-info';
+import * as GetTradeAccept from './get-trade-accept';
+import * as GetTradeReject from './get-trade-reject';
 import * as GetTradeExit from './get-trade-exit';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
@@ -76,6 +78,8 @@ export enum ServerPacketType {
   NPC_TEXT = 30,
   NPC_OPTIONS_LIST = 31,
   SEND_NPC_INFO = 33,
+  GET_TRADE_ACCEPT = 36,
+  GET_TRADE_REJECT = 37,
   GET_TRADE_EXIT = 38,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
@@ -123,6 +127,8 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.NPC_TEXT]: NpcText.PacketData;
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.PacketData;
   [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.PacketData;
+  [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.PacketData;
+  [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.PacketData;
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
@@ -167,6 +173,8 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.NPC_TEXT]: NpcText.DataParser,
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.DataParser,
   [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.DataParser,
+  [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.DataParser,
+  [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.DataParser,
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
