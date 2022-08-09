@@ -37,6 +37,10 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.RAW_TEXT]: {
       message: 'test',
     },
+    [ClientPacketType.MOVE_TO]: {
+      x: 135,
+      y: 270,
+    },
     [ClientPacketType.SIT_DOWN]: {
       sit: true,
     },
