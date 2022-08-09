@@ -30,6 +30,7 @@ import * as LookAtMapObject from './look-at-map-object';
 import * as TouchPlayer from './touch-player';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
+import * as AttackSomeone from './attack-someone';
 import * as PingResponse from './ping-response';
 import * as DoEmote from './do-emote';
 import * as LogIn from './log-in';
@@ -62,6 +63,7 @@ export enum ClientPacketType {
   TOUCH_PLAYER = 28,
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
+  ATTACK_SOMEONE = 40,
   PING_RESPONSE = 60,
   DO_EMOTE = 70,
   LOG_IN = 140,
@@ -100,6 +102,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.Data;
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
+  [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.DO_EMOTE]: DoEmote.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -134,6 +137,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.DataParser,
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
+  [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,

@@ -100,6 +100,9 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.TRADE_WITH]: {
       actorId: 42,
     },
+    [ClientPacketType.ATTACK_SOMEONE]: {
+      actorId: 2650,
+    },
     [ClientPacketType.PING_RESPONSE]: {
       echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
     },
