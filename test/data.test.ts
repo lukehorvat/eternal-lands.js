@@ -261,6 +261,10 @@ test('Parsing complete and incomplete server packets', () => {
       youRejected: false,
     },
     [ServerPacketType.GET_TRADE_EXIT]: {},
+    [ServerPacketType.GET_TRADE_PARTNER_NAME]: {
+      isStorageAvailable: true,
+      tradePartnerName: 'Player',
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,

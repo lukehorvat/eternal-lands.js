@@ -38,6 +38,7 @@ import * as SendNpcInfo from './send-npc-info';
 import * as GetTradeAccept from './get-trade-accept';
 import * as GetTradeReject from './get-trade-reject';
 import * as GetTradeExit from './get-trade-exit';
+import * as GetTradePartnerName from './get-trade-partner-name';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
 import * as SendPartialStat from './send-partial-stat';
@@ -81,6 +82,7 @@ export enum ServerPacketType {
   GET_TRADE_ACCEPT = 36,
   GET_TRADE_REJECT = 37,
   GET_TRADE_EXIT = 38,
+  GET_TRADE_PARTNER_NAME = 41,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
   SEND_PARTIAL_STAT = 49,
@@ -130,6 +132,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.PacketData;
   [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.PacketData;
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.PacketData;
+  [ServerPacketType.GET_TRADE_PARTNER_NAME]: GetTradePartnerName.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.PacketData;
@@ -176,6 +179,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.GET_TRADE_ACCEPT]: GetTradeAccept.DataParser,
   [ServerPacketType.GET_TRADE_REJECT]: GetTradeReject.DataParser,
   [ServerPacketType.GET_TRADE_EXIT]: GetTradeExit.DataParser,
+  [ServerPacketType.GET_TRADE_PARTNER_NAME]: GetTradePartnerName.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.DataParser,
