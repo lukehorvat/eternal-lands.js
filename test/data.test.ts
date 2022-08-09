@@ -41,6 +41,10 @@ test('Parsing complete and incomplete client packets', () => {
       x: 135,
       y: 270,
     },
+    [ClientPacketType.SEND_PM]: {
+      recipientName: 'Player',
+      message: 'hi there!',
+    },
     [ClientPacketType.SIT_DOWN]: {
       sit: true,
     },
