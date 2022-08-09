@@ -13,9 +13,8 @@ export const DataParser: PacketDataParser<PacketData> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     const options = reader.readArray(() => {
-      const length = reader.read({ type: 'UInt16LE' });
       return {
-        responseText: reader.read({ type: 'String', length }),
+        responseText: reader.offset(2).read({ type: 'StringNT' }),
         responseId: reader.read({ type: 'UInt16LE' }),
         toActorId: reader.read({ type: 'UInt16LE' }),
       };
@@ -27,8 +26,8 @@ export const DataParser: PacketDataParser<PacketData> = {
     return new BufferWriter()
       .writeArray(data.options, (writer, option) => {
         writer
-          .write({ type: 'UInt16LE', value: option.responseText.length })
-          .write({ type: 'String', value: option.responseText })
+          .offset(2)
+          .write({ type: 'StringNT', value: option.responseText })
           .write({ type: 'UInt16LE', value: option.responseId })
           .write({ type: 'UInt16LE', value: option.toActorId });
       })

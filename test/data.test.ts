@@ -250,6 +250,10 @@ test('Parsing complete and incomplete server packets', () => {
         },
       ],
     },
+    [ServerPacketType.SEND_NPC_INFO]: {
+      npcName: 'Xaquelina',
+      npcPortrait: 60,
+    },
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,

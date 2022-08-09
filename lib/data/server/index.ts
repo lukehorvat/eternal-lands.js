@@ -34,6 +34,7 @@ import * as GetBagsList from './get-bags-list';
 import * as DestroyBag from './destroy-bag';
 import * as NpcText from './npc-text';
 import * as NpcOptionsList from './npc-options-list';
+import * as SendNpcInfo from './send-npc-info';
 import * as GetActorDamage from './get-actor-damage';
 import * as GetActorHeal from './get-actor-heal';
 import * as SendPartialStat from './send-partial-stat';
@@ -73,6 +74,7 @@ export enum ServerPacketType {
   DESTROY_BAG = 29,
   NPC_TEXT = 30,
   NPC_OPTIONS_LIST = 31,
+  SEND_NPC_INFO = 33,
   GET_ACTOR_DAMAGE = 47,
   GET_ACTOR_HEAL = 48,
   SEND_PARTIAL_STAT = 49,
@@ -118,6 +120,7 @@ export interface ServerPacketData extends Record<ServerPacketType, PacketData> {
   [ServerPacketType.DESTROY_BAG]: DestroyBag.PacketData;
   [ServerPacketType.NPC_TEXT]: NpcText.PacketData;
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.PacketData;
+  [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.PacketData;
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.PacketData;
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.PacketData;
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.PacketData;
@@ -160,6 +163,7 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.DESTROY_BAG]: DestroyBag.DataParser,
   [ServerPacketType.NPC_TEXT]: NpcText.DataParser,
   [ServerPacketType.NPC_OPTIONS_LIST]: NpcOptionsList.DataParser,
+  [ServerPacketType.SEND_NPC_INFO]: SendNpcInfo.DataParser,
   [ServerPacketType.GET_ACTOR_DAMAGE]: GetActorDamage.DataParser,
   [ServerPacketType.GET_ACTOR_HEAL]: GetActorHeal.DataParser,
   [ServerPacketType.SEND_PARTIAL_STAT]: SendPartialStat.DataParser,
