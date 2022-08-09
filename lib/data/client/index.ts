@@ -10,6 +10,7 @@ import * as Unsupported from './unsupported';
 import * as RawText from './raw-text';
 import * as MoveTo from './move-to';
 import * as SendPM from './send-pm';
+import * as GetPlayerInfo from './get-player-info';
 import * as SitDown from './sit-down';
 import * as Ping from './ping';
 import * as HeartBeat from './heart-beat';
@@ -24,6 +25,7 @@ export enum ClientPacketType {
   RAW_TEXT = 0,
   MOVE_TO = 1,
   SEND_PM = 2,
+  GET_PLAYER_INFO = 5,
   SIT_DOWN = 7,
   PING = 13,
   HEART_BEAT = 14,
@@ -44,6 +46,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.RAW_TEXT]: RawText.Data;
   [ClientPacketType.MOVE_TO]: MoveTo.Data;
   [ClientPacketType.SEND_PM]: SendPM.Data;
+  [ClientPacketType.GET_PLAYER_INFO]: GetPlayerInfo.Data;
   [ClientPacketType.SIT_DOWN]: SitDown.Data;
   [ClientPacketType.PING]: Ping.Data;
   [ClientPacketType.HEART_BEAT]: HeartBeat.Data;
@@ -60,6 +63,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.RAW_TEXT]: RawText.DataParser,
   [ClientPacketType.MOVE_TO]: MoveTo.DataParser,
   [ClientPacketType.SEND_PM]: SendPM.DataParser,
+  [ClientPacketType.GET_PLAYER_INFO]: GetPlayerInfo.DataParser,
   [ClientPacketType.SIT_DOWN]: SitDown.DataParser,
   [ClientPacketType.PING]: Ping.DataParser,
   [ClientPacketType.HEART_BEAT]: HeartBeat.DataParser,

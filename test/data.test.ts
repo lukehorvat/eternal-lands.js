@@ -45,6 +45,9 @@ test('Parsing complete and incomplete client packets', () => {
       recipientName: 'Player',
       message: 'hi there!',
     },
+    [ClientPacketType.GET_PLAYER_INFO]: {
+      actorId: 344,
+    },
     [ClientPacketType.SIT_DOWN]: {
       sit: true,
     },
