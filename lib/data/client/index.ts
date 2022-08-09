@@ -26,6 +26,7 @@ import * as PickUpItem from './pick-up-item';
 import * as LookAtGroundItem from './look-at-ground-item';
 import * as InspectBag from './inspect-bag';
 import * as CloseBag from './close-bag';
+import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
 import * as LogIn from './log-in';
@@ -51,6 +52,7 @@ export enum ClientPacketType {
   LOOK_AT_GROUND_ITEM = 24,
   INSPECT_BAG = 25,
   CLOSE_BAG = 26,
+  USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
   LOG_IN = 140,
@@ -82,6 +84,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.LOOK_AT_GROUND_ITEM]: LookAtGroundItem.Data;
   [ClientPacketType.INSPECT_BAG]: InspectBag.Data;
   [ClientPacketType.CLOSE_BAG]: CloseBag.Data;
+  [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -109,6 +112,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.LOOK_AT_GROUND_ITEM]: LookAtGroundItem.DataParser,
   [ClientPacketType.INSPECT_BAG]: InspectBag.DataParser,
   [ClientPacketType.CLOSE_BAG]: CloseBag.DataParser,
+  [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,

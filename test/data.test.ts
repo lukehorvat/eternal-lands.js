@@ -87,6 +87,9 @@ test('Parsing complete and incomplete client packets', () => {
       bagId: 8,
     },
     [ClientPacketType.CLOSE_BAG]: {},
+    [ClientPacketType.USE_INVENTORY_ITEM]: {
+      position: 11,
+    },
     [ClientPacketType.TRADE_WITH]: {
       actorId: 42,
     },
