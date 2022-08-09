@@ -32,6 +32,7 @@ import * as RespondToNpc from './respond-to-npc';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
 import * as RejectTrade from './reject-trade';
+import * as ExitTrade from './exit-trade';
 import * as AttackSomeone from './attack-someone';
 import * as PingResponse from './ping-response';
 import * as DoEmote from './do-emote';
@@ -67,6 +68,7 @@ export enum ClientPacketType {
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
   REJECT_TRADE = 34,
+  EXIT_TRADE = 35,
   ATTACK_SOMEONE = 40,
   PING_RESPONSE = 60,
   DO_EMOTE = 70,
@@ -108,6 +110,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.REJECT_TRADE]: RejectTrade.Data;
+  [ClientPacketType.EXIT_TRADE]: ExitTrade.Data;
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.DO_EMOTE]: DoEmote.Data;
@@ -145,6 +148,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.REJECT_TRADE]: RejectTrade.DataParser,
+  [ClientPacketType.EXIT_TRADE]: ExitTrade.DataParser,
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,

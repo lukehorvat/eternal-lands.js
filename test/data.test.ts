@@ -105,6 +105,7 @@ test('Parsing complete and incomplete client packets', () => {
       actorId: 42,
     },
     [ClientPacketType.REJECT_TRADE]: {},
+    [ClientPacketType.EXIT_TRADE]: {},
     [ClientPacketType.ATTACK_SOMEONE]: {
       actorId: 2650,
     },
