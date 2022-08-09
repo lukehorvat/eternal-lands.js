@@ -51,6 +51,8 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.SIT_DOWN]: {
       sit: true,
     },
+    [ClientPacketType.TURN_LEFT]: {},
+    [ClientPacketType.TURN_RIGHT]: {},
     [ClientPacketType.PING]: {
       echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
     },

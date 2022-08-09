@@ -12,6 +12,8 @@ import * as MoveTo from './move-to';
 import * as SendPM from './send-pm';
 import * as GetPlayerInfo from './get-player-info';
 import * as SitDown from './sit-down';
+import * as TurnLeft from './turn-left';
+import * as TurnRight from './turn-right';
 import * as Ping from './ping';
 import * as HeartBeat from './heart-beat';
 import * as LocateMe from './locate-me';
@@ -29,6 +31,8 @@ export enum ClientPacketType {
   SEND_PM = 2,
   GET_PLAYER_INFO = 5,
   SIT_DOWN = 7,
+  TURN_LEFT = 11,
+  TURN_RIGHT = 12,
   PING = 13,
   HEART_BEAT = 14,
   LOCATE_ME = 15,
@@ -52,6 +56,8 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.SEND_PM]: SendPM.Data;
   [ClientPacketType.GET_PLAYER_INFO]: GetPlayerInfo.Data;
   [ClientPacketType.SIT_DOWN]: SitDown.Data;
+  [ClientPacketType.TURN_LEFT]: TurnLeft.Data;
+  [ClientPacketType.TURN_RIGHT]: TurnRight.Data;
   [ClientPacketType.PING]: Ping.Data;
   [ClientPacketType.HEART_BEAT]: HeartBeat.Data;
   [ClientPacketType.LOCATE_ME]: LocateMe.Data;
@@ -71,6 +77,8 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.SEND_PM]: SendPM.DataParser,
   [ClientPacketType.GET_PLAYER_INFO]: GetPlayerInfo.DataParser,
   [ClientPacketType.SIT_DOWN]: SitDown.DataParser,
+  [ClientPacketType.TURN_LEFT]: TurnLeft.DataParser,
+  [ClientPacketType.TURN_RIGHT]: TurnRight.DataParser,
   [ClientPacketType.PING]: Ping.DataParser,
   [ClientPacketType.HEART_BEAT]: HeartBeat.DataParser,
   [ClientPacketType.LOCATE_ME]: LocateMe.DataParser,
