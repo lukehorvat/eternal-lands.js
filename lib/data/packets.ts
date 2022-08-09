@@ -1,9 +1,9 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 
 export type PacketType = number;
-export type PacketDataPopulated = Record<string, any>;
-export type PacketDataEmpty = Record<string, never>;
-export type PacketData = PacketDataPopulated | PacketDataEmpty;
+export type PopulatedPacketData = Record<string, any>;
+export type EmptyPacketData = Record<string, never>;
+export type PacketData = PopulatedPacketData | EmptyPacketData;
 
 export class PacketWithBufferedData {
   readonly type: PacketType;
@@ -32,6 +32,16 @@ export interface PacketDataParser<Data extends PacketData> {
   fromBuffer(dataBuffer: Buffer): Data;
   toBuffer(data: Data): Buffer;
 }
+
+export const EmptyPacketDataParser: PacketDataParser<EmptyPacketData> = {
+  fromBuffer() {
+    return {};
+  },
+
+  toBuffer() {
+    return Buffer.alloc(0);
+  },
+};
 
 export function readPacketsFromBuffer<
   Type extends PacketType,
