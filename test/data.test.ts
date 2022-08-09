@@ -254,6 +254,7 @@ test('Parsing complete and incomplete server packets', () => {
       npcName: 'Xaquelina',
       npcPortrait: 60,
     },
+    [ServerPacketType.GET_TRADE_EXIT]: {},
     [ServerPacketType.GET_ACTOR_DAMAGE]: {
       actorId: 123,
       damageAmount: 46,
