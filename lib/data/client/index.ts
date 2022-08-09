@@ -28,6 +28,7 @@ import * as InspectBag from './inspect-bag';
 import * as CloseBag from './close-bag';
 import * as LookAtMapObject from './look-at-map-object';
 import * as TouchPlayer from './touch-player';
+import * as RespondToNpc from './respond-to-npc';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
 import * as AttackSomeone from './attack-someone';
@@ -61,6 +62,7 @@ export enum ClientPacketType {
   CLOSE_BAG = 26,
   LOOK_AT_MAP_OBJECT = 27,
   TOUCH_PLAYER = 28,
+  RESPOND_TO_NPC = 29,
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
   ATTACK_SOMEONE = 40,
@@ -100,6 +102,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.CLOSE_BAG]: CloseBag.Data;
   [ClientPacketType.LOOK_AT_MAP_OBJECT]: LookAtMapObject.Data;
   [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.Data;
+  [ClientPacketType.RESPOND_TO_NPC]: RespondToNpc.Data;
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
@@ -135,6 +138,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.CLOSE_BAG]: CloseBag.DataParser,
   [ClientPacketType.LOOK_AT_MAP_OBJECT]: LookAtMapObject.DataParser,
   [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.DataParser,
+  [ClientPacketType.RESPOND_TO_NPC]: RespondToNpc.DataParser,
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,

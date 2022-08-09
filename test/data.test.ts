@@ -94,6 +94,10 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.TOUCH_PLAYER]: {
       actorId: 2963,
     },
+    [ClientPacketType.RESPOND_TO_NPC]: {
+      toActorId: 3023,
+      responseId: 4,
+    },
     [ClientPacketType.USE_INVENTORY_ITEM]: {
       position: 11,
     },
