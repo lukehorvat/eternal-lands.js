@@ -23,6 +23,7 @@ import * as MoveInventoryItem from './move-inventory-item';
 import * as Harvest from './harvest';
 import * as DropItem from './drop-item';
 import * as PickUpItem from './pick-up-item';
+import * as CloseBag from './close-bag';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
 import * as LogIn from './log-in';
@@ -45,6 +46,7 @@ export enum ClientPacketType {
   HARVEST = 21,
   DROP_ITEM = 22,
   PICK_UP_ITEM = 23,
+  CLOSE_BAG = 26,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
   LOG_IN = 140,
@@ -73,6 +75,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.HARVEST]: Harvest.Data;
   [ClientPacketType.DROP_ITEM]: DropItem.Data;
   [ClientPacketType.PICK_UP_ITEM]: PickUpItem.Data;
+  [ClientPacketType.CLOSE_BAG]: CloseBag.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -97,6 +100,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.HARVEST]: Harvest.DataParser,
   [ClientPacketType.DROP_ITEM]: DropItem.DataParser,
   [ClientPacketType.PICK_UP_ITEM]: PickUpItem.DataParser,
+  [ClientPacketType.CLOSE_BAG]: CloseBag.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,
