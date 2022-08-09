@@ -32,6 +32,7 @@ import * as PingResponse from './ping-response';
 import * as LogIn from './log-in';
 import * as GetDate from './get-date';
 import * as GetTime from './get-time';
+import * as ServerStats from './server-stats';
 
 export enum ClientPacketType {
   UNSUPPORTED = -1,
@@ -60,6 +61,7 @@ export enum ClientPacketType {
   LOG_IN = 140,
   GET_DATE = 230,
   GET_TIME = 231,
+  SERVER_STATS = 232,
 }
 
 type SupportedClientPacketType = Exclude<
@@ -94,6 +96,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.LOG_IN]: LogIn.Data;
   [ClientPacketType.GET_DATE]: GetDate.Data;
   [ClientPacketType.GET_TIME]: GetTime.Data;
+  [ClientPacketType.SERVER_STATS]: ServerStats.Data;
 }
 
 export const ClientPacketDataParsers: {
@@ -124,6 +127,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.LOG_IN]: LogIn.DataParser,
   [ClientPacketType.GET_DATE]: GetDate.DataParser,
   [ClientPacketType.GET_TIME]: GetTime.DataParser,
+  [ClientPacketType.SERVER_STATS]: ServerStats.DataParser,
 };
 
 export class ClientPacket<
