@@ -27,6 +27,7 @@ import * as LookAtGroundItem from './look-at-ground-item';
 import * as InspectBag from './inspect-bag';
 import * as CloseBag from './close-bag';
 import * as LookAtMapObject from './look-at-map-object';
+import * as TouchPlayer from './touch-player';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
@@ -58,6 +59,7 @@ export enum ClientPacketType {
   INSPECT_BAG = 25,
   CLOSE_BAG = 26,
   LOOK_AT_MAP_OBJECT = 27,
+  TOUCH_PLAYER = 28,
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
@@ -95,6 +97,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.INSPECT_BAG]: InspectBag.Data;
   [ClientPacketType.CLOSE_BAG]: CloseBag.Data;
   [ClientPacketType.LOOK_AT_MAP_OBJECT]: LookAtMapObject.Data;
+  [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.Data;
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
@@ -128,6 +131,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.INSPECT_BAG]: InspectBag.DataParser,
   [ClientPacketType.CLOSE_BAG]: CloseBag.DataParser,
   [ClientPacketType.LOOK_AT_MAP_OBJECT]: LookAtMapObject.DataParser,
+  [ClientPacketType.TOUCH_PLAYER]: TouchPlayer.DataParser,
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,

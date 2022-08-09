@@ -91,6 +91,9 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.LOOK_AT_MAP_OBJECT]: {
       objectId: 329,
     },
+    [ClientPacketType.TOUCH_PLAYER]: {
+      actorId: 2963,
+    },
     [ClientPacketType.USE_INVENTORY_ITEM]: {
       position: 11,
     },
