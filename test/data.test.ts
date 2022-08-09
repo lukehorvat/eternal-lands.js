@@ -38,7 +38,7 @@ test('Parsing complete and incomplete client packets', () => {
       message: 'test',
     },
     [ClientPacketType.PING]: {
-      echo: 123,
+      echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
     },
     [ClientPacketType.HEART_BEAT]: {},
     [ClientPacketType.LOCATE_ME]: {},
@@ -46,7 +46,7 @@ test('Parsing complete and incomplete client packets', () => {
       actorId: 42,
     },
     [ClientPacketType.PING_RESPONSE]: {
-      echo: 321,
+      echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
     },
     [ClientPacketType.LOG_IN]: {
       username: 'foo',
@@ -132,7 +132,7 @@ test('Parsing complete and incomplete server packets', () => {
       ],
     },
     [ServerPacketType.PONG]: {
-      echo: 123,
+      echo: Buffer.from([0x06, 0x07, 0x08, 0x09]),
     },
     [ServerPacketType.TELEPORT_IN]: {
       x: 150,
@@ -324,7 +324,7 @@ test('Parsing complete and incomplete server packets', () => {
       guild: 'TEST',
     },
     [ServerPacketType.PING_REQUEST]: {
-      echo: 321,
+      echo: Buffer.from([0x09, 0x08, 0x07, 0x06]),
     },
     [ServerPacketType.GET_ACTIVE_CHANNELS]: {
       activeChannel: 80100,

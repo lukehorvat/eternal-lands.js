@@ -198,7 +198,7 @@ test('Can send and receive packets whilst connected', async () => {
   );
 
   // Send ping packet.
-  const pingRequest = { echo: 123 };
+  const pingRequest = { echo: Buffer.from([0x01, 0x02, 0x03, 0x04]) };
   await expect(
     connection.send(ClientPacketType.PING, pingRequest)
   ).resolves.toStrictEqual(pingRequest);
@@ -206,7 +206,7 @@ test('Can send and receive packets whilst connected', async () => {
   expect(onSendAnyMock).lastCalledWith(ClientPacketType.PING, pingRequest);
 
   // Receive pong packet.
-  const pongResponse = { echo: 123 };
+  const pongResponse = { echo: Buffer.from([0x01, 0x02, 0x03, 0x04]) };
   await expect(
     connection.onReceiveOnce(ServerPacketType.PONG)
   ).resolves.toStrictEqual(pongResponse);

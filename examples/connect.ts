@@ -38,6 +38,8 @@ import { ELClientPacketType, ELConnection, ELServerPacketType } from '../lib';
   }, 25000);
 
   setTimeout(() => {
-    elc.send(ELClientPacketType.PING, { echo: 123 });
+    elc.send(ELClientPacketType.PING, {
+      echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
+    });
   }, 3000);
 })();

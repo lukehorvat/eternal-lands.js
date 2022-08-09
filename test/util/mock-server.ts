@@ -77,7 +77,7 @@ export class MockELServer {
     } else if (ClientPacket.isType(packet, ClientPacketType.PING)) {
       this.sendPacket(
         socket,
-        new ServerPacket(ServerPacketType.PONG, { echo: packet.data.echo })
+        new ServerPacket(ServerPacketType.PONG, packet.data)
       );
     }
   }

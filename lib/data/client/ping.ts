@@ -1,21 +1,17 @@
-import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../packets';
 
 export type PacketData = {
-  echo: number;
+  echo: Buffer;
 };
 
 export const DataParser: PacketDataParser<PacketData> = {
   fromBuffer(dataBuffer: Buffer) {
-    const reader = new BufferReader(dataBuffer);
     return {
-      echo: reader.read({ type: 'UInt32LE' }),
+      echo: dataBuffer,
     };
   },
 
   toBuffer(data) {
-    return new BufferWriter()
-      .write({ type: 'UInt32LE', value: data.echo })
-      .buffer();
+    return data.echo;
   },
 };
