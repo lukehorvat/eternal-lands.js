@@ -37,6 +37,9 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.RAW_TEXT]: {
       message: 'test',
     },
+    [ClientPacketType.SIT_DOWN]: {
+      sit: true,
+    },
     [ClientPacketType.PING]: {
       echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
     },

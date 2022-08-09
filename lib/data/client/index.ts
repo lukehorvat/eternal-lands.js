@@ -8,6 +8,7 @@ import {
 } from '../packets';
 import * as Unsupported from './unsupported';
 import * as RawText from './raw-text';
+import * as SitDown from './sit-down';
 import * as Ping from './ping';
 import * as HeartBeat from './heart-beat';
 import * as LocateMe from './locate-me';
@@ -19,6 +20,7 @@ import * as LogIn from './log-in';
 export enum ClientPacketType {
   UNSUPPORTED = -1,
   RAW_TEXT = 0,
+  SIT_DOWN = 7,
   PING = 13,
   HEART_BEAT = 14,
   LOCATE_ME = 15,
@@ -36,6 +38,7 @@ type SupportedClientPacketType = Exclude<
 export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.UNSUPPORTED]: Unsupported.Data;
   [ClientPacketType.RAW_TEXT]: RawText.Data;
+  [ClientPacketType.SIT_DOWN]: SitDown.Data;
   [ClientPacketType.PING]: Ping.Data;
   [ClientPacketType.HEART_BEAT]: HeartBeat.Data;
   [ClientPacketType.LOCATE_ME]: LocateMe.Data;
@@ -49,6 +52,7 @@ export const ClientPacketDataParsers: {
   [Type in SupportedClientPacketType]: PacketDataParser<ClientPacketData[Type]>;
 } = {
   [ClientPacketType.RAW_TEXT]: RawText.DataParser,
+  [ClientPacketType.SIT_DOWN]: SitDown.DataParser,
   [ClientPacketType.PING]: Ping.DataParser,
   [ClientPacketType.HEART_BEAT]: HeartBeat.DataParser,
   [ClientPacketType.LOCATE_ME]: LocateMe.DataParser,
