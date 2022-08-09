@@ -100,6 +100,8 @@ test('Parsing complete and incomplete client packets', () => {
       username: 'foo',
       password: 'bar',
     },
+    [ClientPacketType.GET_DATE]: {},
+    [ClientPacketType.GET_TIME]: {},
   };
 
   (Object.values(ClientPacketType) as ClientPacketType[])
