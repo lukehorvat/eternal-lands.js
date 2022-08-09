@@ -56,6 +56,10 @@ test('Parsing complete and incomplete client packets', () => {
     },
     [ClientPacketType.HEART_BEAT]: {},
     [ClientPacketType.LOCATE_ME]: {},
+    [ClientPacketType.USE_MAP_OBJECT]: {
+      objectId: 322,
+      useWith: 4,
+    },
     [ClientPacketType.HARVEST]: {
       objectId: 1859,
     },
