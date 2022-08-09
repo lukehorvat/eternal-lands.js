@@ -23,6 +23,7 @@ import {
   ActorType,
   ActorWeapon,
   ChatChannel,
+  EmoteId,
   StatType,
 } from '../lib/constants';
 
@@ -95,6 +96,9 @@ test('Parsing complete and incomplete client packets', () => {
     },
     [ClientPacketType.PING_RESPONSE]: {
       echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
+    },
+    [ClientPacketType.DO_EMOTE]: {
+      emoteId: EmoteId.PAT_BELLY,
     },
     [ClientPacketType.LOG_IN]: {
       username: 'foo',

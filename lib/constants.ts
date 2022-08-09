@@ -528,3 +528,27 @@ export enum ActorCommand {
   ATTACK_UP_9 = 72,
   ATTACK_UP_10 = 73,
 }
+
+export enum EmoteId {
+  WAVE_LEFT_HAND = 120,
+  WAVE_RIGHT_HAND = 121,
+  WAVE_BOTH_HANDS = 122,
+  NOD_HEAD = 123,
+  SHAKE_HEAD = 124,
+  JUMP = 125,
+  CLAP = 126,
+  CHEER_LEFT = 127,
+  CHEER_RIGHT = 128,
+  THUMBS_UP = 129,
+  SHRUG = 130,
+  STRETCH = 131,
+  FACE_PALM = 132,
+  SCRATCH_HEAD = 133,
+  BOW1 = 134,
+  BOW2 = 135,
+  CURTSY = 136,
+  SALUTE = 137,
+  BLOW_KISS = 138,
+  PAT_BELLY = 139,
+  KNOCK = 140,
+}

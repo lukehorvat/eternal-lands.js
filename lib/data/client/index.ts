@@ -29,6 +29,7 @@ import * as CloseBag from './close-bag';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
+import * as DoEmote from './do-emote';
 import * as LogIn from './log-in';
 import * as GetDate from './get-date';
 import * as GetTime from './get-time';
@@ -58,6 +59,7 @@ export enum ClientPacketType {
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
+  DO_EMOTE = 70,
   LOG_IN = 140,
   GET_DATE = 230,
   GET_TIME = 231,
@@ -93,6 +95,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
+  [ClientPacketType.DO_EMOTE]: DoEmote.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
   [ClientPacketType.GET_DATE]: GetDate.Data;
   [ClientPacketType.GET_TIME]: GetTime.Data;
@@ -124,6 +127,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
+  [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,
   [ClientPacketType.GET_DATE]: GetDate.DataParser,
   [ClientPacketType.GET_TIME]: GetTime.DataParser,
