@@ -21,6 +21,8 @@ import * as UseMapObject from './use-map-object';
 import * as LookAtInventoryItem from './look-at-inventory-item';
 import * as MoveInventoryItem from './move-inventory-item';
 import * as Harvest from './harvest';
+import * as DropItem from './drop-item';
+import * as PickUpItem from './pick-up-item';
 import * as TradeWith from './trade-with';
 import * as PingResponse from './ping-response';
 import * as LogIn from './log-in';
@@ -41,6 +43,8 @@ export enum ClientPacketType {
   LOOK_AT_INVENTORY_ITEM = 19,
   MOVE_INVENTORY_ITEM = 20,
   HARVEST = 21,
+  DROP_ITEM = 22,
+  PICK_UP_ITEM = 23,
   TRADE_WITH = 32,
   PING_RESPONSE = 60,
   LOG_IN = 140,
@@ -67,6 +71,8 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.LOOK_AT_INVENTORY_ITEM]: LookAtInventoryItem.Data;
   [ClientPacketType.MOVE_INVENTORY_ITEM]: MoveInventoryItem.Data;
   [ClientPacketType.HARVEST]: Harvest.Data;
+  [ClientPacketType.DROP_ITEM]: DropItem.Data;
+  [ClientPacketType.PICK_UP_ITEM]: PickUpItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -89,6 +95,8 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.LOOK_AT_INVENTORY_ITEM]: LookAtInventoryItem.DataParser,
   [ClientPacketType.MOVE_INVENTORY_ITEM]: MoveInventoryItem.DataParser,
   [ClientPacketType.HARVEST]: Harvest.DataParser,
+  [ClientPacketType.DROP_ITEM]: DropItem.DataParser,
+  [ClientPacketType.PICK_UP_ITEM]: PickUpItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,

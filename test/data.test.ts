@@ -72,6 +72,14 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.HARVEST]: {
       objectId: 1859,
     },
+    [ClientPacketType.DROP_ITEM]: {
+      position: 2,
+      quantity: 10000,
+    },
+    [ClientPacketType.PICK_UP_ITEM]: {
+      position: 4,
+      quantity: 500,
+    },
     [ClientPacketType.TRADE_WITH]: {
       actorId: 42,
     },
