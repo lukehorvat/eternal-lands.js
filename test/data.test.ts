@@ -80,6 +80,9 @@ test('Parsing complete and incomplete client packets', () => {
       position: 4,
       quantity: 500,
     },
+    [ClientPacketType.LOOK_AT_GROUND_ITEM]: {
+      position: 5,
+    },
     [ClientPacketType.INSPECT_BAG]: {
       bagId: 8,
     },
