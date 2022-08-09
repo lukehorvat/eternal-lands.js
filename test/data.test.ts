@@ -260,7 +260,7 @@ test('Parsing complete and incomplete server packets', () => {
       position: 1,
       id: 505,
       isFromStorage: false,
-      isFromYou: true,
+      isYours: true,
     },
     [ServerPacketType.GET_TRADE_ACCEPT]: {
       youAccepted: true,
@@ -269,6 +269,11 @@ test('Parsing complete and incomplete server packets', () => {
       youRejected: false,
     },
     [ServerPacketType.GET_TRADE_EXIT]: {},
+    [ServerPacketType.REMOVE_TRADE_OBJECT]: {
+      quantity: 50,
+      position: 2,
+      isYours: false,
+    },
     [ServerPacketType.GET_YOUR_TRADEOBJECTS]: {
       items: [
         { imageId: 1, quantity: 20, position: 0, flags: 14, id: 43 },
