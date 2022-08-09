@@ -88,6 +88,9 @@ test('Parsing complete and incomplete client packets', () => {
       bagId: 8,
     },
     [ClientPacketType.CLOSE_BAG]: {},
+    [ClientPacketType.LOOK_AT_MAP_OBJECT]: {
+      objectId: 329,
+    },
     [ClientPacketType.USE_INVENTORY_ITEM]: {
       position: 11,
     },
