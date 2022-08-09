@@ -1,7 +1,7 @@
 export { Connection as ELConnection } from './connection';
 export * as ELConstants from './constants';
 export {
-  ClientPacket as ELClientPacketPacket,
+  ClientPacket as ELClientPacket,
   ClientPacketType as ELClientPacketType,
 } from './data/client';
 export {
