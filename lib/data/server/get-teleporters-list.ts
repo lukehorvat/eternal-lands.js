@@ -1,14 +1,14 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../packets';
 
-export type PacketData = {
+export type Data = {
   teleporters: {
     x: number;
     y: number;
   }[];
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     const teleportersCount = reader.read({ type: 'UInt16LE' });

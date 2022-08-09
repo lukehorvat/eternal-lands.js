@@ -2,7 +2,7 @@ import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../packets';
 import { ActorType } from '../../constants';
 
-export type PacketData = {
+export type Data = {
   id: number;
   xPos: number;
   yPos: number;
@@ -13,7 +13,7 @@ export type PacketData = {
   name: string;
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     return {

@@ -1,12 +1,12 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../packets';
 
-export type PacketData = {
+export type Data = {
   activeChannel?: number;
   channels: number[];
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     const activeChannelIndex = reader.read({ type: 'UInt8' });

@@ -1,7 +1,7 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../packets';
 
-export type PacketData = {
+export type Data = {
   quantity: number;
   position: number;
 
@@ -11,7 +11,7 @@ export type PacketData = {
   isYours: boolean;
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     return {

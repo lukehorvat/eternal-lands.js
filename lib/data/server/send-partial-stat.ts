@@ -2,12 +2,12 @@ import { BufferReader, BufferWriter } from 'easy-buffer';
 import { StatType } from '../../constants';
 import { PacketDataParser } from '../packets';
 
-export type PacketData = {
+export type Data = {
   statType: StatType;
   statValue: number;
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
     return {

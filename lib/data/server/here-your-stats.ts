@@ -6,7 +6,7 @@ type Stat = {
   base: number;
 };
 
-export type PacketData = {
+export type Data = {
   attributes: {
     physique: Stat;
     coordination: Stat;
@@ -44,7 +44,7 @@ export type PacketData = {
   actionPoints: Stat;
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     const reader = new BufferReader(dataBuffer);
 

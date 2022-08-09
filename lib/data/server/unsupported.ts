@@ -1,6 +1,6 @@
 import { PacketType } from '../packets';
 
-export type PacketData = {
+export type Data = {
   type: PacketType;
   data: Buffer;
 };

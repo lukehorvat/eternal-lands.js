@@ -1,8 +1,8 @@
 import { PacketDataParser } from '../packets';
 
-export type PacketData = Record<string, never>;
+export type Data = Record<string, never>;
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer() {
     return {};
   },

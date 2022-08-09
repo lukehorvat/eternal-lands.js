@@ -1,10 +1,10 @@
 import { PacketDataParser } from '../packets';
 
-export type PacketData = {
+export type Data = {
   echo: Buffer;
 };
 
-export const DataParser: PacketDataParser<PacketData> = {
+export const DataParser: PacketDataParser<Data> = {
   fromBuffer(dataBuffer: Buffer) {
     return {
       echo: dataBuffer,

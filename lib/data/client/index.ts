@@ -32,14 +32,14 @@ type SupportedClientPacketType = Exclude<
 >;
 
 export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
-  [ClientPacketType.UNSUPPORTED]: Unsupported.PacketData;
-  [ClientPacketType.RAW_TEXT]: RawText.PacketData;
-  [ClientPacketType.PING]: Ping.PacketData;
-  [ClientPacketType.HEART_BEAT]: HeartBeat.PacketData;
-  [ClientPacketType.LOCATE_ME]: LocateMe.PacketData;
-  [ClientPacketType.TRADE_WITH]: TradeWith.PacketData;
-  [ClientPacketType.PING_RESPONSE]: PingResponse.PacketData;
-  [ClientPacketType.LOG_IN]: LogIn.PacketData;
+  [ClientPacketType.UNSUPPORTED]: Unsupported.Data;
+  [ClientPacketType.RAW_TEXT]: RawText.Data;
+  [ClientPacketType.PING]: Ping.Data;
+  [ClientPacketType.HEART_BEAT]: HeartBeat.Data;
+  [ClientPacketType.LOCATE_ME]: LocateMe.Data;
+  [ClientPacketType.TRADE_WITH]: TradeWith.Data;
+  [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
+  [ClientPacketType.LOG_IN]: LogIn.Data;
 }
 
 export const ClientPacketDataParsers: {
