@@ -145,6 +145,14 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.GET_STORAGE_CATEGORY]: {
       categoryId: 11,
     },
+    [ClientPacketType.DEPOSIT_ITEM]: {
+      position: 6,
+      quantity: 20,
+    },
+    [ClientPacketType.WITHDRAW_ITEM]: {
+      position: 260,
+      quantity: 5,
+    },
     [ClientPacketType.PING_RESPONSE]: {
       echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
     },
