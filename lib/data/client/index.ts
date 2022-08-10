@@ -36,6 +36,7 @@ import * as RejectTrade from './reject-trade';
 import * as ExitTrade from './exit-trade';
 import * as PutObjectOnTrade from './put-object-on-trade';
 import * as RemoveObjectFromTrade from './remove-object-from-trade';
+import * as LookAtTradeItem from './look-at-trade-item';
 import * as AttackSomeone from './attack-someone';
 import * as PingResponse from './ping-response';
 import * as DoEmote from './do-emote';
@@ -75,7 +76,7 @@ export enum ClientPacketType {
   EXIT_TRADE = 35,
   PUT_OBJECT_ON_TRADE = 36,
   REMOVE_OBJECT_FROM_TRADE = 37,
-  // LOOK_AT_TRADE_ITEM = 38,
+  LOOK_AT_TRADE_ITEM = 38,
   ATTACK_SOMEONE = 40,
   // GET_STORAGE_CATEGORY = 44,
   // DEPOSIT_ITEM = 45,
@@ -125,6 +126,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.EXIT_TRADE]: ExitTrade.Data;
   [ClientPacketType.PUT_OBJECT_ON_TRADE]: PutObjectOnTrade.Data;
   [ClientPacketType.REMOVE_OBJECT_FROM_TRADE]: RemoveObjectFromTrade.Data;
+  [ClientPacketType.LOOK_AT_TRADE_ITEM]: LookAtTradeItem.Data;
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.DO_EMOTE]: DoEmote.Data;
@@ -166,6 +168,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.EXIT_TRADE]: ExitTrade.DataParser,
   [ClientPacketType.PUT_OBJECT_ON_TRADE]: PutObjectOnTrade.DataParser,
   [ClientPacketType.REMOVE_OBJECT_FROM_TRADE]: RemoveObjectFromTrade.DataParser,
+  [ClientPacketType.LOOK_AT_TRADE_ITEM]: LookAtTradeItem.DataParser,
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,

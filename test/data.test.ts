@@ -135,6 +135,10 @@ test('Parsing complete and incomplete client packets', () => {
       position: 10,
       quantity: 50,
     },
+    [ClientPacketType.LOOK_AT_TRADE_ITEM]: {
+      position: 8,
+      isYours: true,
+    },
     [ClientPacketType.ATTACK_SOMEONE]: {
       actorId: 2650,
     },
