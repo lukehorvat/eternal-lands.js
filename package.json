@@ -2,7 +2,7 @@
   "name": "el-packets",
   "private": true,
   "version": "0.0.0",
-  "description": "TODO",
+  "description": "An implementation of the Eternal Lands packet layer... in TypeScript/JavaScript!",
   "author": "Luke Horvat",
   "license": "MIT",
   "repository": "lukehorvat/el-packets",
