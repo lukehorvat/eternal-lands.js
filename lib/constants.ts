@@ -552,3 +552,5 @@ export enum EmoteId {
   PAT_BELLY = 139,
   KNOCK = 140,
 }
+
+export const MAX_TRADE_SLOTS = 16;

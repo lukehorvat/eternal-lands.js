@@ -104,6 +104,26 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.TRADE_WITH]: {
       actorId: 42,
     },
+    [ClientPacketType.ACCEPT_TRADE]: {
+      slots: [
+        { isFromStorage: true },
+        { isFromStorage: false },
+        { isFromStorage: undefined },
+        { isFromStorage: false },
+        { isFromStorage: true },
+        { isFromStorage: undefined },
+        { isFromStorage: undefined },
+        { isFromStorage: false },
+        { isFromStorage: undefined },
+        { isFromStorage: true },
+        { isFromStorage: true },
+        { isFromStorage: undefined },
+        { isFromStorage: undefined },
+        { isFromStorage: undefined },
+        { isFromStorage: false },
+        { isFromStorage: true },
+      ],
+    },
     [ClientPacketType.REJECT_TRADE]: {},
     [ClientPacketType.EXIT_TRADE]: {},
     [ClientPacketType.ATTACK_SOMEONE]: {

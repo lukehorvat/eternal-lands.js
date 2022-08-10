@@ -31,6 +31,7 @@ import * as TouchPlayer from './touch-player';
 import * as RespondToNpc from './respond-to-npc';
 import * as UseInventoryItem from './use-inventory-item';
 import * as TradeWith from './trade-with';
+import * as AcceptTrade from './accept-trade';
 import * as RejectTrade from './reject-trade';
 import * as ExitTrade from './exit-trade';
 import * as AttackSomeone from './attack-someone';
@@ -67,6 +68,7 @@ export enum ClientPacketType {
   RESPOND_TO_NPC = 29,
   USE_INVENTORY_ITEM = 31,
   TRADE_WITH = 32,
+  ACCEPT_TRADE = 33,
   REJECT_TRADE = 34,
   EXIT_TRADE = 35,
   ATTACK_SOMEONE = 40,
@@ -109,6 +111,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.RESPOND_TO_NPC]: RespondToNpc.Data;
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.Data;
   [ClientPacketType.TRADE_WITH]: TradeWith.Data;
+  [ClientPacketType.ACCEPT_TRADE]: AcceptTrade.Data;
   [ClientPacketType.REJECT_TRADE]: RejectTrade.Data;
   [ClientPacketType.EXIT_TRADE]: ExitTrade.Data;
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
@@ -147,6 +150,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.RESPOND_TO_NPC]: RespondToNpc.DataParser,
   [ClientPacketType.USE_INVENTORY_ITEM]: UseInventoryItem.DataParser,
   [ClientPacketType.TRADE_WITH]: TradeWith.DataParser,
+  [ClientPacketType.ACCEPT_TRADE]: AcceptTrade.DataParser,
   [ClientPacketType.REJECT_TRADE]: RejectTrade.DataParser,
   [ClientPacketType.EXIT_TRADE]: ExitTrade.DataParser,
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,
