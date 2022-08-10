@@ -41,6 +41,7 @@ import * as AttackSomeone from './attack-someone';
 import * as GetStorageCategory from './get-storage-category';
 import * as DepositItem from './deposit-item';
 import * as WithdrawItem from './withdraw-item';
+import * as LookAtStorageItem from './look-at-storage-item';
 import * as PingResponse from './ping-response';
 import * as DoEmote from './do-emote';
 import * as LogIn from './log-in';
@@ -84,7 +85,7 @@ export enum ClientPacketType {
   GET_STORAGE_CATEGORY = 44,
   DEPOSIT_ITEM = 45,
   WITHDRAW_ITEM = 46,
-  // LOOK_AT_STORAGE_ITEM = 47,
+  LOOK_AT_STORAGE_ITEM = 47,
   PING_RESPONSE = 60,
   DO_EMOTE = 70,
   LOG_IN = 140,
@@ -134,6 +135,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.GET_STORAGE_CATEGORY]: GetStorageCategory.Data;
   [ClientPacketType.DEPOSIT_ITEM]: DepositItem.Data;
   [ClientPacketType.WITHDRAW_ITEM]: WithdrawItem.Data;
+  [ClientPacketType.LOOK_AT_STORAGE_ITEM]: LookAtStorageItem.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.DO_EMOTE]: DoEmote.Data;
   [ClientPacketType.LOG_IN]: LogIn.Data;
@@ -179,6 +181,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.GET_STORAGE_CATEGORY]: GetStorageCategory.DataParser,
   [ClientPacketType.DEPOSIT_ITEM]: DepositItem.DataParser,
   [ClientPacketType.WITHDRAW_ITEM]: WithdrawItem.DataParser,
+  [ClientPacketType.LOOK_AT_STORAGE_ITEM]: LookAtStorageItem.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,
   [ClientPacketType.LOG_IN]: LogIn.DataParser,

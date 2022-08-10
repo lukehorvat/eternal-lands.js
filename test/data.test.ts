@@ -153,6 +153,9 @@ test('Parsing complete and incomplete client packets', () => {
       position: 260,
       quantity: 5,
     },
+    [ClientPacketType.LOOK_AT_STORAGE_ITEM]: {
+      position: 282,
+    },
     [ClientPacketType.PING_RESPONSE]: {
       echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
     },
