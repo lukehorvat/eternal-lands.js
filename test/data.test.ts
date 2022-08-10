@@ -142,6 +142,9 @@ test('Parsing complete and incomplete client packets', () => {
     [ClientPacketType.ATTACK_SOMEONE]: {
       actorId: 2650,
     },
+    [ClientPacketType.GET_STORAGE_CATEGORY]: {
+      categoryId: 11,
+    },
     [ClientPacketType.PING_RESPONSE]: {
       echo: Buffer.from([0x04, 0x03, 0x02, 0x01]),
     },
