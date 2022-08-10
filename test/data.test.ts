@@ -126,6 +126,11 @@ test('Parsing complete and incomplete client packets', () => {
     },
     [ClientPacketType.REJECT_TRADE]: {},
     [ClientPacketType.EXIT_TRADE]: {},
+    [ClientPacketType.PUT_OBJECT_ON_TRADE]: {
+      isFromStorage: true,
+      position: 276,
+      quantity: 100,
+    },
     [ClientPacketType.ATTACK_SOMEONE]: {
       actorId: 2650,
     },

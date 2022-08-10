@@ -34,6 +34,7 @@ import * as TradeWith from './trade-with';
 import * as AcceptTrade from './accept-trade';
 import * as RejectTrade from './reject-trade';
 import * as ExitTrade from './exit-trade';
+import * as PutObjectOnTrade from './put-object-on-trade';
 import * as AttackSomeone from './attack-someone';
 import * as PingResponse from './ping-response';
 import * as DoEmote from './do-emote';
@@ -71,7 +72,14 @@ export enum ClientPacketType {
   ACCEPT_TRADE = 33,
   REJECT_TRADE = 34,
   EXIT_TRADE = 35,
+  PUT_OBJECT_ON_TRADE = 36,
+  // REMOVE_OBJECT_FROM_TRADE = 37,
+  // LOOK_AT_TRADE_ITEM = 38,
   ATTACK_SOMEONE = 40,
+  // GET_STORAGE_CATEGORY = 44,
+  // DEPOSIT_ITEM = 45,
+  // WITHDRAW_ITEM = 46,
+  // LOOK_AT_STORAGE_ITEM = 47,
   PING_RESPONSE = 60,
   DO_EMOTE = 70,
   LOG_IN = 140,
@@ -114,6 +122,7 @@ export interface ClientPacketData extends Record<ClientPacketType, PacketData> {
   [ClientPacketType.ACCEPT_TRADE]: AcceptTrade.Data;
   [ClientPacketType.REJECT_TRADE]: RejectTrade.Data;
   [ClientPacketType.EXIT_TRADE]: ExitTrade.Data;
+  [ClientPacketType.PUT_OBJECT_ON_TRADE]: PutObjectOnTrade.Data;
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.Data;
   [ClientPacketType.PING_RESPONSE]: PingResponse.Data;
   [ClientPacketType.DO_EMOTE]: DoEmote.Data;
@@ -153,6 +162,7 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.ACCEPT_TRADE]: AcceptTrade.DataParser,
   [ClientPacketType.REJECT_TRADE]: RejectTrade.DataParser,
   [ClientPacketType.EXIT_TRADE]: ExitTrade.DataParser,
+  [ClientPacketType.PUT_OBJECT_ON_TRADE]: PutObjectOnTrade.DataParser,
   [ClientPacketType.ATTACK_SOMEONE]: AttackSomeone.DataParser,
   [ClientPacketType.PING_RESPONSE]: PingResponse.DataParser,
   [ClientPacketType.DO_EMOTE]: DoEmote.DataParser,
