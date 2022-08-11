@@ -6,6 +6,17 @@
   "author": "Luke Horvat",
   "license": "MIT",
   "repository": "lukehorvat/eternal-lands.js",
+  "keywords": [
+    "eternal",
+    "lands",
+    "mmorpg",
+    "client",
+    "server",
+    "packet",
+    "buffer",
+    "socket",
+    "bot"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
