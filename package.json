@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "easy-buffer": "1.1.1",
-    "emittery": "0.11.0"
+    "emittery": "0.12.1"
   },
   "devDependencies": {
     "@types/jest": "28.1.6",
