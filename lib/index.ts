@@ -1,4 +1,4 @@
 export { Client } from './client';
-export { ClientPacket, ClientPacketType } from './data/client';
-export { ServerPacket, ServerPacketType } from './data/server';
+export { ClientPacket, ClientPacketType } from './packets/client';
+export { ServerPacket, ServerPacketType } from './packets/server';
 export * as Constants from './constants';

@@ -1,6 +1,6 @@
 import { Socket, Server, createServer } from 'net';
-import { ClientPacket, ClientPacketType } from '../../lib/data/client';
-import { ServerPacket, ServerPacketType } from '../../lib/data/server';
+import { ClientPacket, ClientPacketType } from '../../lib/packets/client';
+import { ServerPacket, ServerPacketType } from '../../lib/packets/server';
 
 type ServerOptions = {
   port?: number;

@@ -1,6 +1,6 @@
 import { Client } from '../lib/client';
-import { ClientPacketType } from '../lib/data/client';
-import { ServerPacketType } from '../lib/data/server';
+import { ClientPacketType } from '../lib/packets/client';
+import { ServerPacketType } from '../lib/packets/server';
 import { MockELServer } from './util/mock-server';
 
 let server: MockELServer;

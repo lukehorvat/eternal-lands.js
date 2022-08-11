@@ -4,12 +4,12 @@ import {
   ServerPacket,
   ServerPacketData,
   ServerPacketType,
-} from './data/server';
+} from './packets/server';
 import {
   ClientPacket,
   ClientPacketData,
   ClientPacketType,
-} from './data/client';
+} from './packets/client';
 import { SERVER_HOST, ServerPort } from './constants';
 
 type ClientOptions = {
