@@ -2,7 +2,7 @@
   "name": "eternal-lands.js",
   "private": true,
   "version": "0.0.0",
-  "description": "An implementation of the Eternal Lands packet layer... in JavaScript/TypeScript!",
+  "description": "An Eternal Lands client library written in JavaScript/TypeScript.",
   "author": "Luke Horvat",
   "license": "MIT",
   "repository": "lukehorvat/eternal-lands.js",
