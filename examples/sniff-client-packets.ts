@@ -4,14 +4,14 @@
  * Obviously, you need to install `pcap` first before running this example.
  */
 
-import { ELConstants, ELClientPacket, ELClientPacketType } from '../lib';
+import * as EL from '../lib';
 import pcap from 'pcap';
 
 console.log('Sniffing packets sent by client...');
 
 pcap
   .createSession('en0', {
-    filter: `tcp dst port ${ELConstants.ServerPort.MAIN_SERVER} and host ${ELConstants.SERVER_HOST}`,
+    filter: `tcp dst port ${EL.Constants.ServerPort.MAIN_SERVER} and host ${EL.Constants.SERVER_HOST}`,
   })
   .on('packet', (packet) => {
     const tcpPacket = pcap.decode.packet(packet).payload.payload.payload;
@@ -27,7 +27,7 @@ pcap
 let previousBuffer = Buffer.alloc(0);
 
 function onDataSniffed(buffer: Buffer) {
-  const { packets, remainingBuffer } = ELClientPacket.fromBuffer(
+  const { packets, remainingBuffer } = EL.ClientPacket.fromBuffer(
     // Prepend any partial (overflow/underflow) packet data received previously.
     Buffer.concat([previousBuffer, buffer])
   );
@@ -35,6 +35,6 @@ function onDataSniffed(buffer: Buffer) {
   previousBuffer = remainingBuffer;
 }
 
-function onPacketSent(packet: ELClientPacket<ELClientPacketType>) {
-  console.log(ELClientPacketType[packet.type], packet.data);
+function onPacketSent(packet: EL.ClientPacket<EL.ClientPacketType>) {
+  console.log(EL.ClientPacketType[packet.type], packet.data);
 }

@@ -12,45 +12,45 @@ import {
 } from './data/client';
 import { SERVER_HOST, ServerPort } from './constants';
 
-type ConnectionOptions = {
+type ClientOptions = {
   host?: string;
   port?: number;
 };
 
-enum ConnectionState {
+enum ClientConnectionState {
   CONNECTING,
   CONNECTED,
   DISCONNECTING,
   DISCONNECTED,
 }
 
-export class Connection {
-  private readonly options?: ConnectionOptions;
+export class Client {
+  private readonly options?: ClientOptions;
   private readonly socket: Socket;
   private readonly clientEvents: Emittery<ClientPacketData>;
   private readonly serverEvents: Emittery<ServerPacketData>;
-  private connectionState: ConnectionState;
+  private connectionState: ClientConnectionState;
 
-  constructor(options?: ConnectionOptions) {
+  constructor(options?: ClientOptions) {
     this.options = options;
     this.socket = new Socket();
     this.clientEvents = new Emittery<ClientPacketData>();
     this.serverEvents = new Emittery<ServerPacketData>();
-    this.connectionState = ConnectionState.DISCONNECTED;
+    this.connectionState = ClientConnectionState.DISCONNECTED;
   }
 
   connect(): Promise<void> {
     switch (this.connectionState) {
-      case ConnectionState.DISCONNECTED:
-        this.connectionState = ConnectionState.CONNECTING;
+      case ClientConnectionState.DISCONNECTED:
+        this.connectionState = ClientConnectionState.CONNECTING;
         return new Promise<void>((resolve, reject) => {
           const onSocketConnect = () => {
-            this.connectionState = ConnectionState.CONNECTED;
+            this.connectionState = ClientConnectionState.CONNECTED;
             this.socket.off('error', onSocketError);
             resolve();
           };
           const onSocketError = (err: Error) => {
-            this.connectionState = ConnectionState.DISCONNECTED;
+            this.connectionState = ClientConnectionState.DISCONNECTED;
             this.socket.off('connect', onSocketConnect);
             reject(err);
           };
@@ -67,7 +67,7 @@ export class Connection {
           const onSocketDisconnect = () => {
             // In case the socket is reconnected later, reset some state.
             this.socket.off('data', onSocketData);
-            this.connectionState = ConnectionState.DISCONNECTED;
+            this.connectionState = ClientConnectionState.DISCONNECTED;
           };
           const onSocketData = (buffer: Buffer) => {
             const { packets, remainingBuffer } = ServerPacket.fromBuffer(
@@ -84,11 +84,11 @@ export class Connection {
             .once('close', onSocketDisconnect)
             .on('data', onSocketData);
         });
-      case ConnectionState.CONNECTING:
+      case ClientConnectionState.CONNECTING:
         return Promise.reject('Already in the process of connecting!');
-      case ConnectionState.CONNECTED:
+      case ClientConnectionState.CONNECTED:
         return Promise.reject('Already connected!');
-      case ConnectionState.DISCONNECTING:
+      case ClientConnectionState.DISCONNECTING:
         return Promise.reject(
           'Cannot connect whilst in the process of disconnecting!'
         );
@@ -97,19 +97,19 @@ export class Connection {
 
   disconnect(): Promise<void> {
     switch (this.connectionState) {
-      case ConnectionState.CONNECTED:
-        this.connectionState = ConnectionState.DISCONNECTING;
+      case ClientConnectionState.CONNECTED:
+        this.connectionState = ClientConnectionState.DISCONNECTING;
         return new Promise((resolve) => {
           this.socket.end().once('close', () => {
-            this.connectionState = ConnectionState.DISCONNECTED;
+            this.connectionState = ClientConnectionState.DISCONNECTED;
             resolve();
           });
         });
-      case ConnectionState.DISCONNECTED:
+      case ClientConnectionState.DISCONNECTED:
         return Promise.reject('Already disconnected!');
-      case ConnectionState.DISCONNECTING:
+      case ClientConnectionState.DISCONNECTING:
         return Promise.reject('Already in the process of disconnecting!');
-      case ConnectionState.CONNECTING:
+      case ClientConnectionState.CONNECTING:
         return Promise.reject(
           'Cannot disconnect whilst in the process of connecting!'
         );
@@ -117,7 +117,7 @@ export class Connection {
   }
 
   get isConnected() {
-    return this.connectionState === ConnectionState.CONNECTED;
+    return this.connectionState === ClientConnectionState.CONNECTED;
   }
 
   send<Type extends ClientPacketType>(

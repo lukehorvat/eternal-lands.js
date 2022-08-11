@@ -6,10 +6,10 @@
  * We also respond to any ping requests that the server makes.
  */
 
-import { ELClientPacketType, ELConnection, ELServerPacketType } from '../lib';
+import * as EL from '../lib';
 
 (async () => {
-  const elc = new ELConnection();
+  const elc = new EL.Client();
 
   try {
     await elc.connect();
@@ -24,21 +24,21 @@ import { ELClientPacketType, ELConnection, ELServerPacketType } from '../lib';
     process.exit(1);
   });
   elc.onSendAny((type, data) => {
-    console.log('Sent', ELClientPacketType[type], data);
+    console.log('Sent', EL.ClientPacketType[type], data);
   });
   elc.onReceiveAny((type, data) => {
-    console.log('Received', ELServerPacketType[type], data);
+    console.log('Received', EL.ServerPacketType[type], data);
   });
-  elc.onReceive(ELServerPacketType.PING_REQUEST, (data) => {
-    elc.send(ELClientPacketType.PING_RESPONSE, data);
+  elc.onReceive(EL.ServerPacketType.PING_REQUEST, (data) => {
+    elc.send(EL.ClientPacketType.PING_RESPONSE, data);
   });
 
   setInterval(() => {
-    elc.send(ELClientPacketType.HEART_BEAT, {});
+    elc.send(EL.ClientPacketType.HEART_BEAT, {});
   }, 25000);
 
   setTimeout(() => {
-    elc.send(ELClientPacketType.PING, {
+    elc.send(EL.ClientPacketType.PING, {
       echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
     });
   }, 3000);
