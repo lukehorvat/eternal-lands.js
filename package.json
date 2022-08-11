@@ -1,11 +1,11 @@
 {
-  "name": "el-packets",
+  "name": "eternal-lands.js",
   "private": true,
   "version": "0.0.0",
-  "description": "An implementation of the Eternal Lands packet layer... in TypeScript/JavaScript!",
+  "description": "An implementation of the Eternal Lands packet layer... in JavaScript/TypeScript!",
   "author": "Luke Horvat",
   "license": "MIT",
-  "repository": "lukehorvat/el-packets",
+  "repository": "lukehorvat/eternal-lands.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
