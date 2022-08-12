@@ -2,7 +2,7 @@
 
 An [Eternal Lands](http://www.eternal-lands.com) client library written in JavaScript/TypeScript.
 
-It provides several abstractions to help manage the "low-level" (i.e. sending and receiving of packets) so that you can focus on building the "high-level" (e.g. trade bots, guard bots, AI-controlled ants, etc).
+It provides several abstractions for managing the "low-level" (i.e. sending and receiving of packets) so that you can focus on building the "high-level" (e.g. trade bots, guard bots, AI-controlled ants, etc).
 
 ## Installation
 
@@ -14,4 +14,4 @@ $ npm install eternal-lands.js
 
 ## Usage
 
-TODO.
+More info coming soon.
