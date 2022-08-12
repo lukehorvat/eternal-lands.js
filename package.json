@@ -1,7 +1,6 @@
 {
   "name": "eternal-lands.js",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A JavaScript (and TypeScript) client library for Eternal Lands.",
   "author": "Luke Horvat",
   "license": "MIT",
