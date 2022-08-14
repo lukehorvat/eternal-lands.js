@@ -1,4 +1,4 @@
-import { Socket } from 'net';
+import WebSocket from 'isomorphic-ws';
 import Emittery from 'emittery';
 import {
   ServerPacket,
@@ -10,19 +10,18 @@ import {
   ClientPacketData,
   ClientPacketType,
 } from '../packets/client';
-import { SERVER_HOST, ServerPort } from '../constants';
 
-type ClientOptions = { host?: string; port?: number };
+type ClientOptions = { url: string };
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 
 export class Client {
-  private readonly options?: ClientOptions;
+  private readonly options: ClientOptions;
   private readonly connectionEvents: Emittery<ClientConnectionEvents>;
   private readonly clientEvents: Emittery<ClientPacketData>;
   private readonly serverEvents: Emittery<ServerPacketData>;
-  private socket?: Socket;
+  private socket?: WebSocket;
 
-  constructor(options?: ClientOptions) {
+  constructor(options: ClientOptions) {
     this.options = options;
     this.connectionEvents = new Emittery();
     this.clientEvents = new Emittery();
@@ -31,32 +30,32 @@ export class Client {
 
   async connect(): Promise<void> {
     switch (this.socket?.readyState) {
-      case 'open':
+      case WebSocket.OPEN:
         throw new Error('Already connected!');
-      case 'opening':
+      case WebSocket.CONNECTING:
         throw new Error('Already in the process of connecting!');
-      case 'readOnly':
-      case 'writeOnly':
+      case WebSocket.CLOSING:
         throw new Error(
           'Cannot connect whilst in the process of disconnecting!'
         );
-      case 'closed':
+      case WebSocket.CLOSED:
       default:
         return new Promise<void>((resolve, reject) => {
           let previousBuffer = Buffer.alloc(0);
 
           const onSocketConnect = () => {
             this.connectionEvents.emit('CONNECT');
-            this.socket!.off('error', onSocketError);
+            this.socket!.removeEventListener('error', onSocketError);
             resolve();
           };
-          const onSocketError = (err: Error) => {
-            reject(err);
+          const onSocketError = () => {
+            reject();
           };
           const onSocketDisconnect = () => {
             this.connectionEvents.emit('DISCONNECT');
           };
-          const onSocketData = (buffer: Buffer) => {
+          const onSocketData = (event: WebSocket.MessageEvent) => {
+            const buffer = Buffer.from(event.data as ArrayBuffer);
             const { packets, remainingBuffer } = ServerPacket.fromBuffer(
               // Prepend any partial (overflow/underflow) packet data received previously.
               Buffer.concat([previousBuffer, buffer])
@@ -67,40 +66,41 @@ export class Client {
             previousBuffer = remainingBuffer;
           };
 
-          this.socket = new Socket()
-            .once('connect', onSocketConnect)
-            .once('error', onSocketError)
-            .once('close', onSocketDisconnect)
-            .on('data', onSocketData)
-            .connect(
-              this.options?.port ?? ServerPort.TEST_SERVER,
-              this.options?.host ?? SERVER_HOST
-            );
+          this.socket = new WebSocket(this.options.url, ['binary']);
+          this.socket.binaryType = 'arraybuffer';
+          this.socket.addEventListener('open', onSocketConnect, { once: true });
+          this.socket.addEventListener('error', onSocketError, { once: true });
+          this.socket.addEventListener('close', onSocketDisconnect, {
+            once: true,
+          });
+          this.socket.addEventListener('message', onSocketData);
         });
     }
   }
 
   async disconnect(): Promise<void> {
     switch (this.socket?.readyState) {
-      case 'open':
+      case WebSocket.OPEN:
         return new Promise<void>((resolve) => {
-          this.socket!.once('close', () => resolve()).end();
+          this.socket!.addEventListener('close', () => resolve(), {
+            once: true,
+          });
+          this.socket!.close(1000);
         });
-      case 'opening':
+      case WebSocket.CONNECTING:
         throw new Error(
           'Cannot disconnect whilst in the process of connecting!'
         );
-      case 'readOnly':
-      case 'writeOnly':
+      case WebSocket.CLOSING:
         throw new Error('Already in the process of disconnecting!');
-      case 'closed':
+      case WebSocket.CLOSED:
       default:
         throw new Error('Already disconnected!');
     }
   }
 
   get isConnected(): boolean {
-    return this.socket?.readyState === 'open';
+    return this.socket?.readyState === WebSocket.OPEN;
   }
 
   async send<Type extends ClientPacketType>(
@@ -112,11 +112,7 @@ export class Client {
     }
 
     const packet = new ClientPacket(type, data);
-    await new Promise<void>((resolve, reject) => {
-      this.socket!.write(packet.toBuffer(), (err) =>
-        err ? reject(err) : resolve()
-      );
-    });
+    this.socket!.send(packet.toBuffer()); // TODO: This just queues the data. Is there some way to wait until it has actually been sent?
     this.clientEvents.emit(type, data);
     return data;
   }
