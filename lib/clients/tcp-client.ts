@@ -19,7 +19,7 @@ export class TcpSocketClient extends BaseClient {
     this.options = options;
   }
 
-  async connect(): Promise<void> {
+  override async connect(): Promise<void> {
     switch (this.socket?.readyState) {
       case 'open':
         throw new Error('Already connected!');
@@ -71,7 +71,7 @@ export class TcpSocketClient extends BaseClient {
     }
   }
 
-  async disconnect(): Promise<void> {
+  override async disconnect(): Promise<void> {
     switch (this.socket?.readyState) {
       case 'open':
         return new Promise<void>((resolve) => {
@@ -90,11 +90,11 @@ export class TcpSocketClient extends BaseClient {
     }
   }
 
-  get isConnected(): boolean {
+  override get isConnected(): boolean {
     return this.socket?.readyState === 'open';
   }
 
-  async send<Type extends ClientPacketType>(
+  override async send<Type extends ClientPacketType>(
     type: Type,
     data: ClientPacketData[Type]
   ): Promise<ClientPacketData[Type]> {

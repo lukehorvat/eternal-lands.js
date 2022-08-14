@@ -3,6 +3,7 @@ import { ServerPacketData, ServerPacketType } from '../packets/server';
 import { ClientPacketData, ClientPacketType } from '../packets/client';
 
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
+type UnsubscribeFn = () => void;
 
 export abstract class BaseClient {
   private readonly connectionEvents: Emittery<ClientConnectionEvents>;
@@ -26,18 +27,18 @@ export abstract class BaseClient {
     data: ClientPacketData[Type]
   ): Promise<ClientPacketData[Type]>;
 
-  onConnect(listener: () => void): () => void {
+  onConnect(listener: () => void): UnsubscribeFn {
     return this.connectionEvents.on('CONNECT', listener);
   }
 
-  onDisconnect(listener: () => void): () => void {
+  onDisconnect(listener: () => void): UnsubscribeFn {
     return this.connectionEvents.on('DISCONNECT', listener);
   }
 
   onSend<Type extends ClientPacketType>(
     type: Type,
     listener: (data: ClientPacketData[Type]) => void
-  ): () => void {
+  ): UnsubscribeFn {
     return this.clientEvents.on(type, listener);
   }
 
@@ -52,14 +53,14 @@ export abstract class BaseClient {
       type: ClientPacketType,
       data: ClientPacketData[ClientPacketType]
     ) => void
-  ): () => void {
+  ): UnsubscribeFn {
     return this.clientEvents.onAny(listener);
   }
 
   onReceive<Type extends ServerPacketType>(
     type: Type,
     listener: (data: ServerPacketData[Type]) => void
-  ): () => void {
+  ): UnsubscribeFn {
     return this.serverEvents.on(type, listener);
   }
 
@@ -74,7 +75,7 @@ export abstract class BaseClient {
       type: ServerPacketType,
       data: ServerPacketData[ServerPacketType]
     ) => void
-  ): () => void {
+  ): UnsubscribeFn {
     return this.serverEvents.onAny(listener);
   }
 

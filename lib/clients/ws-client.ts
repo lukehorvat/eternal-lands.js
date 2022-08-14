@@ -18,7 +18,7 @@ export class WebSocketClient extends BaseClient {
     this.options = options;
   }
 
-  async connect(): Promise<void> {
+  override async connect(): Promise<void> {
     switch (this.socket?.readyState) {
       case WebSocket.OPEN:
         throw new Error('Already connected!');
@@ -70,7 +70,7 @@ export class WebSocketClient extends BaseClient {
     }
   }
 
-  async disconnect(): Promise<void> {
+  override async disconnect(): Promise<void> {
     switch (this.socket?.readyState) {
       case WebSocket.OPEN:
         return new Promise<void>((resolve) => {
@@ -91,11 +91,11 @@ export class WebSocketClient extends BaseClient {
     }
   }
 
-  get isConnected(): boolean {
+  override get isConnected(): boolean {
     return this.socket?.readyState === WebSocket.OPEN;
   }
 
-  async send<Type extends ClientPacketType>(
+  override async send<Type extends ClientPacketType>(
     type: Type,
     data: ClientPacketData[Type]
   ): Promise<ClientPacketData[Type]> {
