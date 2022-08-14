@@ -6,7 +6,7 @@ type ServerOptions = {
   port?: number;
 };
 
-export class MockServer {
+export class MockTcpSocketServer {
   private readonly options?: ServerOptions;
   private server?: Server;
 

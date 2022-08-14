@@ -1,4 +1,8 @@
-export { Client } from './clients/tcp-client';
+export {
+  TcpSocketClient,
+  TcpSocketClient as Client, // alias
+} from './clients/tcp-client';
+export { WebSocketClient } from './clients/ws-client';
 export {
   ClientPacket,
   ClientPacketData,

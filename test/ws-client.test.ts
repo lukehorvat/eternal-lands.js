@@ -1,14 +1,14 @@
-import { Client } from '../lib/clients/ws-client';
+import { WebSocketClient } from '../lib/clients/ws-client';
 import { ClientPacketType } from '../lib/packets/client';
 import { ServerPacketType } from '../lib/packets/server';
-import { MockServer } from './util/mock-ws-server';
+import { MockWebSocketServer } from './util/mock-ws-server';
 
-let server: MockServer;
-let client: Client;
+let server: MockWebSocketServer;
+let client: WebSocketClient;
 
 beforeEach(() => {
-  server = new MockServer({ port: 8000 });
-  client = new Client({ url: 'ws://0.0.0.0:8000' });
+  server = new MockWebSocketServer({ port: 8000 });
+  client = new WebSocketClient({ url: 'ws://0.0.0.0:8000' });
 });
 
 afterEach(async () => {

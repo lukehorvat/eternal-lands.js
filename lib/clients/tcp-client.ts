@@ -15,7 +15,7 @@ import { SERVER_HOST, ServerPort } from '../constants';
 type ClientOptions = { host?: string; port?: number };
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 
-export class Client {
+export class TcpSocketClient {
   private readonly options?: ClientOptions;
   private readonly connectionEvents: Emittery<ClientConnectionEvents>;
   private readonly clientEvents: Emittery<ClientPacketData>;

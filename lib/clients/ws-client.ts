@@ -14,7 +14,7 @@ import {
 type ClientOptions = { url: string };
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 
-export class Client {
+export class WebSocketClient {
   private readonly options: ClientOptions;
   private readonly connectionEvents: Emittery<ClientConnectionEvents>;
   private readonly clientEvents: Emittery<ClientPacketData>;

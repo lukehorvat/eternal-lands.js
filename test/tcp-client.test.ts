@@ -1,14 +1,14 @@
-import { Client } from '../lib/clients/tcp-client';
+import { TcpSocketClient } from '../lib/clients/tcp-client';
 import { ClientPacketType } from '../lib/packets/client';
 import { ServerPacketType } from '../lib/packets/server';
-import { MockServer } from './util/mock-tcp-server';
+import { MockTcpSocketServer } from './util/mock-tcp-server';
 
-let server: MockServer;
-let client: Client;
+let server: MockTcpSocketServer;
+let client: TcpSocketClient;
 
 beforeEach(() => {
-  server = new MockServer({ port: 8000 });
-  client = new Client({ host: 'localhost', port: 8000 });
+  server = new MockTcpSocketServer({ port: 8000 });
+  client = new TcpSocketClient({ host: 'localhost', port: 8000 });
 });
 
 afterEach(async () => {
