@@ -1,6 +1,6 @@
 {
   "name": "eternal-lands.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A JavaScript (and TypeScript) client library for Eternal Lands.",
   "author": "Luke Horvat",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "packet",
     "buffer",
     "socket",
-    "bot"
+    "websocket"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
