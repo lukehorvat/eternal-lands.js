@@ -40,41 +40,43 @@ export class Client {
         );
       case WebSocket.CLOSED:
       default:
-        return new Promise<void>((resolve, reject) => {
-          let previousBuffer = Buffer.alloc(0);
-
+        await new Promise<void>((resolve, reject) => {
           const onSocketConnect = () => {
             this.connectionEvents.emit('CONNECT');
             this.socket!.removeEventListener('error', onSocketError);
             resolve();
           };
-          const onSocketError = () => {
-            reject();
-          };
-          const onSocketDisconnect = () => {
-            this.connectionEvents.emit('DISCONNECT');
-          };
-          const onSocketData = (event: WebSocket.MessageEvent) => {
-            const buffer = Buffer.from(event.data as ArrayBuffer);
-            const { packets, remainingBuffer } = ServerPacket.fromBuffer(
-              // Prepend any partial (overflow/underflow) packet data received previously.
-              Buffer.concat([previousBuffer, buffer])
-            );
-            packets.forEach((packet) => {
-              this.serverEvents.emit(packet.type, packet.data);
-            });
-            previousBuffer = remainingBuffer;
+          const onSocketError = (event: WebSocket.ErrorEvent) => {
+            reject(event.error);
           };
 
           this.socket = new WebSocket(this.options.url, ['binary']);
           this.socket.binaryType = 'arraybuffer';
           this.socket.addEventListener('open', onSocketConnect, { once: true });
           this.socket.addEventListener('error', onSocketError, { once: true });
-          this.socket.addEventListener('close', onSocketDisconnect, {
-            once: true,
-          });
-          this.socket.addEventListener('message', onSocketData);
         });
+
+        let previousBuffer = Buffer.alloc(0);
+        const onSocketDisconnect = () => {
+          this.connectionEvents.emit('DISCONNECT');
+        };
+        const onSocketData = (event: WebSocket.MessageEvent) => {
+          const buffer = Buffer.from(event.data as ArrayBuffer);
+          const { packets, remainingBuffer } = ServerPacket.fromBuffer(
+            // Prepend any partial (overflow/underflow) packet data received previously.
+            Buffer.concat([previousBuffer, buffer])
+          );
+          packets.forEach((packet) => {
+            this.serverEvents.emit(packet.type, packet.data);
+          });
+          previousBuffer = remainingBuffer;
+        };
+
+        this.socket!.addEventListener('close', onSocketDisconnect, {
+          once: true,
+        });
+        this.socket!.addEventListener('message', onSocketData);
+        return;
     }
   }
 
@@ -111,8 +113,14 @@ export class Client {
       throw new Error('Cannot send when disconnected!');
     }
 
+    // Force a tick of the event loop so that the "sent" event gets
+    // emitted async. We need to do this because `WebSocket.send()`
+    // doesn't have a callback (unlike Node.js sockets), and we want
+    // userland to assume that `send()` is an async task.
+    await Promise.resolve();
+
     const packet = new ClientPacket(type, data);
-    this.socket!.send(packet.toBuffer()); // TODO: This just queues the data. Is there some way to wait until it has actually been sent?
+    this.socket!.send(packet.toBuffer());
     this.clientEvents.emit(type, data);
     return data;
   }

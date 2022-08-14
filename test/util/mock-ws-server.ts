@@ -1,4 +1,4 @@
-import { Socket, Server, createServer } from 'net';
+import { WebSocket, WebSocketServer } from 'ws';
 import { ClientPacket, ClientPacketType } from '../../lib/packets/client';
 import { ServerPacket, ServerPacketType } from '../../lib/packets/server';
 
@@ -8,7 +8,7 @@ type ServerOptions = {
 
 export class MockServer {
   private readonly options?: ServerOptions;
-  private server?: Server;
+  private server?: WebSocketServer;
 
   constructor(options?: ServerOptions) {
     this.options = options;
@@ -16,13 +16,12 @@ export class MockServer {
 
   start(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.server = createServer()
+      this.server = new WebSocketServer({ port: this.options?.port })
         .once('listening', resolve)
         .once('error', reject)
         .on('connection', (socket) => {
           this.onClientConnected(socket);
-        })
-        .listen(this.options?.port);
+        });
     });
   }
 
@@ -36,25 +35,27 @@ export class MockServer {
     });
   }
 
-  private onClientConnected(socket: Socket): void {
+  private onClientConnected(socket: WebSocket): void {
     let previousBuffer = Buffer.alloc(0);
 
-    socket.on('data', (buffer) => {
-      const { packets, remainingBuffer } = ClientPacket.fromBuffer(
-        // Prepend any partial (overflow/underflow) packet data received previously.
-        Buffer.concat([previousBuffer, buffer])
-      );
+    socket.on('message', (data) => {
+      if (data instanceof Buffer) {
+        const { packets, remainingBuffer } = ClientPacket.fromBuffer(
+          // Prepend any partial (overflow/underflow) packet data received previously.
+          Buffer.concat([previousBuffer, data])
+        );
 
-      packets.forEach((packet) => {
-        this.onPacketReceived(socket, packet);
-      });
+        packets.forEach((packet) => {
+          this.onPacketReceived(socket, packet);
+        });
 
-      previousBuffer = remainingBuffer;
+        previousBuffer = remainingBuffer;
+      }
     });
   }
 
   private onPacketReceived<Type extends ClientPacketType>(
-    socket: Socket,
+    socket: WebSocket,
     packet: ClientPacket<Type>
   ): void {
     if (ClientPacket.isType(packet, ClientPacketType.LOG_IN)) {
@@ -83,9 +84,9 @@ export class MockServer {
   }
 
   private sendPacket<Type extends ServerPacketType>(
-    socket: Socket,
+    socket: WebSocket,
     packet: ServerPacket<Type>
   ): void {
-    socket.write(packet.toBuffer());
+    socket.send(packet.toBuffer());
   }
 }

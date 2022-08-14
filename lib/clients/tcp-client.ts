@@ -42,9 +42,7 @@ export class Client {
         );
       case 'closed':
       default:
-        return new Promise<void>((resolve, reject) => {
-          let previousBuffer = Buffer.alloc(0);
-
+        await new Promise<void>((resolve, reject) => {
           const onSocketConnect = () => {
             this.connectionEvents.emit('CONNECT');
             this.socket!.off('error', onSocketError);
@@ -53,30 +51,33 @@ export class Client {
           const onSocketError = (err: Error) => {
             reject(err);
           };
-          const onSocketDisconnect = () => {
-            this.connectionEvents.emit('DISCONNECT');
-          };
-          const onSocketData = (buffer: Buffer) => {
-            const { packets, remainingBuffer } = ServerPacket.fromBuffer(
-              // Prepend any partial (overflow/underflow) packet data received previously.
-              Buffer.concat([previousBuffer, buffer])
-            );
-            packets.forEach((packet) => {
-              this.serverEvents.emit(packet.type, packet.data);
-            });
-            previousBuffer = remainingBuffer;
-          };
 
           this.socket = new Socket()
             .once('connect', onSocketConnect)
             .once('error', onSocketError)
-            .once('close', onSocketDisconnect)
-            .on('data', onSocketData)
             .connect(
               this.options?.port ?? ServerPort.TEST_SERVER,
               this.options?.host ?? SERVER_HOST
             );
         });
+
+        let previousBuffer = Buffer.alloc(0);
+        const onSocketDisconnect = () => {
+          this.connectionEvents.emit('DISCONNECT');
+        };
+        const onSocketData = (buffer: Buffer) => {
+          const { packets, remainingBuffer } = ServerPacket.fromBuffer(
+            // Prepend any partial (overflow/underflow) packet data received previously.
+            Buffer.concat([previousBuffer, buffer])
+          );
+          packets.forEach((packet) => {
+            this.serverEvents.emit(packet.type, packet.data);
+          });
+          previousBuffer = remainingBuffer;
+        };
+
+        this.socket!.once('close', onSocketDisconnect).on('data', onSocketData);
+        return;
     }
   }
 
