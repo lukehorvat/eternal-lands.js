@@ -65,7 +65,7 @@ test(`Throws an error when attempting to connect whilst already connected`, asyn
   await server.start();
 
   await client.connect();
-  await expect(client.connect()).rejects.toMatch('Already connected!');
+  await expect(client.connect()).rejects.toThrow('Already connected!');
 });
 
 test(`Throws an error when attempting to connect whilst already in the process of connecting`, async () => {
@@ -75,7 +75,7 @@ test(`Throws an error when attempting to connect whilst already in the process o
   const promise = client.connect();
 
   // Now try to connect again while the previous promise is unresolved
-  await expect(client.connect()).rejects.toMatch(
+  await expect(client.connect()).rejects.toThrow(
     'Already in the process of connecting!'
   );
 
@@ -83,13 +83,13 @@ test(`Throws an error when attempting to connect whilst already in the process o
 });
 
 test(`Throws an error when attempting to disconnect whilst already disconnected`, async () => {
-  await expect(client.disconnect()).rejects.toMatch('Already disconnected!');
+  await expect(client.disconnect()).rejects.toThrow('Already disconnected!');
 
   await server.start();
   await client.connect();
 
   await client.disconnect();
-  await expect(client.disconnect()).rejects.toMatch('Already disconnected!');
+  await expect(client.disconnect()).rejects.toThrow('Already disconnected!');
 });
 
 test(`Throws an error when attempting to disconnect whilst in the process of connecting`, async () => {
@@ -98,7 +98,7 @@ test(`Throws an error when attempting to disconnect whilst in the process of con
   // Start connecting (note the lack of await)
   const promise = client.connect();
 
-  await expect(client.disconnect()).rejects.toMatch(
+  await expect(client.disconnect()).rejects.toThrow(
     'Cannot disconnect whilst in the process of connecting!'
   );
 
@@ -112,7 +112,7 @@ test(`Throws an error when attempting to connect whilst in the process of discon
   // Start disconnecting (note the lack of await)
   const promise = client.disconnect();
 
-  await expect(client.connect()).rejects.toMatch(
+  await expect(client.connect()).rejects.toThrow(
     'Cannot connect whilst in the process of disconnecting!'
   );
 
@@ -124,7 +124,7 @@ test(`Throws an error when attempting to send packets whilst disconnected`, asyn
     client.send(ClientPacketType.RAW_TEXT, {
       message: 'test',
     })
-  ).rejects.toMatch('Cannot send packets when disconnected!');
+  ).rejects.toThrow('Cannot send packets when disconnected!');
 });
 
 test('Can send and receive packets whilst connected', async () => {

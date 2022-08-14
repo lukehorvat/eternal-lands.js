@@ -85,12 +85,14 @@ export class Client {
             .on('data', onSocketData);
         });
       case ClientConnectionState.CONNECTING:
-        return Promise.reject('Already in the process of connecting!');
+        return Promise.reject(
+          new Error('Already in the process of connecting!')
+        );
       case ClientConnectionState.CONNECTED:
-        return Promise.reject('Already connected!');
+        return Promise.reject(new Error('Already connected!'));
       case ClientConnectionState.DISCONNECTING:
         return Promise.reject(
-          'Cannot connect whilst in the process of disconnecting!'
+          new Error('Cannot connect whilst in the process of disconnecting!')
         );
     }
   }
@@ -106,12 +108,14 @@ export class Client {
           });
         });
       case ClientConnectionState.DISCONNECTED:
-        return Promise.reject('Already disconnected!');
+        return Promise.reject(new Error('Already disconnected!'));
       case ClientConnectionState.DISCONNECTING:
-        return Promise.reject('Already in the process of disconnecting!');
+        return Promise.reject(
+          new Error('Already in the process of disconnecting!')
+        );
       case ClientConnectionState.CONNECTING:
         return Promise.reject(
-          'Cannot disconnect whilst in the process of connecting!'
+          new Error('Cannot disconnect whilst in the process of connecting!')
         );
     }
   }
@@ -125,7 +129,9 @@ export class Client {
     data: ClientPacketData[Type]
   ): Promise<ClientPacketData[Type]> {
     if (!this.isConnected) {
-      return Promise.reject('Cannot send packets when disconnected!');
+      return Promise.reject(
+        new Error('Cannot send packets when disconnected!')
+      );
     }
 
     return new Promise<void>((resolve, reject) => {
