@@ -1,4 +1,4 @@
-export { Client } from './client';
+export { Client } from './clients/tcp-client';
 export {
   ClientPacket,
   ClientPacketData,

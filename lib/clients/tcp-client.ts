@@ -4,13 +4,13 @@ import {
   ServerPacket,
   ServerPacketData,
   ServerPacketType,
-} from './packets/server';
+} from '../packets/server';
 import {
   ClientPacket,
   ClientPacketData,
   ClientPacketType,
-} from './packets/client';
-import { SERVER_HOST, ServerPort } from './constants';
+} from '../packets/client';
+import { SERVER_HOST, ServerPort } from '../constants';
 
 type ClientOptions = { host?: string; port?: number };
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;

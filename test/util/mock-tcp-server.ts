@@ -6,7 +6,7 @@ type ServerOptions = {
   port?: number;
 };
 
-export class MockELServer {
+export class MockServer {
   private readonly options?: ServerOptions;
   private server?: Server;
 

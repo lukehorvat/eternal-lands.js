@@ -1,13 +1,13 @@
-import { Client } from '../lib/client';
+import { Client } from '../lib/clients/tcp-client';
 import { ClientPacketType } from '../lib/packets/client';
 import { ServerPacketType } from '../lib/packets/server';
-import { MockELServer } from './util/mock-server';
+import { MockServer } from './util/mock-tcp-server';
 
-let server: MockELServer;
+let server: MockServer;
 let client: Client;
 
 beforeEach(() => {
-  server = new MockELServer({ port: 8000 });
+  server = new MockServer({ port: 8000 });
   client = new Client({ host: 'localhost', port: 8000 });
 });
 
