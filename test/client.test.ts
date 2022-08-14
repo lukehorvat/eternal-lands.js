@@ -124,7 +124,7 @@ test(`Throws an error when attempting to send packets whilst disconnected`, asyn
     client.send(ClientPacketType.RAW_TEXT, {
       message: 'test',
     })
-  ).rejects.toThrow('Cannot send packets when disconnected!');
+  ).rejects.toThrow('Cannot send when disconnected!');
 });
 
 test('Can send and receive packets whilst connected', async () => {
