@@ -29,18 +29,16 @@ export class Client {
     this.serverEvents = new Emittery();
   }
 
-  connect(): Promise<void> {
+  async connect(): Promise<void> {
     switch (this.socket?.readyState) {
       case 'open':
-        return Promise.reject(new Error('Already connected!'));
+        throw new Error('Already connected!');
       case 'opening':
-        return Promise.reject(
-          new Error('Already in the process of connecting!')
-        );
+        throw new Error('Already in the process of connecting!');
       case 'readOnly':
       case 'writeOnly':
-        return Promise.reject(
-          new Error('Cannot connect whilst in the process of disconnecting!')
+        throw new Error(
+          'Cannot connect whilst in the process of disconnecting!'
         );
       case 'closed':
       default:
@@ -82,7 +80,7 @@ export class Client {
     }
   }
 
-  disconnect(): Promise<void> {
+  async disconnect(): Promise<void> {
     switch (this.socket?.readyState) {
       case 'open':
         return new Promise((resolve) => {
@@ -91,17 +89,15 @@ export class Client {
           });
         });
       case 'opening':
-        return Promise.reject(
-          new Error('Cannot disconnect whilst in the process of connecting!')
+        throw new Error(
+          'Cannot disconnect whilst in the process of connecting!'
         );
       case 'readOnly':
       case 'writeOnly':
-        return Promise.reject(
-          new Error('Already in the process of disconnecting!')
-        );
+        throw new Error('Already in the process of disconnecting!');
       case 'closed':
       default:
-        return Promise.reject(new Error('Already disconnected!'));
+        throw new Error('Already disconnected!');
     }
   }
 
@@ -109,24 +105,23 @@ export class Client {
     return this.socket?.readyState === 'open';
   }
 
-  send<Type extends ClientPacketType>(
+  async send<Type extends ClientPacketType>(
     type: Type,
     data: ClientPacketData[Type]
   ): Promise<ClientPacketData[Type]> {
     if (!this.isConnected) {
-      return Promise.reject(new Error('Cannot send when disconnected!'));
+      throw new Error('Cannot send when disconnected!');
     }
 
-    return new Promise<void>((resolve, reject) => {
-      const packet = new ClientPacket(type, data);
+    const packet = new ClientPacket(type, data);
+    await new Promise<void>((resolve, reject) => {
       this.socket!.write(packet.toBuffer(), (err) => {
         if (err) return reject(err);
         resolve();
       });
-    }).then(() => {
-      this.clientEvents.emit(type, data);
-      return data;
     });
+    this.clientEvents.emit(type, data);
+    return data;
   }
 
   onConnect(listener: () => void): () => void {
