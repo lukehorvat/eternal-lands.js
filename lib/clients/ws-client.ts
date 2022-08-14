@@ -1,10 +1,6 @@
 import WebSocket from 'isomorphic-ws';
-import Emittery from 'emittery';
-import {
-  ServerPacket,
-  ServerPacketData,
-  ServerPacketType,
-} from '../packets/server';
+import { BaseClient } from './base-client';
+import { ServerPacket } from '../packets/server';
 import {
   ClientPacket,
   ClientPacketData,
@@ -12,20 +8,14 @@ import {
 } from '../packets/client';
 
 type ClientOptions = { url: string };
-type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 
-export class WebSocketClient {
+export class WebSocketClient extends BaseClient {
   private readonly options: ClientOptions;
-  private readonly connectionEvents: Emittery<ClientConnectionEvents>;
-  private readonly clientEvents: Emittery<ClientPacketData>;
-  private readonly serverEvents: Emittery<ServerPacketData>;
   private socket?: WebSocket;
 
   constructor(options: ClientOptions) {
+    super();
     this.options = options;
-    this.connectionEvents = new Emittery();
-    this.clientEvents = new Emittery();
-    this.serverEvents = new Emittery();
   }
 
   async connect(): Promise<void> {
@@ -42,7 +32,7 @@ export class WebSocketClient {
       default:
         await new Promise<void>((resolve, reject) => {
           const onSocketConnect = () => {
-            this.connectionEvents.emit('CONNECT');
+            this.emitConnectEvent();
             this.socket!.removeEventListener('error', onSocketError);
             resolve();
           };
@@ -58,7 +48,7 @@ export class WebSocketClient {
 
         let previousBuffer = Buffer.alloc(0);
         const onSocketDisconnect = () => {
-          this.connectionEvents.emit('DISCONNECT');
+          this.emitDisconnectEvent();
         };
         const onSocketData = (event: WebSocket.MessageEvent) => {
           const buffer = Buffer.from(event.data as ArrayBuffer);
@@ -67,7 +57,7 @@ export class WebSocketClient {
             Buffer.concat([previousBuffer, buffer])
           );
           packets.forEach((packet) => {
-            this.serverEvents.emit(packet.type, packet.data);
+            this.emitReceiveEvent(packet.type, packet.data);
           });
           previousBuffer = remainingBuffer;
         };
@@ -113,67 +103,16 @@ export class WebSocketClient {
       throw new Error('Cannot send when disconnected!');
     }
 
-    // Force a tick of the event loop so that the "sent" event gets
-    // emitted async. We need to do this because `WebSocket.send()`
-    // doesn't have a callback (unlike Node.js sockets), and we want
-    // userland to assume that `send()` is an async task.
-    await Promise.resolve();
-
     const packet = new ClientPacket(type, data);
     this.socket!.send(packet.toBuffer());
-    this.clientEvents.emit(type, data);
+
+    // Force a tick of the event loop so that the following event gets emitted
+    // async. We need to do this because `WebSocket.send()` doesn't have a
+    // callback (unlike Node.js sockets), and we want our `send()` to feel like
+    // an async task in userland.
+    await Promise.resolve();
+
+    this.emitSendEvent(type, data);
     return data;
-  }
-
-  onConnect(listener: () => void): () => void {
-    return this.connectionEvents.on('CONNECT', listener);
-  }
-
-  onDisconnect(listener: () => void): () => void {
-    return this.connectionEvents.on('DISCONNECT', listener);
-  }
-
-  onSend<Type extends ClientPacketType>(
-    type: Type,
-    listener: (data: ClientPacketData[Type]) => void
-  ): () => void {
-    return this.clientEvents.on(type, listener);
-  }
-
-  onSendOnce<Type extends ClientPacketType>(
-    type: Type
-  ): Promise<ClientPacketData[Type]> {
-    return this.clientEvents.once(type);
-  }
-
-  onSendAny(
-    listener: (
-      type: ClientPacketType,
-      data: ClientPacketData[ClientPacketType]
-    ) => void
-  ): () => void {
-    return this.clientEvents.onAny(listener);
-  }
-
-  onReceive<Type extends ServerPacketType>(
-    type: Type,
-    listener: (data: ServerPacketData[Type]) => void
-  ): () => void {
-    return this.serverEvents.on(type, listener);
-  }
-
-  onReceiveOnce<Type extends ServerPacketType>(
-    type: Type
-  ): Promise<ServerPacketData[Type]> {
-    return this.serverEvents.once(type);
-  }
-
-  onReceiveAny(
-    listener: (
-      type: ServerPacketType,
-      data: ServerPacketData[ServerPacketType]
-    ) => void
-  ): () => void {
-    return this.serverEvents.onAny(listener);
   }
 }

@@ -7,8 +7,8 @@ let server: MockTcpSocketServer;
 let client: TcpSocketClient;
 
 beforeEach(() => {
-  server = new MockTcpSocketServer({ port: 8000 });
-  client = new TcpSocketClient({ host: 'localhost', port: 8000 });
+  server = new MockTcpSocketServer({ port: 4444 });
+  client = new TcpSocketClient({ host: 'localhost', port: 4444 });
 });
 
 afterEach(async () => {

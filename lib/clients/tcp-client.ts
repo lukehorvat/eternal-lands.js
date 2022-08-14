@@ -1,10 +1,6 @@
 import { Socket } from 'net';
-import Emittery from 'emittery';
-import {
-  ServerPacket,
-  ServerPacketData,
-  ServerPacketType,
-} from '../packets/server';
+import { BaseClient } from './base-client';
+import { ServerPacket } from '../packets/server';
 import {
   ClientPacket,
   ClientPacketData,
@@ -13,20 +9,14 @@ import {
 import { SERVER_HOST, ServerPort } from '../constants';
 
 type ClientOptions = { host?: string; port?: number };
-type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 
-export class TcpSocketClient {
+export class TcpSocketClient extends BaseClient {
   private readonly options?: ClientOptions;
-  private readonly connectionEvents: Emittery<ClientConnectionEvents>;
-  private readonly clientEvents: Emittery<ClientPacketData>;
-  private readonly serverEvents: Emittery<ServerPacketData>;
   private socket?: Socket;
 
   constructor(options?: ClientOptions) {
+    super();
     this.options = options;
-    this.connectionEvents = new Emittery();
-    this.clientEvents = new Emittery();
-    this.serverEvents = new Emittery();
   }
 
   async connect(): Promise<void> {
@@ -44,7 +34,7 @@ export class TcpSocketClient {
       default:
         await new Promise<void>((resolve, reject) => {
           const onSocketConnect = () => {
-            this.connectionEvents.emit('CONNECT');
+            this.emitConnectEvent();
             this.socket!.off('error', onSocketError);
             resolve();
           };
@@ -63,7 +53,7 @@ export class TcpSocketClient {
 
         let previousBuffer = Buffer.alloc(0);
         const onSocketDisconnect = () => {
-          this.connectionEvents.emit('DISCONNECT');
+          this.emitDisconnectEvent();
         };
         const onSocketData = (buffer: Buffer) => {
           const { packets, remainingBuffer } = ServerPacket.fromBuffer(
@@ -71,7 +61,7 @@ export class TcpSocketClient {
             Buffer.concat([previousBuffer, buffer])
           );
           packets.forEach((packet) => {
-            this.serverEvents.emit(packet.type, packet.data);
+            this.emitReceiveEvent(packet.type, packet.data);
           });
           previousBuffer = remainingBuffer;
         };
@@ -118,59 +108,7 @@ export class TcpSocketClient {
         err ? reject(err) : resolve()
       );
     });
-    this.clientEvents.emit(type, data);
+    this.emitSendEvent(type, data);
     return data;
-  }
-
-  onConnect(listener: () => void): () => void {
-    return this.connectionEvents.on('CONNECT', listener);
-  }
-
-  onDisconnect(listener: () => void): () => void {
-    return this.connectionEvents.on('DISCONNECT', listener);
-  }
-
-  onSend<Type extends ClientPacketType>(
-    type: Type,
-    listener: (data: ClientPacketData[Type]) => void
-  ): () => void {
-    return this.clientEvents.on(type, listener);
-  }
-
-  onSendOnce<Type extends ClientPacketType>(
-    type: Type
-  ): Promise<ClientPacketData[Type]> {
-    return this.clientEvents.once(type);
-  }
-
-  onSendAny(
-    listener: (
-      type: ClientPacketType,
-      data: ClientPacketData[ClientPacketType]
-    ) => void
-  ): () => void {
-    return this.clientEvents.onAny(listener);
-  }
-
-  onReceive<Type extends ServerPacketType>(
-    type: Type,
-    listener: (data: ServerPacketData[Type]) => void
-  ): () => void {
-    return this.serverEvents.on(type, listener);
-  }
-
-  onReceiveOnce<Type extends ServerPacketType>(
-    type: Type
-  ): Promise<ServerPacketData[Type]> {
-    return this.serverEvents.once(type);
-  }
-
-  onReceiveAny(
-    listener: (
-      type: ServerPacketType,
-      data: ServerPacketData[ServerPacketType]
-    ) => void
-  ): () => void {
-    return this.serverEvents.onAny(listener);
   }
 }

@@ -7,8 +7,8 @@ let server: MockWebSocketServer;
 let client: WebSocketClient;
 
 beforeEach(() => {
-  server = new MockWebSocketServer({ port: 8000 });
-  client = new WebSocketClient({ url: 'ws://0.0.0.0:8000' });
+  server = new MockWebSocketServer({ port: 5555 });
+  client = new WebSocketClient({ url: 'ws://0.0.0.0:5555' });
 });
 
 afterEach(async () => {
