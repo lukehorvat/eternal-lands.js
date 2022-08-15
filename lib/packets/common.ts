@@ -5,6 +5,12 @@ export type PopulatedPacketData = Record<string, any>;
 export type EmptyPacketData = Record<string, never>;
 export type PacketData = PopulatedPacketData | EmptyPacketData;
 
+/**
+ * Class representing a packet with a parsed type, but a data buffer that has
+ * not been parsed yet. Essentially, an "intermediate" packet form.
+ *
+ * raw buffer -> packet with buffered data (YOU ARE HERE) -> packet with parsed data
+ */
 export class PacketWithBufferedData {
   readonly type: PacketType;
   readonly dataBuffer: Buffer;
@@ -15,6 +21,11 @@ export class PacketWithBufferedData {
   }
 }
 
+/**
+ * Class representing a packet with a parsed type and data.
+ *
+ * raw buffer -> packet with buffered data -> packet with parsed data (YOU ARE HERE)
+ */
 export class PacketWithParsedData<
   Type extends PacketType,
   Data extends PacketData
@@ -28,11 +39,20 @@ export class PacketWithParsedData<
   }
 }
 
+/**
+ * Interface to describe an object that is capable of transforming a packet's
+ * data from "unparsed" (a buffer) to "parsed" (a JS object literal), and vice
+ * versa.
+ */
 export interface PacketDataParser<Data extends PacketData> {
   fromBuffer(dataBuffer: Buffer): Data;
   toBuffer(data: Data): Buffer;
 }
 
+/**
+ * For packets that do not have data to parse/unparse, this PacketDataParser can
+ * be used.
+ */
 export const EmptyPacketDataParser: PacketDataParser<EmptyPacketData> = {
   fromBuffer() {
     return {};
@@ -43,6 +63,11 @@ export const EmptyPacketDataParser: PacketDataParser<EmptyPacketData> = {
   },
 };
 
+/**
+ * A utility function to read packets from a buffer.
+ *
+ * The `parsePacketData` parameter dictates how each packet's data is parsed.
+ */
 export function readPacketsFromBuffer<
   Type extends PacketType,
   Data extends PacketData,
@@ -76,6 +101,11 @@ export function readPacketsFromBuffer<
   return { packets, remainingBuffer: buffer };
 }
 
+/**
+ * A utility function to write packets to a buffer.
+ *
+ * The `bufferPacketData` parameter dictates how each packet's data is buffered.
+ */
 export function writePacketsToBuffer<
   Type extends PacketType,
   Data extends PacketData,

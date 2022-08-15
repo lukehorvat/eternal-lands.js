@@ -10,6 +10,14 @@ import { SERVER_HOST, ServerPort } from '../constants';
 
 type ClientOptions = { host?: string; port?: number };
 
+/**
+ * Class representing a client that connects to the EL server via a direct TCP
+ * socket.
+ *
+ * By default it will connect to the official EL test server.
+ *
+ * This client only works in a Node.js environment, not in the browser.
+ */
 export class TcpSocketClient extends BaseClient {
   private readonly options?: ClientOptions;
   private socket?: Socket;

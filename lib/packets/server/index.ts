@@ -52,6 +52,11 @@ import * as YouDontExist from './you-dont-exist';
 import * as LogInOk from './log-in-ok';
 import * as LogInNotOk from './log-in-not-ok';
 
+/**
+ * Enum representing the packet types that can be sent from server to client.
+ *
+ * See: https://github.com/raduprv/Eternal-Lands/blob/968f90742b68659b201ea8c0790be0e60267b750/client_serv.h#L733-L852
+ */
 export enum ServerPacketType {
   UNSUPPORTED = -1,
   RAW_TEXT = 0,
@@ -266,6 +271,9 @@ export const ServerPacketDataParsers: {
   [ServerPacketType.LOG_IN_NOT_OK]: LogInNotOk.DataParser,
 };
 
+/**
+ * Class representing a packet that can be sent from server to client.
+ */
 export class ServerPacket<
   Type extends ServerPacketType
 > extends PacketWithParsedData<Type, ServerPacketData[Type]> {
@@ -277,6 +285,9 @@ export class ServerPacket<
     }
   }
 
+  /**
+   * Convert the server packet to a buffer.
+   */
   toBuffer(): Buffer {
     return writePacketsToBuffer([this], (packet) => {
       return ServerPacket.isType(packet, ServerPacketType.UNSUPPORTED)
@@ -290,6 +301,9 @@ export class ServerPacket<
     });
   }
 
+  /**
+   * Read server packets from a buffer.
+   */
   static fromBuffer(buffer: Buffer) {
     return readPacketsFromBuffer(buffer, (packet: PacketWithBufferedData) => {
       return packet.type in ServerPacketType
@@ -306,6 +320,9 @@ export class ServerPacket<
     });
   }
 
+  /**
+   * Check whether a server packet is of a particular type.
+   */
   static isType<Type extends ServerPacketType>(
     packet: ServerPacket<ServerPacketType>,
     type: Type

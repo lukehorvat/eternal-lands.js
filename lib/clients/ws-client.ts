@@ -9,6 +9,15 @@ import {
 
 type ClientOptions = { url: string };
 
+/**
+ * Class representing a client that connects to the EL server via a WebSocket.
+ *
+ * Since there is no "official" WebSocket server for EL, there is no server it
+ * can connect to by default. Therefore the server URL **must** be specified
+ * via the constructor options.
+ *
+ * This client works both in a Node.js environment and in the browser.
+ */
 export class WebSocketClient extends BaseClient {
   private readonly options: ClientOptions;
   private socket?: WebSocket;

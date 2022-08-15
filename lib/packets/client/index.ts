@@ -49,6 +49,11 @@ import * as GetDate from './get-date';
 import * as GetTime from './get-time';
 import * as ServerStats from './server-stats';
 
+/**
+ * Enum representing the packet types that can be sent from client to server.
+ *
+ * See: https://github.com/raduprv/Eternal-Lands/blob/968f90742b68659b201ea8c0790be0e60267b750/client_serv.h#L658-L731
+ */
 export enum ClientPacketType {
   UNSUPPORTED = -1,
   RAW_TEXT = 0,
@@ -211,6 +216,9 @@ export const ClientPacketDataParsers: {
   [ClientPacketType.SERVER_STATS]: ServerStats.DataParser,
 };
 
+/**
+ * Class representing a packet that can be sent from client to server.
+ */
 export class ClientPacket<
   Type extends ClientPacketType
 > extends PacketWithParsedData<Type, ClientPacketData[Type]> {
@@ -222,6 +230,9 @@ export class ClientPacket<
     }
   }
 
+  /**
+   * Convert the client packet to a buffer.
+   */
   toBuffer(): Buffer {
     return writePacketsToBuffer([this], (packet) => {
       return ClientPacket.isType(packet, ClientPacketType.UNSUPPORTED)
@@ -235,6 +246,9 @@ export class ClientPacket<
     });
   }
 
+  /**
+   * Read client packets from a buffer.
+   */
   static fromBuffer(buffer: Buffer) {
     return readPacketsFromBuffer(buffer, (packet: PacketWithBufferedData) => {
       return packet.type in ClientPacketType
@@ -251,6 +265,9 @@ export class ClientPacket<
     });
   }
 
+  /**
+   * Check whether a client packet is of a particular type.
+   */
   static isType<Type extends ClientPacketType>(
     packet: ClientPacket<ClientPacketType>,
     type: Type
