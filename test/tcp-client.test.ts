@@ -209,3 +209,22 @@ test('Can send and receive packets whilst connected', async () => {
   expect(onReceivePongMock).lastCalledWith(pongResponse);
   expect(onReceiveAnyMock).lastCalledWith(ServerPacketType.PONG, pongResponse);
 });
+
+test(`Persists (and doesn't duplicate) listeners across reconnects`, async () => {
+  await server.start();
+
+  const onReceivePongMock = jest.fn();
+  client.onReceive(ServerPacketType.PONG, onReceivePongMock);
+
+  await client.connect();
+  client.send(ClientPacketType.PING, { echo: Buffer.from([1, 2, 3, 4]) });
+  await client.onReceiveOnce(ServerPacketType.PONG);
+  expect(onReceivePongMock).toBeCalledTimes(1);
+
+  await client.disconnect();
+
+  await client.connect();
+  client.send(ClientPacketType.PING, { echo: Buffer.from([5, 6, 7, 8]) });
+  await client.onReceiveOnce(ServerPacketType.PONG);
+  expect(onReceivePongMock).toBeCalledTimes(2);
+});
