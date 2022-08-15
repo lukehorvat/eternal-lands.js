@@ -55,7 +55,7 @@ Simply a shorthand alias for [TcpSocketClient](#tcpsocketclient).
 
 Class representing a client that connects to the EL server directly via a TCP socket.
 
-This client only works in a Node.js environment, not in the browser.
+This client only works in a Node.js environment, not in a web browser.
 
 #### constructor({ host, port })
 
@@ -219,7 +219,23 @@ client.onReceiveAny((type, data) => {
 
 ### WebSocketClient
 
-TODO
+Class representing a client that connects to the EL server via a WebSocket.
+
+This client works both in a Node.js environment _and_ in a web browser.
+
+It has the exact same methods and properties as a [TcpSocketClient](#tcpsocketclient), so I won't bother listing them all again here. The only difference is the options passed to the constructor, detailed below.
+
+#### constructor({ url })
+
+Create a new `WebSocketClient` instance.
+
+Since there is no "official" WebSocket server hosted for EL at this point in time, there is no server it can connect to by default. Therefore the server URL **must** be specified via the constructor options.
+
+Example:
+
+```ts
+const client = new EL.WebSocketClient({ url: 'ws://localhost:8000' });
+```
 
 ### ClientPacket
 
