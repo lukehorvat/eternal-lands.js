@@ -11,7 +11,7 @@ import { SERVER_HOST, ServerPort } from '../constants';
 type ClientOptions = { host?: string; port?: number };
 
 /**
- * Class representing a client that connects to the EL server via a direct TCP
+ * Class representing a client that connects to the EL server directly via a TCP
  * socket.
  *
  * By default it will connect to the official EL test server.

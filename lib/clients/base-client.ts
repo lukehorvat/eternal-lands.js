@@ -25,11 +25,15 @@ export abstract class BaseClient {
 
   /**
    * Connect to the server.
+   *
+   * Returns a promise that is resolved once the client has connected.
    */
   abstract connect(): Promise<void>;
 
   /**
    * Disconnect from the server.
+   *
+   * Returns a promise that is resolved once the client has disconnected.
    */
   abstract disconnect(): Promise<void>;
 
@@ -39,7 +43,9 @@ export abstract class BaseClient {
   abstract get isConnected(): boolean;
 
   /**
-   * Send a packet to the server.
+   * Send a packet of a particular type to the server.
+   *
+   * Returns a promise that is resolved once the packet has been sent.
    */
   abstract send<Type extends ClientPacketType>(
     type: Type,
@@ -49,7 +55,7 @@ export abstract class BaseClient {
   /**
    * Listen to when the client connects to the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onConnect(listener: () => void): UnsubscribeFn {
     return this.connectionEvents.on('CONNECT', listener);
@@ -58,7 +64,7 @@ export abstract class BaseClient {
   /**
    * Listen to when the client disconnects from the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onDisconnect(listener: () => void): UnsubscribeFn {
     return this.connectionEvents.on('DISCONNECT', listener);
@@ -67,7 +73,7 @@ export abstract class BaseClient {
   /**
    * Listen to when the client sends a packet of a particular type to the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onSend<Type extends ClientPacketType>(
     type: Type,
@@ -89,9 +95,9 @@ export abstract class BaseClient {
   }
 
   /**
-   * Listen to when the client sends a packet of any type to the server.
+   * Listen to when the client sends a packet of _any_ type to the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onSendAny(
     listener: (
@@ -105,7 +111,7 @@ export abstract class BaseClient {
   /**
    * Listen to when the client receives a packet of a particular type from the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onReceive<Type extends ServerPacketType>(
     type: Type,
@@ -127,9 +133,9 @@ export abstract class BaseClient {
   }
 
   /**
-   * Listen to when the client receives a packet of any type from the server.
+   * Listen to when the client receives a packet of _any_ type from the server.
    *
-   * Returns a function to unsubscribe the listener.
+   * Returns a function that can be called to unsubscribe the listener.
    */
   onReceiveAny(
     listener: (
