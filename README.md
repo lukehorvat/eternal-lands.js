@@ -14,4 +14,22 @@ $ npm install eternal-lands.js
 
 ## Usage
 
-More info coming soon.
+A quick example:
+
+```ts
+import * as EL from 'eternal-lands.js';
+
+const elc = new EL.Client();
+
+// Connect to the server
+await elc.connect();
+
+// Log in
+elc.send(EL.ClientPacketType.LOG_IN, { username, password });
+await elc.onReceiveOnce(EL.ServerPacketType.LOG_IN_OK);
+
+// Send a message to local chat
+elc.send(EL.ClientPacketType.RAW_TEXT, { message: 'Hello, world!' });
+```
+
+See the [examples](/examples/) directory for more.
