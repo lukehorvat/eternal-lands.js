@@ -6,6 +6,10 @@ It provides several abstractions for managing the "low-level" (i.e. sending and 
 
 Works both in Node.js _and_ in web browsers! 🎉 (However, for browsers please read the [Browser support](#browser-support) section.)
 
+<p align="center">
+  <img src="example.gif" width="500" />
+</p>
+
 ## Installation
 
 Install the package via npm:
