@@ -27,10 +27,10 @@ const password = process.env.EL_PASSWORD!;
     console.log('Disconnected!');
     process.exit(1);
   });
-  client.onSendAny((type, data) => {
+  client.onSendAny(({ type, data }) => {
     console.log('Sent', EL.ClientPacketType[type], data);
   });
-  client.onReceiveAny((type, data) => {
+  client.onReceiveAny(({ type, data }) => {
     console.log('Received', EL.ServerPacketType[type], data);
   });
   client.onReceive(EL.ServerPacketType.PING_REQUEST, (data) => {

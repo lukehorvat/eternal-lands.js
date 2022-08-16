@@ -180,8 +180,8 @@ Returns a function that can be called to unsubscribe `listener`.
 Example:
 
 ```ts
-client.onSendAny((type, data) => {
-  console.log('Sent packet', EL.ClientPacketType[type], data);
+client.onSendAny((packet) => {
+  console.log('Sent packet', EL.ClientPacketType[packet.type], packet.data);
 });
 ```
 
@@ -222,8 +222,8 @@ Returns a function that can be called to unsubscribe `listener`.
 Example:
 
 ```ts
-client.onReceiveAny((type, data) => {
-  console.log('Received packet', EL.ServerPacketType[type], data);
+client.onReceiveAny((packet) => {
+  console.log('Received packet', EL.ServerPacketType[packet.type], packet.data);
 });
 ```
 

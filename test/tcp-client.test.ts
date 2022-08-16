@@ -1,6 +1,6 @@
 import { TcpSocketClient } from '../lib/clients/tcp-client';
-import { ClientPacketType } from '../lib/packets/client';
-import { ServerPacketType } from '../lib/packets/server';
+import { ClientPacket, ClientPacketType } from '../lib/packets/client';
+import { ServerPacket, ServerPacketType } from '../lib/packets/server';
 import { MockTcpSocketServer } from './util/mock-tcp-server';
 
 let server: MockTcpSocketServer;
@@ -155,8 +155,7 @@ test('Can send and receive packets whilst connected', async () => {
   ).resolves.toStrictEqual(badLoginRequest);
   expect(onSendLoginMock).lastCalledWith(badLoginRequest);
   expect(onSendAnyMock).lastCalledWith(
-    ClientPacketType.LOG_IN,
-    badLoginRequest
+    new ClientPacket(ClientPacketType.LOG_IN, badLoginRequest)
   );
 
   // Receive failed login packet.
@@ -166,8 +165,7 @@ test('Can send and receive packets whilst connected', async () => {
   ).resolves.toStrictEqual(badLoginResponse);
   expect(onReceiveLoginFailMock).lastCalledWith(badLoginResponse);
   expect(onReceiveAnyMock).lastCalledWith(
-    ServerPacketType.LOG_IN_NOT_OK,
-    badLoginResponse
+    new ServerPacket(ServerPacketType.LOG_IN_NOT_OK, badLoginResponse)
   );
 
   // Send login packet with correct credentials.
@@ -178,8 +176,7 @@ test('Can send and receive packets whilst connected', async () => {
   ).resolves.toStrictEqual(goodLoginRequest);
   expect(onSendLoginMock).lastCalledWith(goodLoginRequest);
   expect(onSendAnyMock).lastCalledWith(
-    ClientPacketType.LOG_IN,
-    goodLoginRequest
+    new ClientPacket(ClientPacketType.LOG_IN, goodLoginRequest)
   );
 
   // Receive successful login packet.
@@ -189,8 +186,7 @@ test('Can send and receive packets whilst connected', async () => {
   ).resolves.toStrictEqual(goodLoginResponse);
   expect(onReceiveLoginSuccessMock).lastCalledWith(goodLoginResponse);
   expect(onReceiveAnyMock).lastCalledWith(
-    ServerPacketType.LOG_IN_OK,
-    goodLoginResponse
+    new ServerPacket(ServerPacketType.LOG_IN_OK, goodLoginResponse)
   );
 
   // Send ping packet.
@@ -199,7 +195,9 @@ test('Can send and receive packets whilst connected', async () => {
     client.send(ClientPacketType.PING, pingRequest)
   ).resolves.toStrictEqual(pingRequest);
   expect(onSendPingMock).lastCalledWith(pingRequest);
-  expect(onSendAnyMock).lastCalledWith(ClientPacketType.PING, pingRequest);
+  expect(onSendAnyMock).lastCalledWith(
+    new ClientPacket(ClientPacketType.PING, pingRequest)
+  );
 
   // Receive pong packet.
   const pongResponse = { echo: Buffer.from([0x01, 0x02, 0x03, 0x04]) };
@@ -207,7 +205,9 @@ test('Can send and receive packets whilst connected', async () => {
     client.onReceiveOnce(ServerPacketType.PONG)
   ).resolves.toStrictEqual(pongResponse);
   expect(onReceivePongMock).lastCalledWith(pongResponse);
-  expect(onReceiveAnyMock).lastCalledWith(ServerPacketType.PONG, pongResponse);
+  expect(onReceiveAnyMock).lastCalledWith(
+    new ServerPacket(ServerPacketType.PONG, pongResponse)
+  );
 });
 
 test(`Persists (and doesn't duplicate) listeners across reconnects`, async () => {

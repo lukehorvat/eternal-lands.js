@@ -1,6 +1,14 @@
 import Emittery from 'emittery';
-import { ServerPacketData, ServerPacketType } from '../packets/server';
-import { ClientPacketData, ClientPacketType } from '../packets/client';
+import {
+  ServerPacket,
+  ServerPacketData,
+  ServerPacketType,
+} from '../packets/server';
+import {
+  ClientPacket,
+  ClientPacketData,
+  ClientPacketType,
+} from '../packets/client';
 
 type ClientConnectionEvents = Record<'CONNECT' | 'DISCONNECT', undefined>;
 type UnsubscribeFn = () => void;
@@ -100,12 +108,11 @@ export abstract class BaseClient {
    * Returns a function that can be called to unsubscribe the listener.
    */
   onSendAny(
-    listener: (
-      type: ClientPacketType,
-      data: ClientPacketData[ClientPacketType]
-    ) => void
+    listener: (packet: ClientPacket<ClientPacketType>) => void
   ): UnsubscribeFn {
-    return this.clientEvents.onAny(listener);
+    return this.clientEvents.onAny((type, data) =>
+      listener(new ClientPacket(type, data))
+    );
   }
 
   /**
@@ -138,12 +145,11 @@ export abstract class BaseClient {
    * Returns a function that can be called to unsubscribe the listener.
    */
   onReceiveAny(
-    listener: (
-      type: ServerPacketType,
-      data: ServerPacketData[ServerPacketType]
-    ) => void
+    listener: (packet: ServerPacket<ServerPacketType>) => void
   ): UnsubscribeFn {
-    return this.serverEvents.onAny(listener);
+    return this.serverEvents.onAny((type, data) =>
+      listener(new ServerPacket(type, data))
+    );
   }
 
   /**
