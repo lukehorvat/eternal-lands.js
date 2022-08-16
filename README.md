@@ -368,4 +368,44 @@ client.onReceive(EL.ServerPacketType.RAW_TEXT, (data) => {
 
 ## Browser support
 
-TODO
+Getting this library to work in web browsers is pretty easy, but you'll want to use a bundler like [Webpack](https://webpack.js.org).
+
+You need to configure your bundler to do the following:
+
+1. _Ignore_ the Node.js `net` module.
+2. _Polyfill_ the Node.js `Buffer` module. (I recommend [this polyfill](https://www.npmjs.com/package/buffer).)
+
+For example, in Webpack 5 the configuration would look like this:
+
+```js
+resolve: {
+  fallback: {
+    net: false,
+    buffer: require.resolve('buffer/'),
+  },
+},
+plugins: [
+  new webpack.ProvidePlugin({
+    Buffer: ['buffer', 'Buffer'],
+  }),
+],
+```
+
+Once that's set up, you should be able to use everything from the library's API in the browser, _except_ for the Node.js-only [TcpSocketClient](#tcpsocketclient)!
+
+Of course, that likely means you'll be using [WebSocketClient](#websocketclient), and since there is no "official" WebSocket server hosted for EL at this point in time, you'll need to host one yourself so that the client can connect. Fortunately, that's not difficult – simply install [websockify](https://github.com/novnc/websockify) and run it like so:
+
+```sh
+websockify localhost:8000 game.eternal-lands.com:2001
+```
+
+This will automatically forward all WebSocket traffic on port 8000 to the EL server via TCP, and vice versa.
+
+Then, in the browser, you should be able to connect to the server by doing the following:
+
+```ts
+const client = new EL.WebSocketClient({ url: 'ws://localhost:8000' });
+await client.connect();
+```
+
+That's it! 😎
