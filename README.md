@@ -317,4 +317,21 @@ const packet = new EL.ServerPacket(EL.ServerPacketType.INVENTORY_ITEM_TEXT, {
 
 ### Constants
 
-TODO
+Various enums and constants that may be useful.
+
+I won't list them all here; just refer to [lib/constants.ts](lib/constants.ts).
+
+Example:
+
+```ts
+const client = new EL.Client({ port: EL.Constants.ServerPort.MAIN_SERVER });
+
+client.onReceive(EL.ServerPacketType.RAW_TEXT, (data) => {
+  if (
+    data.channel === EL.Constants.ChatChannel.SERVER &&
+    data.message.includes('wants to trade with you.')
+  ) {
+    // Someone initiated a trade.
+  }
+});
+```
