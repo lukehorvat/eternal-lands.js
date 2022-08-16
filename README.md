@@ -19,17 +19,17 @@ A quick example:
 ```ts
 import * as EL from 'eternal-lands.js';
 
-const elc = new EL.Client();
+const client = new EL.Client();
 
 // Connect to the server
-await elc.connect();
+await client.connect();
 
 // Log in
-elc.send(EL.ClientPacketType.LOG_IN, { username, password });
-await elc.onReceiveOnce(EL.ServerPacketType.LOG_IN_OK);
+client.send(EL.ClientPacketType.LOG_IN, { username, password });
+await client.onReceiveOnce(EL.ServerPacketType.LOG_IN_OK);
 
 // Send a message to local chat
-elc.send(EL.ClientPacketType.RAW_TEXT, { message: 'Hello, world!' });
+client.send(EL.ClientPacketType.RAW_TEXT, { message: 'Hello, world!' });
 ```
 
 See the [examples](examples/) directory for more.
@@ -239,11 +239,31 @@ const client = new EL.WebSocketClient({ url: 'ws://localhost:8000' });
 
 ### ClientPacketType
 
-TODO
+Enum representing the packet types that can be sent from client to server. The types are lifted directly from the official EL client [source](https://github.com/raduprv/Eternal-Lands/blob/master/client_serv.h).
+
+Please refer to [lib/packets/client/index.ts](lib/packets/client/index.ts) to understand which types are currently supported by this library. If you need to indicate a packet type that the library currently does not support, use the special `UNSUPPORTED` type.
+
+Example:
+
+```ts
+console.log(EL.ClientPacketType.HEART_BEAT); // = 14
+console.log(EL.ClientPacketType.DO_EMOTE); // = 70
+console.log(EL.ClientPacketType.UNSUPPORTED); // = -1
+```
 
 ### ServerPacketType
 
-TODO
+Enum representing the packet types that can be sent from server to client. The types are lifted directly from the official EL client [source](https://github.com/raduprv/Eternal-Lands/blob/master/client_serv.h).
+
+Please refer to [lib/packets/server/index.ts](lib/packets/server/index.ts) to understand which types are currently supported by this library. If you need to indicate a packet type that the library currently does not support, use the special `UNSUPPORTED` type.
+
+Example:
+
+```ts
+console.log(EL.ServerPacketType.CHANGE_MAP); // = 7
+console.log(EL.ServerPacketType.ADD_NEW_ENHANCED_ACTOR); // = 51
+console.log(EL.ServerPacketType.UNSUPPORTED); // = -1
+```
 
 ### ClientPacket
 
@@ -319,7 +339,7 @@ const packet = new EL.ServerPacket(EL.ServerPacketType.INVENTORY_ITEM_TEXT, {
 
 Various enums and constants that may be useful.
 
-I won't list them all here; just refer to [lib/constants.ts](lib/constants.ts).
+I won't bother listing them all here; just refer to [lib/constants.ts](lib/constants.ts).
 
 Example:
 
