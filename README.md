@@ -4,6 +4,8 @@ A JavaScript (and TypeScript) client library for [Eternal Lands](http://www.eter
 
 It provides several abstractions for managing the "low-level" (i.e. sending and receiving of packets) so that you can focus on building the "high-level" (e.g. trade bots, guard bots, AI-controlled ants, etc).
 
+Works both in Node.js _and_ in web browsers! 🎉 (However, for browsers please read the [Browser support](#browser-support) section.)
+
 ## Installation
 
 Install the package via npm:
@@ -36,7 +38,7 @@ See the [examples](examples/) directory for more.
 
 ## API
 
-The library exposes the following:
+The library exposes the following API:
 
 - [Client](#client)
 - [TcpSocketClient](#tcpsocketclient)
@@ -47,6 +49,8 @@ The library exposes the following:
 - [ServerPacket](#serverpacket)
 - [Constants](#constants)
 
+Although JavaScript is supported, it's highly recommended to consume this library's API via TypeScript. In editors like VSCode you will get tab completion and suggestions which make the API _much_ easier to work with.
+
 ### Client
 
 Simply a shorthand alias for [TcpSocketClient](#tcpsocketclient).
@@ -55,7 +59,7 @@ Simply a shorthand alias for [TcpSocketClient](#tcpsocketclient).
 
 Class representing a client that connects to the EL server directly via a TCP socket.
 
-This client only works in a Node.js environment, not in a web browser.
+This client only works in Node.js, not in web browsers.
 
 #### constructor({ host, port })
 
@@ -227,7 +231,7 @@ client.onReceiveAny((type, data) => {
 
 Class representing a client that connects to the EL server via a WebSocket.
 
-This client works both in a Node.js environment _and_ in a web browser.
+This client works both in Node.js _and_ in web browsers.
 
 It has the exact same methods and properties as a [TcpSocketClient](#tcpsocketclient), so I won't bother listing them all again here. The only difference is the options passed to the constructor, detailed below.
 
@@ -361,3 +365,7 @@ client.onReceive(EL.ServerPacketType.RAW_TEXT, (data) => {
   }
 });
 ```
+
+## Browser support
+
+TODO

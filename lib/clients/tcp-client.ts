@@ -16,7 +16,7 @@ type ClientOptions = { host?: string; port?: number };
  *
  * By default it will connect to the official EL test server.
  *
- * This client only works in a Node.js environment, not in a web browser.
+ * This client only works in Node.js, not in web browsers.
  */
 export class TcpSocketClient extends BaseClient {
   private readonly options?: ClientOptions;

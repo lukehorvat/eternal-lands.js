@@ -16,7 +16,7 @@ type ClientOptions = { url: string };
  * can connect to by default. Therefore the server URL **must** be specified
  * via the constructor options.
  *
- * This client works both in a Node.js environment _and_ in a web browser.
+ * This client works both in Node.js _and_ in web browsers.
  */
 export class WebSocketClient extends BaseClient {
   private readonly options: ClientOptions;
