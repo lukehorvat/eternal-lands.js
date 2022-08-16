@@ -9,36 +9,36 @@
 import * as EL from '../lib';
 
 (async () => {
-  const elc = new EL.Client();
+  const client = new EL.Client();
 
   try {
-    await elc.connect();
+    await client.connect();
     console.log('Connected!');
   } catch (err) {
     console.log('Failed to connect!');
     process.exit(1);
   }
 
-  elc.onDisconnect(() => {
+  client.onDisconnect(() => {
     console.log('Disconnected!');
     process.exit(1);
   });
-  elc.onSendAny((type, data) => {
+  client.onSendAny((type, data) => {
     console.log('Sent', EL.ClientPacketType[type], data);
   });
-  elc.onReceiveAny((type, data) => {
+  client.onReceiveAny((type, data) => {
     console.log('Received', EL.ServerPacketType[type], data);
   });
-  elc.onReceive(EL.ServerPacketType.PING_REQUEST, (data) => {
-    elc.send(EL.ClientPacketType.PING_RESPONSE, data);
+  client.onReceive(EL.ServerPacketType.PING_REQUEST, (data) => {
+    client.send(EL.ClientPacketType.PING_RESPONSE, data);
   });
 
   setInterval(() => {
-    elc.send(EL.ClientPacketType.HEART_BEAT, {});
+    client.send(EL.ClientPacketType.HEART_BEAT, {});
   }, 25000);
 
   setTimeout(() => {
-    elc.send(EL.ClientPacketType.PING, {
+    client.send(EL.ClientPacketType.PING, {
       echo: Buffer.from([0x01, 0x02, 0x03, 0x04]),
     });
   }, 3000);
