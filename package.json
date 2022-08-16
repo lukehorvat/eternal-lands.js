@@ -24,11 +24,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf dist",
-    "test": "jest",
-    "example-connect": "ts-node examples/connect",
-    "example-login": "ts-node examples/login",
-    "example-sniff-client-packets": "ts-node examples/sniff-client-packets",
-    "example-sniff-server-packets": "ts-node examples/sniff-server-packets"
+    "test": "jest"
   },
   "dependencies": {
     "easy-buffer": "1.1.1",

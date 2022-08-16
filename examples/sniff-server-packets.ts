@@ -4,7 +4,7 @@
  * Obviously, you need to install `pcap` first before running this example.
  */
 
-import * as EL from '../lib';
+import * as EL from 'eternal-lands.js';
 import pcap from 'pcap';
 
 console.log('Sniffing packets received from server...');

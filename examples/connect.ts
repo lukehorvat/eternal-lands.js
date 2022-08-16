@@ -6,7 +6,7 @@
  * We also respond to any ping requests that the server makes.
  */
 
-import * as EL from '../lib';
+import * as EL from 'eternal-lands.js';
 
 (async () => {
   const client = new EL.Client();

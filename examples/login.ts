@@ -7,7 +7,7 @@
  * We also respond to any ping requests that the server makes.
  */
 
-import * as EL from '../lib';
+import * as EL from 'eternal-lands.js';
 
 const username = process.env.EL_USERNAME!;
 const password = process.env.EL_PASSWORD!;

@@ -187,6 +187,8 @@ Listen to when the client receives a packet of a particular type from the server
 
 Returns a function that can be called to unsubscribe `listener`.
 
+Example:
+
 ```ts
 client.onReceive(EL.ServerPacketType.NEW_MINUTE, (data) => {
   console.log('Received NEW_MINUTE packet', data.minute);
@@ -199,6 +201,8 @@ Listen to when the client receives a packet of a particular type from the server
 
 Returns a Promise that is resolved with the packet's data.
 
+Example:
+
 ```ts
 const { actorId } = await client.onReceiveOnce(
   EL.ServerPacketType.REMOVE_ACTOR
@@ -210,6 +214,8 @@ const { actorId } = await client.onReceiveOnce(
 Listen to when the client receives a packet of _any_ type from the server.
 
 Returns a function that can be called to unsubscribe `listener`.
+
+Example:
 
 ```ts
 client.onReceiveAny((type, data) => {
