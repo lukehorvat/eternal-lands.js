@@ -32,7 +32,7 @@ await elc.onReceiveOnce(EL.ServerPacketType.LOG_IN_OK);
 elc.send(EL.ClientPacketType.RAW_TEXT, { message: 'Hello, world!' });
 ```
 
-See the [examples](/examples/) directory for more.
+See the [examples](examples/) directory for more.
 
 ## API
 
@@ -41,10 +41,10 @@ The library exposes the following:
 - [Client](#client)
 - [TcpSocketClient](#tcpsocketclient)
 - [WebSocketClient](#websocketclient)
-- [ClientPacket](#clientpacket)
 - [ClientPacketType](#clientpackettype)
-- [ServerPacket](#serverpacket)
 - [ServerPacketType](#serverpackettype)
+- [ClientPacket](#clientpacket)
+- [ServerPacket](#serverpacket)
 - [Constants](#constants)
 
 ### Client
@@ -237,21 +237,83 @@ Example:
 const client = new EL.WebSocketClient({ url: 'ws://localhost:8000' });
 ```
 
-### ClientPacket
-
-TODO
-
 ### ClientPacketType
-
-TODO
-
-### ServerPacket
 
 TODO
 
 ### ServerPacketType
 
 TODO
+
+### ClientPacket
+
+Class representing a packet that can be sent from client to server.
+
+Typically you wouldn't ever need to use this class directly, since the client classes eliminate any real need for it. However, in cases where you may not be using the client classes, it can be useful (e.g. see [examples/sniff-client-packets.ts](examples/sniff-client-packets.ts)).
+
+#### constructor(type, data)
+
+Create a new `ClientPacket` instance.
+
+Example:
+
+```ts
+const packet = new EL.ClientPacket(EL.ClientPacketType.INSPECT_BAG, {
+  bagId: 3,
+});
+```
+
+#### toBuffer()
+
+Convert the client packet to a buffer.
+
+Returns the buffer.
+
+Example:
+
+```ts
+const buffer = packet.toBuffer();
+```
+
+#### fromBuffer(buffer) [static method]
+
+Read client packets from a buffer.
+
+Returns the packets parsed from the buffer, as well as any remaining buffer that wasn't large enough to contain a packet.
+
+Example:
+
+```ts
+const { packets, remainingBuffer } = EL.ClientPacket.fromBuffer(buffer);
+```
+
+#### isType(packet, type) [static method]
+
+Check whether a client packet is of a particular type.
+
+Returns a boolean that is `true` if the type matches.
+
+Example:
+
+```ts
+const isHarvest = ClientPacket.isType(packet, ClientPacketType.HARVEST);
+```
+
+### ServerPacket
+
+Class representing a packet that can be sent from server to client.
+
+Typically you wouldn't ever need to use this class directly, since the client classes eliminate any real need for it. However, in cases where you may not be using the client classes, it can be useful (e.g. see [examples/sniff-server-packets.ts](examples/sniff-server-packets.ts)).
+
+It has the exact same methods and properties as [ClientPacket](#clientpacket), so I won't bother listing them all again here. The only difference is it deals with [ServerPacketType](#serverpackettype), not [ClientPacketType](#clientpackettype).
+
+Example:
+
+```ts
+const packet = new EL.ServerPacket(EL.ServerPacketType.INVENTORY_ITEM_TEXT, {
+  text: `You are hungry, you can't manufacture anything.`,
+});
+```
 
 ### Constants
 

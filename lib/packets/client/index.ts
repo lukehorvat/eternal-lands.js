@@ -232,6 +232,8 @@ export class ClientPacket<
 
   /**
    * Convert the client packet to a buffer.
+   *
+   * Returns the buffer.
    */
   toBuffer(): Buffer {
     return writePacketsToBuffer([this], (packet) => {
@@ -248,6 +250,9 @@ export class ClientPacket<
 
   /**
    * Read client packets from a buffer.
+   *
+   * Returns the packets parsed from the buffer, as well as any remaining buffer
+   * that wasn't large enough to contain a packet.
    */
   static fromBuffer(buffer: Buffer) {
     return readPacketsFromBuffer(buffer, (packet: PacketWithBufferedData) => {
@@ -267,6 +272,8 @@ export class ClientPacket<
 
   /**
    * Check whether a client packet is of a particular type.
+   *
+   * Returns a boolean that is `true` if the type matches.
    */
   static isType<Type extends ClientPacketType>(
     packet: ClientPacket<ClientPacketType>,
