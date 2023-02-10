@@ -1,3 +1,5 @@
+export * from './generated/items';
+
 export const SERVER_HOST = 'game.eternal-lands.com';
 
 export enum ServerPort {

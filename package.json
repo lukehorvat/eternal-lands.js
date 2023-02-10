@@ -24,6 +24,8 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf dist",
+    "generate": "ts-node bin/generate-items",
+    "pregenerate": "rimraf lib/generated",
     "test": "jest"
   },
   "dependencies": {
