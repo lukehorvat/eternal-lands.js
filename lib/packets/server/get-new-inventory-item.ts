@@ -1,12 +1,13 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../common';
+import { ItemId } from '../../constants';
 
 export type Data = {
   imageId: number;
   quantity: number;
   position: number;
   flags: number;
-  id?: number; // Defined when item UIDs are enabled.
+  id?: ItemId; // Defined when item UIDs are enabled.
 };
 
 export const DataParser: PacketDataParser<Data> = {

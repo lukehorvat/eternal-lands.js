@@ -24,6 +24,8 @@ import {
   ActorWeapon,
   ChatChannel,
   EmoteId,
+  ItemId,
+  ItemImageIds,
   StatType,
 } from '../lib/constants';
 
@@ -298,32 +300,58 @@ test('Parsing complete and incomplete server packets', () => {
     },
     [ServerPacketType.HERE_YOUR_INVENTORY]: {
       items: [
-        { imageId: 28, quantity: 79, position: 0, flags: 7, id: 3 },
-        { imageId: 3, quantity: 11, position: 1, flags: 4, id: 20 },
-        { imageId: 59, quantity: 36, position: 3, flags: 6, id: 40 },
+        {
+          imageId: ItemImageIds[ItemId.CHRYSANTHEMUM],
+          quantity: 79,
+          position: 0,
+          flags: 7,
+          id: ItemId.CHRYSANTHEMUM,
+        },
+        {
+          imageId: ItemImageIds[ItemId.GOLD_COINS],
+          quantity: 11,
+          position: 1,
+          flags: 4,
+          id: ItemId.GOLD_COINS,
+        },
+        {
+          imageId: ItemImageIds[ItemId.HEALTH_ESSENCE],
+          quantity: 36,
+          position: 3,
+          flags: 6,
+          id: ItemId.HEALTH_ESSENCE,
+        },
       ],
     },
     [ServerPacketType.INVENTORY_ITEM_TEXT]: {
       text: `You can't wear this item!`,
     },
     [ServerPacketType.GET_NEW_INVENTORY_ITEM]: {
-      imageId: 473,
+      imageId: ItemImageIds[ItemId.DUNG],
       quantity: 154,
       position: 1,
       flags: 6,
-      id: 719,
+      id: ItemId.DUNG,
     },
     [ServerPacketType.REMOVE_ITEM_FROM_INVENTORY]: {
       position: 9,
     },
     [ServerPacketType.HERE_YOUR_GROUND_ITEMS]: {
       items: [
-        { imageId: 77, quantity: 2, position: 0 },
-        { imageId: 59, quantity: 8, position: 1 },
+        {
+          imageId: ItemImageIds[ItemId.GREEN_SNAKE_SKIN],
+          quantity: 2,
+          position: 0,
+        },
+        {
+          imageId: ItemImageIds[ItemId.HEALTH_ESSENCE],
+          quantity: 8,
+          position: 1,
+        },
       ],
     },
     [ServerPacketType.GET_NEW_GROUND_ITEM]: {
-      imageId: 86,
+      imageId: ItemImageIds[ItemId.LEATHER_GLOVES],
       quantity: 3,
       position: 1,
     },
@@ -372,10 +400,10 @@ test('Parsing complete and incomplete server packets', () => {
       npcPortrait: 60,
     },
     [ServerPacketType.GET_TRADE_OBJECT]: {
-      imageId: 316,
+      imageId: ItemImageIds[ItemId.TOADSTOOL],
       quantity: 120,
       position: 1,
-      id: 505,
+      id: ItemId.TOADSTOOL,
       isFromStorage: false,
       isYours: true,
     },
@@ -393,13 +421,55 @@ test('Parsing complete and incomplete server packets', () => {
     },
     [ServerPacketType.GET_YOUR_TRADEOBJECTS]: {
       items: [
-        { imageId: 1, quantity: 20, position: 0, flags: 14, id: 43 },
-        { imageId: 54, quantity: 6, position: 27, flags: 6, id: 35 },
-        { imageId: 55, quantity: 6, position: 28, flags: 6, id: 36 },
-        { imageId: 56, quantity: 30, position: 29, flags: 6, id: 37 },
-        { imageId: 86, quantity: 1, position: 32, flags: 0, id: 93 },
-        { imageId: 421, quantity: 1, position: 33, flags: 0, id: 620 },
-        { imageId: 59, quantity: 8, position: 34, flags: 6, id: 40 },
+        {
+          imageId: ItemImageIds[ItemId.FRUITS],
+          quantity: 20,
+          position: 0,
+          flags: 14,
+          id: ItemId.FRUITS,
+        },
+        {
+          imageId: ItemImageIds[ItemId.SPIRIT_ESSENCE],
+          quantity: 6,
+          position: 27,
+          flags: 6,
+          id: ItemId.SPIRIT_ESSENCE,
+        },
+        {
+          imageId: ItemImageIds[ItemId.MATTER_ESSENCE],
+          quantity: 6,
+          position: 28,
+          flags: 6,
+          id: ItemId.MATTER_ESSENCE,
+        },
+        {
+          imageId: ItemImageIds[ItemId.ENERGY_ESSENCE],
+          quantity: 30,
+          position: 29,
+          flags: 6,
+          id: ItemId.ENERGY_ESSENCE,
+        },
+        {
+          imageId: ItemImageIds[ItemId.LEATHER_GLOVES],
+          quantity: 1,
+          position: 32,
+          flags: 0,
+          id: ItemId.LEATHER_GLOVES,
+        },
+        {
+          imageId: ItemImageIds[ItemId.HARVESTER_MEDALLION],
+          quantity: 1,
+          position: 33,
+          flags: 0,
+          id: ItemId.HARVESTER_MEDALLION,
+        },
+        {
+          imageId: ItemImageIds[ItemId.HEALTH_ESSENCE],
+          quantity: 8,
+          position: 34,
+          flags: 6,
+          id: ItemId.HEALTH_ESSENCE,
+        },
       ],
     },
     [ServerPacketType.GET_TRADE_PARTNER_NAME]: {

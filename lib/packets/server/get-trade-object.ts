@@ -1,11 +1,12 @@
 import { BufferReader, BufferWriter } from 'easy-buffer';
 import { PacketDataParser } from '../common';
+import { ItemId } from '../../constants';
 
 export type Data = {
   imageId: number;
   quantity: number;
   position: number;
-  id?: number; // Defined when item UIDs are enabled.
+  id?: ItemId; // Defined when item UIDs are enabled.
 
   /**
    * `true` when the item is being traded from storage; `false` when from inventory.
