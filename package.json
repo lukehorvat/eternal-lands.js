@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "easy-buffer": "1.1.1",
-    "emittery": "0.12.1",
+    "emittery": "0.13.1",
     "isomorphic-ws": "5.0.0",
     "ws": "8.12.0"
   },
