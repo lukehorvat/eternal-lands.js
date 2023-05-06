@@ -1,7 +1,7 @@
 /**
  * In this example, we sniff packets sent by the EL client.
  *
- * Obviously, you need to install `pcap` first before running this example.
+ * You need to install `pcap` first to run this example.
  */
 
 import * as EL from 'eternal-lands.js';

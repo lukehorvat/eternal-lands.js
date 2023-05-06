@@ -1,11 +1,13 @@
 /**
- * In this example, we sniff packets received from the EL server.
+ * In this example, we trigger a notification whenever mixing is stopped by
+ * sniffing packets received from the EL server.
  *
- * You need to install `pcap` first to run this example.
+ * You need to install `pcap` and `node-notifier` first to run this example.
  */
 
 import * as EL from 'eternal-lands.js';
 import pcap from 'pcap';
+import notifier from 'node-notifier';
 
 console.log('Sniffing packets received from server...');
 
@@ -36,5 +38,20 @@ function onDataSniffed(buffer: Buffer) {
 }
 
 function onPacketReceived(packet: EL.ServerPacket<EL.ServerPacketType>) {
-  console.log(EL.ServerPacketType[packet.type], packet.data);
+  if (EL.ServerPacket.isType(packet, EL.ServerPacketType.INVENTORY_ITEM_TEXT)) {
+    const { text } = packet.data;
+    if (
+      text.includes('You stopped working.') ||
+      text.includes('You failed to create a[n]') ||
+      text.includes(`You are hungry, you can't manufacture anything.`) ||
+      text.includes('You need a Needle and you have none!')
+    ) {
+      notifier.notify({
+        title: 'Mixing stopped!',
+        message: `"${text}"`,
+        sound: 'Ping',
+        timeout: 2,
+      });
+    }
+  }
 }
