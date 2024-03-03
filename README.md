@@ -1,4 +1,4 @@
-# eternal-lands.js [![npm version](http://img.shields.io/npm/v/eternal-lands.js.svg?style=flat-square)](https://www.npmjs.org/package/eternal-lands.js) [![build status](https://img.shields.io/github/actions/workflow/status/lukehorvat/eternal-lands.js/build.yml?style=flat-square)](https://github.com/lukehorvat/eternal-lands.js/actions/workflows/build.yml)
+# eternal-lands.js [![npm version](https://img.shields.io/npm/v/eternal-lands.js.svg?style=flat-square)](https://www.npmjs.com/package/eternal-lands.js)
 
 A JavaScript (and TypeScript) client library for [Eternal Lands](http://www.eternal-lands.com).
 
@@ -15,7 +15,7 @@ Works both in Node.js _and_ in web browsers! 🎉 (However, for browsers please 
 Install the package via npm:
 
 ```sh
-$ npm install eternal-lands.js
+npm install eternal-lands.js
 ```
 
 ## Usage
